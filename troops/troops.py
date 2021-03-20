@@ -5,9 +5,6 @@ class Troops:
     cost = -1
     min_level = -1
 
-    def __init__(self):
-        raise NotImplementedError()
-
     def get_n(self):
         return self.n
 
@@ -20,7 +17,6 @@ class Troops:
     def get_cost(self):
         return self.cost
 
-    # TODO: check troop limits (farm)
     def recruit(self, stone, n, level, free_capacity):
         if level < self.min_level:
             raise Exception("Barracks level too low to recruit these troops")

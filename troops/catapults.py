@@ -6,6 +6,3 @@ class Catapults(Troops):
     defense = 3
     cost = 10
     min_level = 3
-
-    def __init__(self):
-        pass
