@@ -15,9 +15,9 @@ class Building:
     def upgrade(self, stone):
         if self.level >= len(self.upgrade_costs):
             raise Exception("Building already at max level")
-        elif self.upgrade_costs[self.level] <= stone:
+        elif self.upgrade_costs[self.level] > stone:
+            raise Exception("Not enough stone to upgrade building")
+        else:
             stone = stone - self.upgrade_costs[self.level]
             self.level += 1
             return stone
-        else:
-            raise Exception("Not enough stone to upgrade building")

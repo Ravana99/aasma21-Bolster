@@ -113,8 +113,7 @@ class Village:
     # OTHER
 
     def __repr__(self):
-        string = ""
-        string += f"////////// {self.name} \\\\\\\\\\\\\\\\\\\\\n"
+        string = f"////////// {self.name} \\\\\\\\\\\\\\\\\\\\\n"
         string += "******* BUILDINGS *******\n"
         string += f"Barracks level: {self.barracks.get_level()}\n"
         string += f"Farm level: {self.farm.get_level()}\n"
