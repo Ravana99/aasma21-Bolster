@@ -8,7 +8,13 @@ class Agent:
         self.name = "Agent " + str(i)
         self.other_villages = []
 
-    def decision(self):
+    def upgrade_decision(self):
+        raise NotImplementedError()
+
+    def recruit_decision(self):
+        raise NotImplementedError()
+
+    def attack_decision(self):
         raise NotImplementedError()
 
     # SENSORS - BUILDINGS
@@ -53,7 +59,7 @@ class Agent:
     def was_attacked(self):
         return self.village.was_attacked()
 
-    # ACTUATORS - UPGRADE
+    # ACTUATORS - UPGRADES
 
     def upgrade_barracks(self):
         self.village.upgrade_barracks()
@@ -69,6 +75,10 @@ class Agent:
 
     def upgrade_warehouse(self):
         self.village.upgrade_warehouse()
+
+    @staticmethod
+    def upgrade_nothing(self):
+        pass
 
     # ACTUATORS - RECRUITMENTS
 
@@ -90,7 +100,26 @@ class Agent:
     def demote_catapults(self, n):
         self.village.demote_catapults(n)
 
+    @staticmethod
+    def demote_nothing(self):
+        pass
+
+    # ACTUATORS - ATTACKS
+
+    def send_attack(self, n_warriors, n_archers, n_catapults, enemy_village_name):
+        return self.village.create_attacking_army(n_warriors, n_archers, n_catapults, enemy_village_name)
+
+    @staticmethod
+    def attack_nothing():
+        return
+
     # OTHER
+
+    def get_name(self):
+        return self.name
+
+    def remove_other_village(self, name):
+        self.other_villages.remove(name)
 
     def get_village(self):
         return self.village
