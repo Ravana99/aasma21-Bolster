@@ -3,12 +3,20 @@ from troops.archers import Archers
 from troops.catapults import Catapults
 from random import uniform
 from math import ceil, log
+from troops.exceptions import InvalidTroopsToSendOffException, AttackWithNoArmyException
 
 
 class Army:
     def __init__(self, n_warriors, n_archers, n_catapults, village_name, attacking, enemy_village_name=""):
+        if not (isinstance(n_warriors, int) or n_warriors.isdigit()) or \
+           not (isinstance(n_archers, int) or n_archers.isdigit()) or \
+           not (isinstance(n_catapults, int) or n_catapults.isdigit()):
+            raise InvalidTroopsToSendOffException()
+        n_warriors = int(n_warriors)
+        n_archers = int(n_archers)
+        n_catapults = int(n_catapults)
         if attacking and n_warriors + n_archers + n_catapults <= 0:
-            raise Exception("Attacks must send off at least one unit")
+            raise AttackWithNoArmyException()
         self.warriors = Warriors(n_warriors)
         self.archers = Archers(n_archers)
         self.catapults = Catapults(n_catapults)

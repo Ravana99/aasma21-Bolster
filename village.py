@@ -11,6 +11,9 @@ from troops.army import Army
 
 class Village:
 
+    MAX_HEALTH = 1000
+    STARTING_STONE = 100
+
     def __init__(self, i):
         self.name = "Village " + str(i)
         self.barracks = Barracks()
@@ -18,13 +21,11 @@ class Village:
         self.mine = Mine()
         self.wall = Wall()
         self.warehouse = Warehouse()
-        # TODO: change back to ~1000
-        self.health = 10
-        self.stone = 100
+        self.health = Village.MAX_HEALTH
+        self.stone = Village.STARTING_STONE
         self.warriors = Warriors()
         self.archers = Archers()
         self.catapults = Catapults()
-        self.was_attacked = False
 
     # GETTERS
 
@@ -60,9 +61,6 @@ class Village:
 
     def get_catapults(self):
         return self.catapults
-
-    def was_attacked(self):
-        return self.was_attacked
 
     def get_troops(self):
         return self.warriors.get_n() + self.archers.get_n() + self.catapults.get_n()
@@ -144,20 +142,43 @@ class Village:
         self.archers.set_n(self.archers.get_n() + army.get_archers().get_n())
         self.catapults.set_n(self.catapults.get_n() + army.get_catapults().get_n())
 
+    def get_attack_power(self):
+        return (self.warriors.get_attack_power() +
+                self.archers.get_attack_power() +
+                self.catapults.get_attack_power())
+
+    def get_defense_power(self):
+        return (self.warriors.get_defense_power() +
+                self.archers.get_defense_power() +
+                self.catapults.get_defense_power())
+
     def __repr__(self):
-        string = f"////////// {self.name} \\\\\\\\\\\\\\\\\\\\\n"
+        string = f"////////// {self.name} \\\\\\\\\\\\\\\\\\\\\n\n"
         string += "******* BUILDINGS *******\n"
-        string += f"Barracks level: {self.barracks.get_level()}\n"
-        string += f"Farm level: {self.farm.get_level()}\n"
-        string += f"Mine level: {self.mine.get_level()}\n"
-        string += f"Wall level: {self.wall.get_level()}\n"
-        string += f"Warehouse level: {self.warehouse.get_level()}\n"
+        string += f"Barracks level: {self.barracks.get_level()} "
+        if self.get_barracks().level == 0:
+            string += f"(no troops unlocked; next unlock: Warriors)\n"
+        elif self.get_barracks().level == 1:
+            string += f"(currently unlocked: Warriors; next unlock: Archers)\n"
+        elif self.get_barracks().level == 2:
+            string += f"(currently unlocked: Warriors, Archers; next unlock: Catapults)\n"
+        else:
+            string += "(all troops unlocked)\n"
+        string += f"Farm level: {self.farm.get_level()} "
+        string += f"(current capacity: {self.farm.capacity()}; with upgrade: {self.farm.next_capacity()})\n"
+        string += f"Mine level: {self.mine.get_level()} "
+        string += f"(current production rate: {self.mine.production()}; with upgrade: {self.mine.next_production()})\n"
+        string += f"Wall level: {self.wall.get_level()} "
+        string += f"(current def bonus: {self.wall.defense_bonus()}; with upgrade: {self.wall.next_defense_bonus()})\n"
+        string += f"Warehouse level: {self.warehouse.get_level()} "
+        string += f"(current capacity: {self.warehouse.capacity()}; with upgrade: {self.warehouse.next_capacity()})\n\n"
         string += "******* TROOPS *******\n"
         string += f"Warriors: {self.warriors.get_n()}\n"
         string += f"Archers: {self.archers.get_n()}\n"
         string += f"Catapults: {self.catapults.get_n()}\n"
+        string += f"Total attack power of all troops: {self.get_attack_power()}\n"
+        string += f"Total defense power of all troops: {self.get_defense_power()}\n\n"
         string += "******* STATS *******\n"
-        string += f"Health: {self.health}\n"
-        string += f"Stone: {self.stone}\n"
-        string += f"Was attacked: {self.was_attacked}\n"
+        string += f"Health: {self.health}/{Village.MAX_HEALTH}\n"
+        string += f"Stone: {self.stone}/{self.warehouse.capacity()}"
         return string

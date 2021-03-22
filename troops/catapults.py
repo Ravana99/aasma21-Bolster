@@ -2,7 +2,7 @@ from troops.troops import Troops
 
 
 class Catapults(Troops):
-    attack = 10
-    defense = 3
-    cost = 10
-    min_level = 3
+    ATTACK = 10
+    DEFENSE = 3
+    COST = 10
+    MIN_BARRACKS_LEVEL = 3

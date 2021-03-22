@@ -2,11 +2,17 @@ from buildings.building import Building
 
 
 class Mine(Building):
+    UPGRADE_COSTS = [None, 100, 250, 600, 1500]
+    PRODUCTIONS = [None, 5, 10, 20, 40, 80]
 
     def __init__(self):
         self.level = 1
-        self.upgrade_costs = [None, 100, 250, 600, 1500]
-        self.productions = [None, 5, 10, 20, 40, 80]
 
     def production(self):
-        return self.productions[self.level]
+        return self.PRODUCTIONS[self.level]
+
+    def next_production(self):
+        if self.is_max_level():
+            return "(MAXED)"
+        else:
+            return self.PRODUCTIONS[self.level + 1]

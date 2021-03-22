@@ -4,19 +4,13 @@ from agent import Agent
 class SpecificAgent(Agent):
 
     def upgrade_decision(self):
-        # TEMPORARY
-        self.upgrade_barracks()
+        # TODO
+        return self.upgrade_nothing()
 
     def recruit_decision(self):
-        # TEMPORARY
-        if self.name == "Agent 0":
-            self.recruit_warriors(10)
-        else:
-            self.recruit_warriors(5)
+        # TODO
+        return self.recruit_nothing()
 
     def attack_decision(self):
-        # TEMPORARY
-        if self.name == "Agent 0":
-            return self.send_attack(10, 0, 0, "Village 1")
-        else:
-            return self.attack_nothing()
+        # TODO
+        return self.attack_nothing()

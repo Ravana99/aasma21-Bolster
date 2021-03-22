@@ -2,7 +2,7 @@ from troops.troops import Troops
 
 
 class Warriors(Troops):
-    attack = 2
-    defense = 2
-    cost = 2
-    min_level = 1
+    ATTACK = 2
+    DEFENSE = 2
+    COST = 2
+    MIN_BARRACKS_LEVEL = 1

@@ -1,4 +1,5 @@
 from specificagent import SpecificAgent
+from player import Player
 from random import shuffle
 
 
@@ -12,7 +13,7 @@ def main():
 
     while play_again:
         global agents, villages
-        agents = [SpecificAgent(i) for i in range(n_players)]
+        agents = [SpecificAgent(i) if i > 0 else Player(i) for i in range(n_players)]
         villages = [agent.get_village() for agent in agents]
         for i, agent in enumerate(agents):
             agent.set_other_villages([village.name for j, village in enumerate(villages) if i != j])
@@ -125,9 +126,10 @@ def get_village_by_name(name):
 
 
 def debug_print():
-    for village in villages:
-        print(village)
-    input("\nPress Enter to continue...\n")
+    print(villages[0])
+    # for village in villages:
+    # print(village)
+    # input("\nPress Enter to continue...\n")
 
 
 if __name__ == '__main__':

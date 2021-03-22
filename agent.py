@@ -56,9 +56,6 @@ class Agent:
     def get_stone(self):
         return self.village.get_stone()
 
-    def was_attacked(self):
-        return self.village.was_attacked()
-
     # ACTUATORS - UPGRADES
 
     def upgrade_barracks(self):
@@ -77,7 +74,7 @@ class Agent:
         self.village.upgrade_warehouse()
 
     @staticmethod
-    def upgrade_nothing(self):
+    def upgrade_nothing():
         pass
 
     # ACTUATORS - RECRUITMENTS
@@ -91,6 +88,10 @@ class Agent:
     def recruit_catapults(self, n):
         self.village.recruit_catapults(n)
 
+    @staticmethod
+    def recruit_nothing():
+        pass
+
     def demote_warriors(self, n):
         self.village.demote_warriors(n)
 
@@ -101,7 +102,7 @@ class Agent:
         self.village.demote_catapults(n)
 
     @staticmethod
-    def demote_nothing(self):
+    def demote_nothing():
         pass
 
     # ACTUATORS - ATTACKS
