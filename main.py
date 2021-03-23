@@ -79,6 +79,7 @@ def process_attacks(attacking_armies):
         defending_army = defending_village.create_defensive_army()
         damage_dealt = attacking_army.attack(defending_army, defending_village.get_wall().defense_bonus())
         plundered_stone = damage_dealt
+        defending_village.remove_stone(plundered_stone)
         all_plundered_stone.append(plundered_stone)
         defending_village.lower_health(damage_dealt)
         defending_village.update_troops(defending_army)
@@ -135,7 +136,7 @@ def get_village_by_name(name):
 def debug_print():
     print(villages[0])
     # for village in villages:
-    # print(village)
+    #     print(village)
     # input("\nPress Enter to continue...\n")
 
 

@@ -122,6 +122,9 @@ class Village:
     def add_stone(self, stone):
         self.stone = min(self.stone + stone, self.warehouse.capacity())
 
+    def remove_stone(self, stone):
+        self.stone = max(self.stone - stone, 0)
+
     def produce_stone(self):
         self.stone = min(self.stone + self.mine.production(), self.warehouse.capacity())
 
