@@ -119,7 +119,10 @@ class Village:
 
     # STONE
 
-    def update_stone(self):
+    def add_stone(self, stone):
+        self.stone = min(self.stone + stone, self.warehouse.capacity())
+
+    def produce_stone(self):
         self.stone = min(self.stone + self.mine.production(), self.warehouse.capacity())
 
     # HEALTH

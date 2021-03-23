@@ -23,7 +23,7 @@ class Troops:
         return self.n * self.DEFENSE
 
     def recruit(self, stone, n, level, free_capacity):
-        if not n.isdigit():
+        if not (isinstance(n, int) or n.isdigit()):
             raise InvalidTroopsToRecruitException()
         else:
             n = int(n)
@@ -41,7 +41,7 @@ class Troops:
                 return stone
 
     def demote(self, n):
-        if not n.isdigit():
+        if not (isinstance(n, int) or n.isdigit()):
             raise InvalidTroopsToDemoteException()
         else:
             n = int(n)
@@ -53,7 +53,7 @@ class Troops:
                 self.n -= n
 
     def send_off(self, n):
-        if not n.isdigit():
+        if not (isinstance(n, int) or n.isdigit()):
             raise InvalidTroopsToSendOffException()
         else:
             n = int(n)

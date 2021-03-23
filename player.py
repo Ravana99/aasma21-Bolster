@@ -87,7 +87,7 @@ class Player(Agent):
                 self.display_attack_options()
                 selection = input("> ")
                 print()
-                if not selection.isdigit():
+                if not (isinstance(selection, int) or selection.isdigit()):
                     print("Invalid selection. Try again.")
                     continue
                 selection = int(selection)

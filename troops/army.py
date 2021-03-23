@@ -68,7 +68,7 @@ class Army:
         winner.determine_survivors(survivor_ratio)
         loser.wipe_out()
 
-        return ceil(survivor_ratio * attacking_power) if winner is self else 0
+        return self.power() if winner is self else 0
 
     def wipe_out(self):
         self.determine_survivors(0)
