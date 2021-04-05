@@ -24,12 +24,16 @@ class Building:
     def get_cost_of_upgrade(self):
         return self.UPGRADE_COSTS[self.level]
 
-    def upgrade(self, iron):
+    def upgrade(self, iron, stone, wood):
         if self.level >= len(self.UPGRADE_COSTS):
             raise UpgradeMaxedOutBuildingException()
-        elif self.UPGRADE_COSTS[self.level] > iron:
-            raise NotEnoughIronToUpgradeException()
+        elif self.UPGRADE_COSTS[self.level][0] > iron or \
+                self.UPGRADE_COSTS[self.level][1] > stone or \
+                self.UPGRADE_COSTS[self.level][2] > wood:
+            raise NotEnoughResourcesToUpgradeException()
         else:
-            iron = iron - self.UPGRADE_COSTS[self.level]
+            iron = iron - self.UPGRADE_COSTS[self.level][0]
+            stone = stone - self.UPGRADE_COSTS[self.level][1]
+            wood = wood - self.UPGRADE_COSTS[self.level][2]
             self.level += 1
-            return iron
+            return iron, stone, wood

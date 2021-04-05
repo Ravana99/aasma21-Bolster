@@ -41,8 +41,8 @@ class Player(Agent):
             except UpgradeMaxedOutBuildingException:
                 print("Building already maxed out. Try again.")
 
-            except NotEnoughIronToUpgradeException:
-                print("Not enough iron to perform upgrade. Try again.")
+            except NotEnoughResourcesToUpgradeException:
+                print("Not enough resources to perform upgrade. Try again.")
 
     def recruit_decision(self):
         while True:
@@ -76,8 +76,8 @@ class Player(Agent):
             except NotEnoughFarmCapacityException:
                 print("Farm capacity too low to recruit that many units. Try again.")
 
-            except NotEnoughIronToRecruitException:
-                print("Not enough iron to recruit that many units. Try again.")
+            except NotEnoughResourcesToRecruitException:
+                print("Not enough resources to recruit that many units. Try again.")
 
             except InvalidTroopsToDemoteException:
                 print("Invalid number of troops to demote. Try again.")
@@ -108,9 +108,6 @@ class Player(Agent):
             except InvalidTroopsToSendOffException:
                 print("Invalid number of troops to send off. Try again.")
 
-            except TooManyTroopsToSendOffException:
-                print("Too many troops to send off. Try again.")
-
             except AttackWithNoArmyException:
                 print("Cannot attack with no troops. Try again.")
 
@@ -123,49 +120,49 @@ class Player(Agent):
             print(f"1: Barracks ({barracks.get_level()}, maxed out)")
         else:
             print(f"1: Barracks ({barracks.get_level()}->{barracks.get_level() + 1}, ", end="")
-            print(f"{barracks.get_cost_of_upgrade()} iron)")
+            print(f"{barracks.get_cost_of_upgrade()} resources)")
 
         farm = self.get_farm()
         if farm.is_max_level():
             print(f"2: Farm ({farm.get_level()}, maxed out)")
         else:
             print(f"2: Farm ({farm.get_level()}->{farm.get_level() + 1}, ", end="")
-            print(f"{farm.get_cost_of_upgrade()} iron)")
+            print(f"{farm.get_cost_of_upgrade()} resources)")
 
         mine = self.get_mine()
         if mine.is_max_level():
             print(f"3: Mine ({mine.get_level()}, maxed out)")
         else:
             print(f"3: Mine ({mine.get_level()}->{mine.get_level() + 1}, ", end="")
-            print(f"{mine.get_cost_of_upgrade()} iron)")
+            print(f"{mine.get_cost_of_upgrade()} resources)")
 
         quarry = self.get_quarry()
         if quarry.is_max_level():
             print(f"4: Quarry ({quarry.get_level()}, maxed out)")
         else:
             print(f"4: Quarry ({quarry.get_level()}->{quarry.get_level() + 1}, ", end="")
-            print(f"{quarry.get_cost_of_upgrade()} iron)")
+            print(f"{quarry.get_cost_of_upgrade()} resources)")
 
         sawmill = self.get_sawmill()
         if sawmill.is_max_level():
             print(f"5: Sawmill ({sawmill.get_level()}, maxed out)")
         else:
             print(f"5: Sawmill ({sawmill.get_level()}->{sawmill.get_level() + 1}, ", end="")
-            print(f"{sawmill.get_cost_of_upgrade()} iron)")
+            print(f"{sawmill.get_cost_of_upgrade()} resources)")
 
         wall = self.get_wall()
         if wall.is_max_level():
             print(f"6: Wall ({wall.get_level()}, maxed out)")
         else:
             print(f"6: Wall ({wall.get_level()}->{wall.get_level() + 1}, ", end="")
-            print(f"{wall.get_cost_of_upgrade()} iron)")
+            print(f"{wall.get_cost_of_upgrade()} resources)")
 
         warehouse = self.get_warehouse()
         if warehouse.is_max_level():
             print(f"7: Warehouse ({warehouse.get_level()}, maxed out)")
         else:
             print(f"7: Warehouse ({warehouse.get_level()}->{warehouse.get_level() + 1}, ", end="")
-            print(f"{warehouse.get_cost_of_upgrade()} iron)")
+            print(f"{warehouse.get_cost_of_upgrade()} resources)")
 
         print(f"0: Pass")
 
@@ -175,11 +172,11 @@ class Player(Agent):
         print("What would you like to recruit/demote?")
 
         print(f"1: (Barracks lvl 1) Recruit warriors ({Warriors.ATTACK} ATK, {Warriors.DEFENSE} DEF, ", end="")
-        print(f"{Warriors.COST} iron/unit)")
+        print(f"{Warriors.COST} resources/unit)")
         print(f"2: (Barracks lvl 2) Recruit archers ({Archers.ATTACK} ATK, {Archers.DEFENSE} DEF, ", end="")
-        print(f"{Archers.COST} iron/unit)")
+        print(f"{Archers.COST} resources/unit)")
         print(f"3: (Barracks lvl 3) Recruit catapults ({Catapults.ATTACK} ATK, {Catapults.DEFENSE} DEF, ", end="")
-        print(f"{Catapults.COST} iron/unit)")
+        print(f"{Catapults.COST} resources/unit)")
         print(f"4: Demote warriors")
         print(f"5: Demote archers")
         print(f"6: Demote catapults")

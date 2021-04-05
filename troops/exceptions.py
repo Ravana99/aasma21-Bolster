@@ -10,7 +10,7 @@ class NotEnoughFarmCapacityException(BaseException):
     pass
 
 
-class NotEnoughIronToRecruitException(BaseException):
+class NotEnoughResourcesToRecruitException(BaseException):
     pass
 
 
@@ -23,10 +23,6 @@ class TooManyTroopsToDemoteException(BaseException):
 
 
 class InvalidTroopsToSendOffException(BaseException):
-    pass
-
-
-class TooManyTroopsToSendOffException(BaseException):
     pass
 
 

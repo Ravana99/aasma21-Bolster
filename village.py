@@ -9,6 +9,7 @@ from troops.warriors import Warriors
 from troops.archers import Archers
 from troops.catapults import Catapults
 from troops.army import Army
+from troops.exceptions import InvalidTroopsToSendOffException
 
 
 class Village:
@@ -86,39 +87,42 @@ class Village:
     # UPGRADES
 
     def upgrade_barracks(self):
-        self.iron = self.barracks.upgrade(self.iron)
+        self.iron, self.stone, self.wood = self.barracks.upgrade(self.iron, self.stone, self.wood)
 
     def upgrade_farm(self):
-        self.iron = self.farm.upgrade(self.iron)
+        self.iron, self.stone, self.wood = self.farm.upgrade(self.iron, self.stone, self.wood)
 
     def upgrade_mine(self):
-        self.iron = self.mine.upgrade(self.iron)
+        self.iron, self.stone, self.wood = self.mine.upgrade(self.iron, self.stone, self.wood)
 
     def upgrade_quarry(self):
-        self.iron = self.quarry.upgrade(self.iron)
+        self.iron, self.stone, self.wood = self.quarry.upgrade(self.iron, self.stone, self.wood)
 
     def upgrade_sawmill(self):
-        self.iron = self.sawmill.upgrade(self.iron)
+        self.iron, self.stone, self.wood = self.sawmill.upgrade(self.iron, self.stone, self.wood)
 
     def upgrade_wall(self):
-        self.iron = self.wall.upgrade(self.iron)
+        self.iron, self.stone, self.wood = self.wall.upgrade(self.iron, self.stone, self.wood)
 
     def upgrade_warehouse(self):
-        self.iron = self.warehouse.upgrade(self.iron)
+        self.iron, self.stone, self.wood = self.warehouse.upgrade(self.iron, self.stone, self.wood)
 
     # RECRUITMENTS
 
     def recruit_warriors(self, n):
         free_capacity = self.farm.capacity() - self.get_troops()
-        self.iron = self.warriors.recruit(self.iron, n, self.barracks.get_level(), free_capacity)
+        self.iron, self.stone, self.wood = self.warriors.recruit(self.iron, self.stone, self.wood,
+                                                                 n, self.barracks.get_level(), free_capacity)
 
     def recruit_archers(self, n):
         free_capacity = self.farm.capacity() - self.get_troops()
-        self.iron = self.archers.recruit(self.iron, n, self.barracks.get_level(), free_capacity)
+        self.iron, self.stone, self.wood = self.archers.recruit(self.iron, self.stone, self.wood,
+                                                                n, self.barracks.get_level(), free_capacity)
 
     def recruit_catapults(self, n):
         free_capacity = self.farm.capacity() - self.get_troops()
-        self.iron = self.catapults.recruit(self.iron, n, self.barracks.get_level(), free_capacity)
+        self.iron, self.stone, self.wood = self.catapults.recruit(self.iron, self.stone, self.wood,
+                                                                  n, self.barracks.get_level(), free_capacity)
 
     def demote_warriors(self, n):
         self.warriors.demote(n)
@@ -132,9 +136,7 @@ class Village:
     # ATTACKS
 
     def create_attacking_army(self, n_warriors, n_archers, n_catapults, enemy_village_name):
-        self.warriors.send_off(n_warriors)
-        self.archers.send_off(n_archers)
-        self.catapults.send_off(n_archers)
+        self.send_off(n_warriors, n_archers, n_catapults)
         return Army(n_warriors, n_archers, n_catapults,
                     self.name, enemy_village_name=enemy_village_name, attacking=True)
 
@@ -142,6 +144,16 @@ class Village:
         return Army(self.warriors.get_n(), self.archers.get_n(), self.catapults.get_n(), self.name, attacking=False)
 
     # RESOURCES
+
+    def add_resources(self, resources):
+        self.add_iron(resources[0])
+        self.add_stone(resources[1])
+        self.add_wood(resources[2])
+
+    def remove_resources(self, resources):
+        self.remove_iron(resources[0])
+        self.remove_stone(resources[1])
+        self.remove_wood(resources[2])
 
     def produce_resources(self):
         self.produce_iron()
@@ -179,7 +191,7 @@ class Village:
         self.wood = max(self.wood - wood, 0)
 
     def produce_wood(self):
-        self.wood = min(self.wood + self.wood.production(), self.warehouse.capacity())
+        self.wood = min(self.wood + self.sawmill.production(), self.warehouse.capacity())
 
     # HEALTH
 
@@ -190,6 +202,19 @@ class Village:
         self.health -= health
 
     # OTHER
+
+    def send_off(self, n_warriors, n_archers, n_catapults):
+        original_warriors, original_archers, original_catapults = \
+            self.warriors.get_n(), self.archers.get_n(), self.catapults.get_n()
+        try:
+            self.warriors.send_off(n_warriors)
+            self.archers.send_off(n_archers)
+            self.catapults.send_off(n_catapults)
+        except InvalidTroopsToSendOffException:
+            self.warriors.set_n(original_warriors)
+            self.archers.set_n(original_archers)
+            self.archers.set_n(original_catapults)
+            raise InvalidTroopsToSendOffException()
 
     def update_troops(self, army):
         self.warriors = army.get_warriors()
@@ -210,6 +235,14 @@ class Village:
         return (self.warriors.get_defense_power() +
                 self.archers.get_defense_power() +
                 self.catapults.get_defense_power())
+
+    def plundered(self, amount):
+        stolen_iron = min(self.iron, amount)
+        stolen_stone = min(self.stone, amount)
+        stolen_wood = min(self.wood, amount)
+        stolen_resources = [stolen_iron, stolen_stone, stolen_wood]
+        self.remove_resources(stolen_resources)
+        return stolen_resources
 
     def __repr__(self):
         string = f"////////// {self.name} \\\\\\\\\\\\\\\\\\\\\n\n"

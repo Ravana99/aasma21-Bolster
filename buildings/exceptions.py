@@ -1,4 +1,4 @@
-class NotEnoughIronToUpgradeException(BaseException):
+class NotEnoughResourcesToUpgradeException(BaseException):
     pass
 
 

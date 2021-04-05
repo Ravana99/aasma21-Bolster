@@ -2,7 +2,7 @@ from buildings.building import Building
 
 
 class Warehouse(Building):
-    UPGRADE_COSTS = [None, 75, 150, 300, 600]
+    UPGRADE_COSTS = [None, [75, 75, 75], [150, 150, 150], [300, 300, 300], [600, 600, 600]]
     CAPACITIES = [None, 100, 200, 400, 800, 1600]
 
     def __init__(self):

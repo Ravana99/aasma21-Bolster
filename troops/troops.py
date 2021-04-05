@@ -4,7 +4,7 @@ from troops.exceptions import *
 class Troops:
     ATTACK = -1
     DEFENSE = -1
-    COST = -1
+    COST = [-1, -1, -1]
     MIN_BARRACKS_LEVEL = -1
 
     def __init__(self, n=0):
@@ -22,7 +22,7 @@ class Troops:
     def get_defense_power(self):
         return self.n * self.DEFENSE
 
-    def recruit(self, iron, n, level, free_capacity):
+    def recruit(self, iron, stone, wood, n, level, free_capacity):
         if not (isinstance(n, int) or n.isdigit()):
             raise InvalidTroopsToRecruitException()
         else:
@@ -33,12 +33,16 @@ class Troops:
                 raise BarracksLevelTooLowException()
             elif n > free_capacity:
                 raise NotEnoughFarmCapacityException()
-            elif self.COST * n > iron:
-                raise NotEnoughIronToRecruitException()
+            elif self.COST[0] * n > iron or \
+                    self.COST[1] * n > stone or \
+                    self.COST[2] * n > wood:
+                raise NotEnoughResourcesToRecruitException()
             else:
-                iron = iron - self.COST * n
+                iron = iron - self.COST[0] * n
+                stone = stone - self.COST[1] * n
+                wood = wood - self.COST[2] * n
                 self.n += n
-                return iron
+                return iron, stone, wood
 
     def demote(self, n):
         if not (isinstance(n, int) or n.isdigit()):
@@ -60,6 +64,6 @@ class Troops:
             if n < 0:
                 raise InvalidTroopsToSendOffException()
             elif n > self.n:
-                raise TooManyTroopsToSendOffException()
+                raise InvalidTroopsToSendOffException()
             else:
                 self.n -= n
