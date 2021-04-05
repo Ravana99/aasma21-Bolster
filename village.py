@@ -1,6 +1,8 @@
 from buildings.barracks import Barracks
 from buildings.farm import Farm
 from buildings.mine import Mine
+from buildings.quarry import Quarry
+from buildings.sawmill import Sawmill
 from buildings.wall import Wall
 from buildings.warehouse import Warehouse
 from troops.warriors import Warriors
@@ -12,17 +14,21 @@ from troops.army import Army
 class Village:
 
     MAX_HEALTH = 1000
-    STARTING_IRON = 100
+    STARTING_RESOURCES = 100
 
     def __init__(self, i):
         self.name = "Village " + str(i)
         self.barracks = Barracks()
         self.farm = Farm()
         self.mine = Mine()
+        self.quarry = Quarry()
+        self.sawmill = Sawmill()
         self.wall = Wall()
         self.warehouse = Warehouse()
         self.health = Village.MAX_HEALTH
-        self.iron = Village.STARTING_IRON
+        self.iron = Village.STARTING_RESOURCES
+        self.stone = Village.STARTING_RESOURCES
+        self.wood = Village.STARTING_RESOURCES
         self.warriors = Warriors()
         self.archers = Archers()
         self.catapults = Catapults()
@@ -41,6 +47,12 @@ class Village:
     def get_mine(self):
         return self.mine
 
+    def get_quarry(self):
+        return self.quarry
+
+    def get_sawmill(self):
+        return self.sawmill
+
     def get_wall(self):
         return self.wall
 
@@ -52,6 +64,12 @@ class Village:
 
     def get_iron(self):
         return self.iron
+
+    def get_stone(self):
+        return self.stone
+
+    def get_wood(self):
+        return self.wood
 
     def get_warriors(self):
         return self.warriors
@@ -75,6 +93,12 @@ class Village:
 
     def upgrade_mine(self):
         self.iron = self.mine.upgrade(self.iron)
+
+    def upgrade_quarry(self):
+        self.iron = self.quarry.upgrade(self.iron)
+
+    def upgrade_sawmill(self):
+        self.iron = self.sawmill.upgrade(self.iron)
 
     def upgrade_wall(self):
         self.iron = self.wall.upgrade(self.iron)
@@ -117,6 +141,13 @@ class Village:
     def create_defensive_army(self):
         return Army(self.warriors.get_n(), self.archers.get_n(), self.catapults.get_n(), self.name, attacking=False)
 
+    # RESOURCES
+
+    def produce_resources(self):
+        self.produce_iron()
+        self.produce_stone()
+        self.produce_wood()
+
     # IRON
 
     def add_iron(self, iron):
@@ -127,6 +158,28 @@ class Village:
 
     def produce_iron(self):
         self.iron = min(self.iron + self.mine.production(), self.warehouse.capacity())
+
+    # STONE
+
+    def add_stone(self, stone):
+        self.stone = min(self.stone + stone, self.warehouse.capacity())
+
+    def remove_stone(self, stone):
+        self.stone = max(self.stone - stone, 0)
+
+    def produce_stone(self):
+        self.stone = min(self.stone + self.quarry.production(), self.warehouse.capacity())
+
+    # WOOD
+
+    def add_wood(self, wood):
+        self.wood = min(self.wood + wood, self.warehouse.capacity())
+
+    def remove_wood(self, wood):
+        self.wood = max(self.wood - wood, 0)
+
+    def produce_wood(self):
+        self.wood = min(self.wood + self.wood.production(), self.warehouse.capacity())
 
     # HEALTH
 
@@ -171,13 +224,17 @@ class Village:
         else:
             string += "(all troops unlocked)\n"
         string += f"Farm level: {self.farm.get_level()} "
-        string += f"(current capacity: {self.farm.capacity()}; with upgrade: {self.farm.next_capacity()})\n"
+        string += f"(current capacity: {self.farm.capacity()}; upgrade: {self.farm.next_capacity()})\n"
         string += f"Mine level: {self.mine.get_level()} "
-        string += f"(current production rate: {self.mine.production()}; with upgrade: {self.mine.next_production()})\n"
+        string += f"(current production rate: {self.mine.production()}; upgrade: {self.mine.next_production()})\n"
+        string += f"Quarry level: {self.quarry.get_level()} "
+        string += f"(current production rate: {self.quarry.production()}; upgrade: {self.quarry.next_production()})\n"
+        string += f"Sawmill level: {self.sawmill.get_level()} "
+        string += f"(current production rate: {self.sawmill.production()}; upgrade: {self.sawmill.next_production()})\n"
         string += f"Wall level: {self.wall.get_level()} "
-        string += f"(current def bonus: {self.wall.defense_bonus()}; with upgrade: {self.wall.next_defense_bonus()})\n"
+        string += f"(current def bonus: {self.wall.defense_bonus()}; upgrade: {self.wall.next_defense_bonus()})\n"
         string += f"Warehouse level: {self.warehouse.get_level()} "
-        string += f"(current capacity: {self.warehouse.capacity()}; with upgrade: {self.warehouse.next_capacity()})\n\n"
+        string += f"(current capacity: {self.warehouse.capacity()}; upgrade: {self.warehouse.next_capacity()})\n\n"
         string += "******* TROOPS *******\n"
         string += f"Warriors: {self.warriors.get_n()}\n"
         string += f"Archers: {self.archers.get_n()}\n"
@@ -186,5 +243,7 @@ class Village:
         string += f"Total defense power of all troops: {self.get_defense_power()}\n\n"
         string += "******* STATS *******\n"
         string += f"Health: {self.health}/{Village.MAX_HEALTH}\n"
-        string += f"Iron: {self.iron}/{self.warehouse.capacity()}"
+        string += f"Iron: {self.iron}/{self.warehouse.capacity()}\n"
+        string += f"Stone: {self.stone}/{self.warehouse.capacity()}\n"
+        string += f"Wood: {self.wood}/{self.warehouse.capacity()}"
         return string

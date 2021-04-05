@@ -28,6 +28,12 @@ class Agent:
     def get_mine(self):
         return self.village.get_mine()
 
+    def get_quarry(self):
+        return self.village.get_quarry()
+
+    def get_sawmill(self):
+        return self.village.get_sawmill()
+
     def get_farm(self):
         return self.village.get_farm()
 
@@ -56,6 +62,12 @@ class Agent:
     def get_iron(self):
         return self.village.get_iron()
 
+    def get_stone(self):
+        return self.village.get_stone()
+
+    def get_wood(self):
+        return self.village.get_wood()
+
     # ACTUATORS - UPGRADES
 
     def upgrade_barracks(self):
@@ -66,6 +78,12 @@ class Agent:
 
     def upgrade_mine(self):
         self.village.upgrade_mine()
+
+    def upgrade_quarry(self):
+        self.village.upgrade_quarry()
+
+    def upgrade_sawmill(self):
+        self.village.upgrade_sawmill()
 
     def upgrade_wall(self):
         self.village.upgrade_wall()
@@ -114,7 +132,7 @@ class Agent:
     def attack_nothing():
         return
 
-    # OTHER
+    # AUX
 
     def get_name(self):
         return self.name

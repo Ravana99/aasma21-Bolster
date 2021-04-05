@@ -26,8 +26,12 @@ class Player(Agent):
                 elif selection == "3":
                     return self.upgrade_mine()
                 elif selection == "4":
-                    return self.upgrade_wall()
+                    return self.upgrade_quarry()
                 elif selection == "5":
+                    return self.upgrade_sawmill()
+                elif selection == "6":
+                    return self.upgrade_wall()
+                elif selection == "7":
                     return self.upgrade_warehouse()
                 elif selection == "0":
                     return self.upgrade_nothing()
@@ -135,18 +139,32 @@ class Player(Agent):
             print(f"3: Mine ({mine.get_level()}->{mine.get_level() + 1}, ", end="")
             print(f"{mine.get_cost_of_upgrade()} iron)")
 
+        quarry = self.get_quarry()
+        if quarry.is_max_level():
+            print(f"4: Quarry ({quarry.get_level()}, maxed out)")
+        else:
+            print(f"4: Quarry ({quarry.get_level()}->{quarry.get_level() + 1}, ", end="")
+            print(f"{quarry.get_cost_of_upgrade()} iron)")
+
+        sawmill = self.get_sawmill()
+        if sawmill.is_max_level():
+            print(f"5: Sawmill ({sawmill.get_level()}, maxed out)")
+        else:
+            print(f"5: Sawmill ({sawmill.get_level()}->{sawmill.get_level() + 1}, ", end="")
+            print(f"{sawmill.get_cost_of_upgrade()} iron)")
+
         wall = self.get_wall()
         if wall.is_max_level():
-            print(f"4: Wall ({wall.get_level()}, maxed out)")
+            print(f"6: Wall ({wall.get_level()}, maxed out)")
         else:
-            print(f"4: Wall ({wall.get_level()}->{wall.get_level() + 1}, ", end="")
+            print(f"6: Wall ({wall.get_level()}->{wall.get_level() + 1}, ", end="")
             print(f"{wall.get_cost_of_upgrade()} iron)")
 
         warehouse = self.get_warehouse()
         if warehouse.is_max_level():
-            print(f"5: Warehouse ({warehouse.get_level()}, maxed out)")
+            print(f"7: Warehouse ({warehouse.get_level()}, maxed out)")
         else:
-            print(f"5: Warehouse ({warehouse.get_level()}->{warehouse.get_level() + 1}, ", end="")
+            print(f"7: Warehouse ({warehouse.get_level()}->{warehouse.get_level() + 1}, ", end="")
             print(f"{warehouse.get_cost_of_upgrade()} iron)")
 
         print(f"0: Pass")
