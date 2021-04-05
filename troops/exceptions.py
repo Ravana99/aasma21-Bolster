@@ -10,7 +10,7 @@ class NotEnoughFarmCapacityException(BaseException):
     pass
 
 
-class NotEnoughStoneToRecruitException(BaseException):
+class NotEnoughIronToRecruitException(BaseException):
     pass
 
 

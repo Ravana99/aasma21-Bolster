@@ -46,11 +46,11 @@ def start_game():
             if decision is not None:
                 armies.append(decision)
 
-        all_plundered_stone = process_attacks(armies)
+        all_plundered_iron = process_attacks(armies)
 
         debug_print()
 
-        return_home(armies, all_plundered_stone)
+        return_home(armies, all_plundered_iron)
 
         debug_print()
 
@@ -61,7 +61,7 @@ def start_game():
             break
 
         for village in villages:
-            village.produce_stone()
+            village.produce_iron()
             village.regenerate()
 
         debug_print()
@@ -72,26 +72,26 @@ def start_game():
 def process_attacks(attacking_armies):
     shuffle(attacking_armies)      # Order of attacks is randomized in case of multiple attacks on the same village
 
-    all_plundered_stone = []
+    all_plundered_iron = []
 
     for attacking_army in attacking_armies:
         defending_village = get_village_by_name(attacking_army.get_enemy_village_name())
         defending_army = defending_village.create_defensive_army()
         damage_dealt = attacking_army.attack(defending_army, defending_village.get_wall().defense_bonus())
-        plundered_stone = damage_dealt
-        defending_village.remove_stone(plundered_stone)
-        all_plundered_stone.append(plundered_stone)
+        plundered_iron = damage_dealt
+        defending_village.remove_iron(plundered_iron)
+        all_plundered_iron.append(plundered_iron)
         defending_village.lower_health(damage_dealt)
         defending_village.update_troops(defending_army)
 
-    return all_plundered_stone
+    return all_plundered_iron
 
 
-def return_home(surviving_armies, all_plundered_stone):
-    for army, plundered_stone in zip(surviving_armies, all_plundered_stone):
+def return_home(surviving_armies, all_plundered_iron):
+    for army, plundered_iron in zip(surviving_armies, all_plundered_iron):
         village = get_village_by_name(army.get_village_name())
         village.add_troops(army)
-        village.add_stone(plundered_stone)
+        village.add_iron(plundered_iron)
 
 
 def eliminate_players():

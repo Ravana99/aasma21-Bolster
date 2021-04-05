@@ -12,7 +12,7 @@ from troops.army import Army
 class Village:
 
     MAX_HEALTH = 1000
-    STARTING_STONE = 100
+    STARTING_IRON = 100
 
     def __init__(self, i):
         self.name = "Village " + str(i)
@@ -22,7 +22,7 @@ class Village:
         self.wall = Wall()
         self.warehouse = Warehouse()
         self.health = Village.MAX_HEALTH
-        self.stone = Village.STARTING_STONE
+        self.iron = Village.STARTING_IRON
         self.warriors = Warriors()
         self.archers = Archers()
         self.catapults = Catapults()
@@ -50,8 +50,8 @@ class Village:
     def get_health(self):
         return self.health
 
-    def get_stone(self):
-        return self.stone
+    def get_iron(self):
+        return self.iron
 
     def get_warriors(self):
         return self.warriors
@@ -68,33 +68,33 @@ class Village:
     # UPGRADES
 
     def upgrade_barracks(self):
-        self.stone = self.barracks.upgrade(self.stone)
+        self.iron = self.barracks.upgrade(self.iron)
 
     def upgrade_farm(self):
-        self.stone = self.farm.upgrade(self.stone)
+        self.iron = self.farm.upgrade(self.iron)
 
     def upgrade_mine(self):
-        self.stone = self.mine.upgrade(self.stone)
+        self.iron = self.mine.upgrade(self.iron)
 
     def upgrade_wall(self):
-        self.stone = self.wall.upgrade(self.stone)
+        self.iron = self.wall.upgrade(self.iron)
 
     def upgrade_warehouse(self):
-        self.stone = self.warehouse.upgrade(self.stone)
+        self.iron = self.warehouse.upgrade(self.iron)
 
     # RECRUITMENTS
 
     def recruit_warriors(self, n):
         free_capacity = self.farm.capacity() - self.get_troops()
-        self.stone = self.warriors.recruit(self.stone, n, self.barracks.get_level(), free_capacity)
+        self.iron = self.warriors.recruit(self.iron, n, self.barracks.get_level(), free_capacity)
 
     def recruit_archers(self, n):
         free_capacity = self.farm.capacity() - self.get_troops()
-        self.stone = self.archers.recruit(self.stone, n, self.barracks.get_level(), free_capacity)
+        self.iron = self.archers.recruit(self.iron, n, self.barracks.get_level(), free_capacity)
 
     def recruit_catapults(self, n):
         free_capacity = self.farm.capacity() - self.get_troops()
-        self.stone = self.catapults.recruit(self.stone, n, self.barracks.get_level(), free_capacity)
+        self.iron = self.catapults.recruit(self.iron, n, self.barracks.get_level(), free_capacity)
 
     def demote_warriors(self, n):
         self.warriors.demote(n)
@@ -117,16 +117,16 @@ class Village:
     def create_defensive_army(self):
         return Army(self.warriors.get_n(), self.archers.get_n(), self.catapults.get_n(), self.name, attacking=False)
 
-    # STONE
+    # IRON
 
-    def add_stone(self, stone):
-        self.stone = min(self.stone + stone, self.warehouse.capacity())
+    def add_iron(self, iron):
+        self.iron = min(self.iron + iron, self.warehouse.capacity())
 
-    def remove_stone(self, stone):
-        self.stone = max(self.stone - stone, 0)
+    def remove_iron(self, iron):
+        self.iron = max(self.iron - iron, 0)
 
-    def produce_stone(self):
-        self.stone = min(self.stone + self.mine.production(), self.warehouse.capacity())
+    def produce_iron(self):
+        self.iron = min(self.iron + self.mine.production(), self.warehouse.capacity())
 
     # HEALTH
 
@@ -186,5 +186,5 @@ class Village:
         string += f"Total defense power of all troops: {self.get_defense_power()}\n\n"
         string += "******* STATS *******\n"
         string += f"Health: {self.health}/{Village.MAX_HEALTH}\n"
-        string += f"Stone: {self.stone}/{self.warehouse.capacity()}"
+        string += f"Iron: {self.iron}/{self.warehouse.capacity()}"
         return string

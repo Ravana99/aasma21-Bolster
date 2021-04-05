@@ -24,12 +24,12 @@ class Building:
     def get_cost_of_upgrade(self):
         return self.UPGRADE_COSTS[self.level]
 
-    def upgrade(self, stone):
+    def upgrade(self, iron):
         if self.level >= len(self.UPGRADE_COSTS):
             raise UpgradeMaxedOutBuildingException()
-        elif self.UPGRADE_COSTS[self.level] > stone:
-            raise NotEnoughStoneToUpgradeException()
+        elif self.UPGRADE_COSTS[self.level] > iron:
+            raise NotEnoughIronToUpgradeException()
         else:
-            stone = stone - self.UPGRADE_COSTS[self.level]
+            iron = iron - self.UPGRADE_COSTS[self.level]
             self.level += 1
-            return stone
+            return iron

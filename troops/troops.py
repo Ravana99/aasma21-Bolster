@@ -22,7 +22,7 @@ class Troops:
     def get_defense_power(self):
         return self.n * self.DEFENSE
 
-    def recruit(self, stone, n, level, free_capacity):
+    def recruit(self, iron, n, level, free_capacity):
         if not (isinstance(n, int) or n.isdigit()):
             raise InvalidTroopsToRecruitException()
         else:
@@ -33,12 +33,12 @@ class Troops:
                 raise BarracksLevelTooLowException()
             elif n > free_capacity:
                 raise NotEnoughFarmCapacityException()
-            elif self.COST * n > stone:
-                raise NotEnoughStoneToRecruitException()
+            elif self.COST * n > iron:
+                raise NotEnoughIronToRecruitException()
             else:
-                stone = stone - self.COST * n
+                iron = iron - self.COST * n
                 self.n += n
-                return stone
+                return iron
 
     def demote(self, n):
         if not (isinstance(n, int) or n.isdigit()):

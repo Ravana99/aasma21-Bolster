@@ -53,8 +53,8 @@ class Agent:
     def get_health(self):
         return self.village.get_health()
 
-    def get_stone(self):
-        return self.village.get_stone()
+    def get_iron(self):
+        return self.village.get_iron()
 
     # ACTUATORS - UPGRADES
 
