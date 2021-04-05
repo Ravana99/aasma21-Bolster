@@ -2,7 +2,7 @@ from buildings.building import Building
 
 
 class Wall(Building):
-    UPGRADE_COSTS = [[25, 25, 25], [200, 200, 200], [800, 800, 800]]
+    UPGRADE_COSTS = [[10, 10, 75], [50, 200, 50], [800, 200, 200]]
     DEFENSE_BONUSES = [1, 1.1, 1.25, 1.5]
 
     def __init__(self):
