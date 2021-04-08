@@ -2,6 +2,7 @@ from agent import Agent
 from troops.warriors import Warriors
 from troops.archers import Archers
 from troops.catapults import Catapults
+from troops.cavalrymen import Cavalrymen
 
 from buildings.exceptions import *
 from troops.exceptions import *
@@ -57,11 +58,15 @@ class Player(Agent):
                 elif selection == "3":
                     return self.recruit_catapults(input("How many? "))
                 elif selection == "4":
-                    return self.demote_warriors(input("How many? "))
+                    return self.recruit_cavalrymen(input("How many? "))
                 elif selection == "5":
-                    return self.demote_archers(input("How many? "))
+                    return self.demote_warriors(input("How many? "))
                 elif selection == "6":
+                    return self.demote_archers(input("How many? "))
+                elif selection == "7":
                     return self.demote_catapults(input("How many? "))
+                elif selection == "8":
+                    return self.demote_cavalrymen(input("How many? "))
                 elif selection == "0":
                     return self.recruit_nothing()
                 else:
@@ -103,7 +108,9 @@ class Player(Agent):
                     n_warriors = input("How many warriors? ")
                     n_archers = input("How many archers? ")
                     n_catapults = input("How many catapults? ")
-                    return self.send_attack(n_warriors, n_archers, n_catapults, self.other_villages[selection - 1])
+                    n_cavalrymen = input("How many cavalrymen? ")
+                    return self.send_attack(n_warriors, n_archers, n_catapults, n_cavalrymen,
+                                            self.other_villages[selection - 1])
 
             except InvalidTroopsToSendOffException:
                 print("Invalid number of troops to send off. Try again.")
@@ -171,15 +178,18 @@ class Player(Agent):
         print()
         print("What would you like to recruit/demote?")
 
-        print(f"1: (Barracks lvl 1) Recruit warriors ({Warriors.ATTACK} ATK, {Warriors.DEFENSE} DEF, ", end="")
-        print(f"{Warriors.COST} resources/unit)")
-        print(f"2: (Barracks lvl 2) Recruit archers ({Archers.ATTACK} ATK, {Archers.DEFENSE} DEF, ", end="")
-        print(f"{Archers.COST} resources/unit)")
-        print(f"3: (Barracks lvl 3) Recruit catapults ({Catapults.ATTACK} ATK, {Catapults.DEFENSE} DEF, ", end="")
-        print(f"{Catapults.COST} resources/unit)")
-        print(f"4: Demote warriors")
-        print(f"5: Demote archers")
-        print(f"6: Demote catapults")
+        print(f"1: (Barracks lvl {Warriors.MIN_BARRACKS_LEVEL}) Recruit warriors ", end="")
+        print(f"({Warriors.ATTACK} ATK, {Warriors.DEFENSE} DEF, {Warriors.COST} resources/unit)")
+        print(f"2: (Barracks lvl {Archers.MIN_BARRACKS_LEVEL}) Recruit archers ", end="")
+        print(f"({Archers.ATTACK} ATK, {Archers.DEFENSE} DEF, {Archers.COST} resources/unit)")
+        print(f"3: (Barracks lvl {Catapults.MIN_BARRACKS_LEVEL}) Recruit catapults ", end="")
+        print(f"({Catapults.ATTACK} ATK, {Catapults.DEFENSE} DEF, {Catapults.COST} resources/unit)")
+        print(f"4: (Barracks lvl {Cavalrymen.MIN_BARRACKS_LEVEL}) Recruit cavalrymen ", end="")
+        print(f"({Cavalrymen.ATTACK} ATK, {Cavalrymen.DEFENSE} DEF, {Cavalrymen.COST} resources/unit)")
+        print(f"5: Demote warriors")
+        print(f"6: Demote archers")
+        print(f"7: Demote catapults")
+        print(f"8: Demote cavalrymen")
         print(f"0: Pass")
 
     def display_attack_options(self):

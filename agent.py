@@ -51,6 +51,9 @@ class Agent:
     def get_catapults(self):
         return self.village.get_catapults()
 
+    def get_cavalrymen(self):
+        return self.village.get_cavalrymen()
+
     def get_troops(self):
         return self.village.get_troops()
 
@@ -106,6 +109,9 @@ class Agent:
     def recruit_catapults(self, n):
         self.village.recruit_catapults(n)
 
+    def recruit_cavalrymen(self, n):
+        self.village.recruit_cavalrymen(n)
+
     @staticmethod
     def recruit_nothing():
         pass
@@ -119,14 +125,17 @@ class Agent:
     def demote_catapults(self, n):
         self.village.demote_catapults(n)
 
+    def demote_cavalrymen(self, n):
+        self.village.demote_cavalrymen(n)
+
     @staticmethod
     def demote_nothing():
         pass
 
     # ACTUATORS - ATTACKS
 
-    def send_attack(self, n_warriors, n_archers, n_catapults, enemy_village_name):
-        return self.village.create_attacking_army(n_warriors, n_archers, n_catapults, enemy_village_name)
+    def send_attack(self, n_warriors, n_archers, n_catapults, n_cavalrymen, enemy_village_name):
+        return self.village.create_attacking_army(n_warriors, n_archers, n_catapults, n_cavalrymen, enemy_village_name)
 
     @staticmethod
     def attack_nothing():

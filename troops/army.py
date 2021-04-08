@@ -1,21 +1,25 @@
 from troops.warriors import Warriors
 from troops.archers import Archers
 from troops.catapults import Catapults
+from troops.cavalrymen import Cavalrymen
 from random import uniform
 from math import ceil, log
 from troops.exceptions import AttackWithNoArmyException
 
 
 class Army:
-    def __init__(self, n_warriors, n_archers, n_catapults, village_name, attacking, enemy_village_name=""):
+    def __init__(self, n_warriors, n_archers, n_catapults, n_cavalrymen,
+                 village_name, attacking, enemy_village_name=""):
         n_warriors = int(n_warriors)
         n_archers = int(n_archers)
         n_catapults = int(n_catapults)
-        if attacking and n_warriors + n_archers + n_catapults <= 0:
+        n_cavalrymen = int(n_cavalrymen)
+        if attacking and n_warriors + n_archers + n_catapults + n_cavalrymen <= 0:
             raise AttackWithNoArmyException()
         self.warriors = Warriors(n_warriors)
         self.archers = Archers(n_archers)
         self.catapults = Catapults(n_catapults)
+        self.cavalrymen = Cavalrymen(n_cavalrymen)
         self.village_name = village_name
         self.attacking = attacking
         self.enemy_village_name = enemy_village_name
@@ -29,6 +33,9 @@ class Army:
     def get_catapults(self):
         return self.catapults
 
+    def get_cavalrymen(self):
+        return self.cavalrymen
+
     def get_village_name(self):
         return self.village_name
 
@@ -39,11 +46,13 @@ class Army:
         if self.attacking:
             return (self.warriors.get_attack_power() +
                     self.archers.get_attack_power() +
-                    self.catapults.get_attack_power())
+                    self.catapults.get_attack_power() +
+                    self.cavalrymen.get_attack_power())
         else:
             return (self.warriors.get_defense_power() +
                     self.archers.get_defense_power() +
-                    self.catapults.get_defense_power())
+                    self.catapults.get_defense_power() +
+                    self.cavalrymen.get_defense_power())
 
     def attack(self, defending_army, defense_bonus):
         attacking_luck = uniform(0.8, 1.2)
@@ -73,3 +82,4 @@ class Army:
         self.warriors.set_n(ceil(ratio * self.warriors.get_n()))
         self.archers.set_n(ceil(ratio * self.archers.get_n()))
         self.catapults.set_n(ceil(ratio * self.catapults.get_n()))
+        self.cavalrymen.set_n(ceil(ratio * self.cavalrymen.get_n()))

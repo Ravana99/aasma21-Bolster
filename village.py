@@ -8,6 +8,7 @@ from buildings.warehouse import Warehouse
 from troops.warriors import Warriors
 from troops.archers import Archers
 from troops.catapults import Catapults
+from troops.cavalrymen import Cavalrymen
 from troops.army import Army
 from troops.exceptions import InvalidTroopsToSendOffException
 
@@ -15,7 +16,7 @@ from troops.exceptions import InvalidTroopsToSendOffException
 class Village:
 
     MAX_HEALTH = 1000
-    STARTING_RESOURCES = 100
+    STARTING_RESOURCES = 100000
 
     def __init__(self, i):
         self.name = "Village " + str(i)
@@ -33,6 +34,7 @@ class Village:
         self.warriors = Warriors()
         self.archers = Archers()
         self.catapults = Catapults()
+        self.cavalrymen = Cavalrymen()
 
     # GETTERS
 
@@ -81,8 +83,11 @@ class Village:
     def get_catapults(self):
         return self.catapults
 
+    def get_cavalrymen(self):
+        return self.cavalrymen
+
     def get_troops(self):
-        return self.warriors.get_n() + self.archers.get_n() + self.catapults.get_n()
+        return self.warriors.get_n() + self.archers.get_n() + self.catapults.get_n() + self.cavalrymen.get_n()
 
     # UPGRADES
 
@@ -124,6 +129,11 @@ class Village:
         self.iron, self.stone, self.wood = self.catapults.recruit(self.iron, self.stone, self.wood,
                                                                   n, self.barracks.get_level(), free_capacity)
 
+    def recruit_cavalrymen(self, n):
+        free_capacity = self.farm.capacity() - self.get_troops()
+        self.iron, self.stone, self.wood = self.cavalrymen.recruit(self.iron, self.stone, self.wood,
+                                                                   n, self.barracks.get_level(), free_capacity)
+
     def demote_warriors(self, n):
         self.warriors.demote(n)
 
@@ -133,15 +143,19 @@ class Village:
     def demote_catapults(self, n):
         self.catapults.demote(n)
 
+    def demote_cavalrymen(self, n):
+        self.cavalrymen.demote(n)
+
     # ATTACKS
 
-    def create_attacking_army(self, n_warriors, n_archers, n_catapults, enemy_village_name):
-        self.send_off(n_warriors, n_archers, n_catapults)
-        return Army(n_warriors, n_archers, n_catapults,
+    def create_attacking_army(self, n_warriors, n_archers, n_catapults, n_cavalrymen, enemy_village_name):
+        self.send_off(n_warriors, n_archers, n_catapults, n_cavalrymen)
+        return Army(n_warriors, n_archers, n_catapults, n_cavalrymen,
                     self.name, enemy_village_name=enemy_village_name, attacking=True)
 
     def create_defensive_army(self):
-        return Army(self.warriors.get_n(), self.archers.get_n(), self.catapults.get_n(), self.name, attacking=False)
+        return Army(self.warriors.get_n(), self.archers.get_n(), self.catapults.get_n(), self.cavalrymen.get_n(),
+                    self.name, attacking=False)
 
     # RESOURCES
 
@@ -203,38 +217,44 @@ class Village:
 
     # OTHER
 
-    def send_off(self, n_warriors, n_archers, n_catapults):
-        original_warriors, original_archers, original_catapults = \
-            self.warriors.get_n(), self.archers.get_n(), self.catapults.get_n()
+    def send_off(self, n_warriors, n_archers, n_catapults, n_cavalrymen):
+        original_warriors, original_archers, original_catapults, original_cavalrymen = \
+            self.warriors.get_n(), self.archers.get_n(), self.catapults.get_n(), self.cavalrymen.get_n()
         try:
             self.warriors.send_off(n_warriors)
             self.archers.send_off(n_archers)
             self.catapults.send_off(n_catapults)
+            self.cavalrymen.send_off(n_cavalrymen)
         except InvalidTroopsToSendOffException:
             self.warriors.set_n(original_warriors)
             self.archers.set_n(original_archers)
-            self.archers.set_n(original_catapults)
+            self.catapults.set_n(original_catapults)
+            self.cavalrymen.set_n(original_cavalrymen)
             raise InvalidTroopsToSendOffException()
 
     def update_troops(self, army):
         self.warriors = army.get_warriors()
         self.archers = army.get_archers()
         self.catapults = army.get_catapults()
+        self.cavalrymen = army.get_cavalrymen()
 
     def add_troops(self, army):
         self.warriors.set_n(self.warriors.get_n() + army.get_warriors().get_n())
         self.archers.set_n(self.archers.get_n() + army.get_archers().get_n())
         self.catapults.set_n(self.catapults.get_n() + army.get_catapults().get_n())
+        self.cavalrymen.set_n(self.cavalrymen.get_n() + army.get_cavalrymen().get_n())
 
     def get_attack_power(self):
         return (self.warriors.get_attack_power() +
                 self.archers.get_attack_power() +
-                self.catapults.get_attack_power())
+                self.catapults.get_attack_power() +
+                self.cavalrymen.get_attack_power())
 
     def get_defense_power(self):
         return (self.warriors.get_defense_power() +
                 self.archers.get_defense_power() +
-                self.catapults.get_defense_power())
+                self.catapults.get_defense_power() +
+                self.cavalrymen.get_defense_power())
 
     def plundered(self, amount):
         stolen_iron = min(self.iron, amount)
@@ -251,9 +271,9 @@ class Village:
         if self.get_barracks().level == 0:
             string += f"(no troops unlocked; next unlock: Warriors)\n"
         elif self.get_barracks().level == 1:
-            string += f"(currently unlocked: Warriors; next unlock: Archers)\n"
+            string += f"(currently unlocked: Warriors; next unlock: Archers, Catapults)\n"
         elif self.get_barracks().level == 2:
-            string += f"(currently unlocked: Warriors, Archers; next unlock: Catapults)\n"
+            string += f"(currently unlocked: Warriors, Archers, Catapults; next unlock: Cavalrymen)\n"
         else:
             string += "(all troops unlocked)\n"
         string += f"Farm level: {self.farm.get_level()} "
@@ -272,6 +292,8 @@ class Village:
         string += f"Warriors: {self.warriors.get_n()}\n"
         string += f"Archers: {self.archers.get_n()}\n"
         string += f"Catapults: {self.catapults.get_n()}\n"
+        string += f"Cavalrymen: {self.cavalrymen.get_n()}\n"
+        string += f"Total troops: {self.get_troops()}/{self.farm.capacity()}\n"
         string += f"Total attack power of all troops: {self.get_attack_power()}\n"
         string += f"Total defense power of all troops: {self.get_defense_power()}\n\n"
         string += "******* STATS *******\n"
