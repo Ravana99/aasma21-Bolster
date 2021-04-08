@@ -16,7 +16,7 @@ from troops.exceptions import InvalidTroopsToSendOffException
 class Village:
 
     MAX_HEALTH = 1000
-    STARTING_RESOURCES = 100000
+    STARTING_RESOURCES = 100
 
     def __init__(self, i):
         self.name = "Village " + str(i)
