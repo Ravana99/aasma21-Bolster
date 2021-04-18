@@ -37,6 +37,7 @@ def start_game(agent_list, village_list):
         return_home(armies, all_reports)
 
         for report in all_reports:
+            # TODO: make it so a losing attacker gets no information regarding defending village
             winning_village = report.get_winner()
             losing_village = report.get_loser()
             winning_agent = get_agent_by_village_name(winning_village)
