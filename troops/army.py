@@ -2,6 +2,7 @@ from troops.warriors import Warriors
 from troops.archers import Archers
 from troops.catapults import Catapults
 from troops.cavalrymen import Cavalrymen
+from troops.report import Report
 from random import uniform
 from math import ceil, log
 from troops.exceptions import AttackWithNoArmyException
@@ -70,10 +71,43 @@ class Army:
         alpha = 2 ** casualty_luck
         survivor_ratio = log(1 + alpha * win_magnitude, 1 + alpha)
 
+        report = Report(attacking_village=self.get_village_name(),
+                        defending_village=defending_army.get_village_name(),
+                        attacking_luck=attacking_luck,
+                        defending_luck=defending_luck,
+                        starting_attacking_warriors=self.get_warriors().get_n(),
+                        starting_attacking_archers=self.get_archers().get_n(),
+                        starting_attacking_catapults=self.get_catapults().get_n(),
+                        starting_attacking_cavalrymen=self.get_cavalrymen().get_n(),
+                        starting_defending_warriors=defending_army.get_warriors().get_n(),
+                        starting_defending_archers=defending_army.get_archers().get_n(),
+                        starting_defending_catapults=defending_army.get_catapults().get_n(),
+                        starting_defending_cavalrymen=defending_army.get_cavalrymen().get_n(),
+                        winner=winner.get_village_name(),
+                        loser=loser.get_village_name(),
+                        casualty_luck=casualty_luck,
+                        attacking_power=attacking_power,
+                        defending_power=defending_power)
+
         winner.determine_survivors(survivor_ratio)
         loser.wipe_out()
 
-        return self.power() if winner is self else 0
+        resources_to_plunder = self.power() if winner is self else 0
+        damage_dealt = resources_to_plunder
+
+        report.set_ending_troops(ending_attacking_warriors=self.get_warriors().get_n(),
+                                 ending_attacking_archers=self.get_archers().get_n(),
+                                 ending_attacking_catapults=self.get_catapults().get_n(),
+                                 ending_attacking_cavalrymen=self.get_cavalrymen().get_n(),
+                                 ending_defending_warriors=defending_army.get_warriors().get_n(),
+                                 ending_defending_archers=defending_army.get_archers().get_n(),
+                                 ending_defending_catapults=defending_army.get_catapults().get_n(),
+                                 ending_defending_cavalrymen=defending_army.get_cavalrymen().get_n())
+
+        report.set_resources_to_plunder(resources_to_plunder)
+        report.set_damage_dealt(damage_dealt)
+
+        return report
 
     def wipe_out(self):
         self.determine_survivors(0)

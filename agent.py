@@ -7,6 +7,7 @@ class Agent:
         self.village = Village(i)
         self.name = "Agent " + str(i)
         self.other_villages = []
+        self.report_log = []
 
     def upgrade_decision(self):
         raise NotImplementedError()
@@ -145,6 +146,12 @@ class Agent:
 
     def get_name(self):
         return self.name
+
+    def get_report_log(self):
+        return self.report_log
+
+    def add_report(self, report):
+        self.report_log.insert(0, report)
 
     def remove_other_village(self, name):
         self.other_villages.remove(name)
