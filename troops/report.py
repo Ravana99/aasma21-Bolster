@@ -48,6 +48,9 @@ class Report:
     def get_loser(self):
         return self.loser
 
+    def get_attacking_village(self):
+        return self.attacking_village
+
     def get_resources_to_plunder(self):
         return self.resources_to_plunder
 
@@ -85,7 +88,13 @@ class Report:
     def set_defending_village_health_before(self, hp):
         self.defending_village_health_before = hp
 
-
-
-
-
+    def truncate_losing_report(self):
+        self.defending_power = None
+        self.starting_defending_warriors = None
+        self.starting_defending_archers = None
+        self.starting_defending_catapults = None
+        self.starting_defending_cavalrymen = None
+        self.ending_defending_warriors = None
+        self.ending_defending_archers = None
+        self.ending_defending_catapults = None
+        self.ending_defending_cavalrymen = None

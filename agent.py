@@ -8,11 +8,15 @@ class Agent:
         self.name = "Agent " + str(i)
         self.other_villages = []
         self.report_log = []
+        self.spy_log = []
 
     def upgrade_decision(self):
         raise NotImplementedError()
 
     def recruit_decision(self):
+        raise NotImplementedError()
+
+    def spying_decision(self):
         raise NotImplementedError()
 
     def attack_decision(self):
@@ -101,6 +105,9 @@ class Agent:
 
     # ACTUATORS - RECRUITMENTS
 
+    def recruit_spies(self, n):
+        self.village.recruit_spies(n)
+
     def recruit_warriors(self, n):
         self.village.recruit_warriors(n)
 
@@ -117,6 +124,9 @@ class Agent:
     def recruit_nothing():
         pass
 
+    def demote_spies(self, n):
+        self.village.demote_spies(n)
+
     def demote_warriors(self, n):
         self.village.demote_warriors(n)
 
@@ -129,9 +139,14 @@ class Agent:
     def demote_cavalrymen(self, n):
         self.village.demote_cavalrymen(n)
 
+    # ACTUATORS - SPYING
+
+    def spy(self, enemy_village_name):
+        return self.village.spy(enemy_village_name)
+
     @staticmethod
-    def demote_nothing():
-        pass
+    def spy_nothing():
+        return
 
     # ACTUATORS - ATTACKS
 
@@ -150,8 +165,14 @@ class Agent:
     def get_report_log(self):
         return self.report_log
 
+    def get_spy_log(self):
+        return self.spy_log
+
     def add_report(self, report):
         self.report_log.insert(0, report)
+
+    def add_espionage(self, espionage):
+        self.spy_log.insert(0, espionage)
 
     def remove_other_village(self, name):
         self.other_villages.remove(name)

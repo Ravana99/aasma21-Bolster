@@ -1,4 +1,5 @@
 from random import shuffle
+from copy import deepcopy
 
 agents = []
 villages = []
@@ -27,6 +28,23 @@ def start_game(agent_list, village_list):
 
         print_player_village()
 
+        spying_missions = []
+        for agent in agents:
+            decision = agent.spying_decision()
+            if decision is not None:
+                spying_missions.append(decision)
+
+        old_len_spy_log = len(agents[0].get_spy_log())
+        process_spying(spying_missions)
+        if agents[0].get_name() == "Player" and len(agents[0].get_spy_log()) != old_len_spy_log:
+            print()
+            print()
+            print("~~~~~~~~~~ NEW ESPIONAGE ~~~~~~~~~~")
+            print()
+            print(agents[0].get_spy_log()[0].get_spied_village())
+
+        print_player_village()
+
         armies = []
         for agent in agents:
             decision = agent.attack_decision()
@@ -37,13 +55,21 @@ def start_game(agent_list, village_list):
         return_home(armies, all_reports)
 
         for report in all_reports:
-            # TODO: make it so a losing attacker gets no information regarding defending village
             winning_village = report.get_winner()
             losing_village = report.get_loser()
-            winning_agent = get_agent_by_village_name(winning_village)
-            losing_agent = get_agent_by_village_name(losing_village)
-            winning_agent.add_report(report)
-            losing_agent.add_report(report)
+            attacking_village = report.get_attacking_village()
+            if attacking_village == losing_village:
+                truncated_report = deepcopy(report)
+                truncated_report.truncate_losing_report()
+                winning_agent = get_agent_by_village_name(winning_village)
+                losing_agent = get_agent_by_village_name(losing_village)
+                winning_agent.add_report(report)
+                losing_agent.add_report(truncated_report)
+            else:
+                winning_agent = get_agent_by_village_name(winning_village)
+                losing_agent = get_agent_by_village_name(losing_village)
+                winning_agent.add_report(report)
+                losing_agent.add_report(report)
 
         show_player_reports()
 
@@ -82,7 +108,10 @@ def show_player_reports():
                 print(f"{report.starting_attacking_archers} archers, ", end="")
                 print(f"{report.starting_attacking_catapults} catapults, ", end="")
                 print(f"{report.starting_attacking_cavalrymen} cavalrymen")
-                print(f"Defending army at the start (total power: {round(report.defending_power, 1)}): ", end="")
+                if report.defending_power is None:
+                    print(f"Defending army at the start (total power: {report.defending_power}): ", end="")
+                else:
+                    print(f"Defending army at the start (total power: {round(report.defending_power, 1)}): ", end="")
                 print(f"{report.starting_defending_warriors} warriors, ", end="")
                 print(f"{report.starting_defending_archers} archers, ", end="")
                 print(f"{report.starting_defending_catapults} catapults, ", end="")
@@ -104,6 +133,14 @@ def show_player_reports():
                 print(report.defending_village_health_before - report.damage_dealt)
                 print()
                 print()
+
+
+def process_spying(spying_missions):
+    for mission in spying_missions:
+        agent = get_agent_by_village_name(mission.get_village_name())
+        enemy_village = deepcopy(get_village_by_name(mission.get_enemy_village_name()))
+        mission.set_spied_village(enemy_village)
+        agent.add_espionage(mission)
 
 
 def process_attacks(attacking_armies):

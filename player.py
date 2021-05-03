@@ -1,4 +1,5 @@
 from agent import Agent
+from troops.spies import Spies
 from troops.warriors import Warriors
 from troops.archers import Archers
 from troops.catapults import Catapults
@@ -52,20 +53,24 @@ class Player(Agent):
                 selection = input("> ")
                 print()
                 if selection == "1":
-                    return self.recruit_warriors(input("How many? "))
+                    return self.recruit_spies(input("How many? "))
                 elif selection == "2":
-                    return self.recruit_archers(input("How many? "))
+                    return self.recruit_warriors(input("How many? "))
                 elif selection == "3":
-                    return self.recruit_catapults(input("How many? "))
+                    return self.recruit_archers(input("How many? "))
                 elif selection == "4":
-                    return self.recruit_cavalrymen(input("How many? "))
+                    return self.recruit_catapults(input("How many? "))
                 elif selection == "5":
-                    return self.demote_warriors(input("How many? "))
+                    return self.recruit_cavalrymen(input("How many? "))
                 elif selection == "6":
-                    return self.demote_archers(input("How many? "))
+                    return self.demote_spies(input("How many? "))
                 elif selection == "7":
-                    return self.demote_catapults(input("How many? "))
+                    return self.demote_warriors(input("How many? "))
                 elif selection == "8":
+                    return self.demote_archers(input("How many? "))
+                elif selection == "9":
+                    return self.demote_catapults(input("How many? "))
+                elif selection == "10":
                     return self.demote_cavalrymen(input("How many? "))
                 elif selection == "0":
                     return self.recruit_nothing()
@@ -89,6 +94,26 @@ class Player(Agent):
 
             except TooManyTroopsToDemoteException:
                 print("Too many troops to demote. Try again.")
+
+    def spying_decision(self):
+        while True:
+            try:
+                self.display_spying_options()
+                selection = input("> ")
+                print()
+                if not (isinstance(selection, int) or selection.isdigit()):
+                    print("Invalid selection. Try again.")
+                    continue
+                selection = int(selection)
+                if selection < 0 or selection > len(self.other_villages):
+                    print("Invalid selection. Try again.")
+                elif selection == 0:
+                    return self.spy_nothing()
+                else:
+                    return self.spy(self.other_villages[selection - 1])
+
+            except InvalidTroopsToSendOffException:
+                print("No spies available. Try again.")
 
     def attack_decision(self):
         while True:
@@ -178,19 +203,28 @@ class Player(Agent):
         print()
         print("What would you like to recruit/demote?")
 
-        print(f"1: (Barracks lvl {Warriors.MIN_BARRACKS_LEVEL}) Recruit warriors ", end="")
+        print(f"1: (Barracks lvl {Warriors.MIN_BARRACKS_LEVEL}) Recruit spies ({Spies.COST} resources/unit)")
+        print(f"2: (Barracks lvl {Warriors.MIN_BARRACKS_LEVEL}) Recruit warriors ", end="")
         print(f"({Warriors.ATTACK} ATK, {Warriors.DEFENSE} DEF, {Warriors.COST} resources/unit)")
-        print(f"2: (Barracks lvl {Archers.MIN_BARRACKS_LEVEL}) Recruit archers ", end="")
+        print(f"3: (Barracks lvl {Archers.MIN_BARRACKS_LEVEL}) Recruit archers ", end="")
         print(f"({Archers.ATTACK} ATK, {Archers.DEFENSE} DEF, {Archers.COST} resources/unit)")
-        print(f"3: (Barracks lvl {Catapults.MIN_BARRACKS_LEVEL}) Recruit catapults ", end="")
+        print(f"4: (Barracks lvl {Catapults.MIN_BARRACKS_LEVEL}) Recruit catapults ", end="")
         print(f"({Catapults.ATTACK} ATK, {Catapults.DEFENSE} DEF, {Catapults.COST} resources/unit)")
-        print(f"4: (Barracks lvl {Cavalrymen.MIN_BARRACKS_LEVEL}) Recruit cavalrymen ", end="")
+        print(f"5: (Barracks lvl {Cavalrymen.MIN_BARRACKS_LEVEL}) Recruit cavalrymen ", end="")
         print(f"({Cavalrymen.ATTACK} ATK, {Cavalrymen.DEFENSE} DEF, {Cavalrymen.COST} resources/unit)")
-        print(f"5: Demote warriors")
-        print(f"6: Demote archers")
-        print(f"7: Demote catapults")
-        print(f"8: Demote cavalrymen")
+        print(f"6: Demote spies")
+        print(f"7: Demote warriors")
+        print(f"8: Demote archers")
+        print(f"9: Demote catapults")
+        print(f"10: Demote cavalrymen")
         print(f"0: Pass")
+
+    def display_spying_options(self):
+        print()
+        print("Which village would you like to spy?")
+        for i, village in enumerate(self.other_villages):
+            print(f"{i + 1}: {village}")
+        print("0: Pass")
 
     def display_attack_options(self):
         print()

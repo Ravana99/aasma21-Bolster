@@ -5,6 +5,8 @@ from buildings.quarry import Quarry
 from buildings.sawmill import Sawmill
 from buildings.wall import Wall
 from buildings.warehouse import Warehouse
+from troops.espionage import Espionage
+from troops.spies import Spies
 from troops.warriors import Warriors
 from troops.archers import Archers
 from troops.catapults import Catapults
@@ -31,6 +33,7 @@ class Village:
         self.iron = Village.STARTING_RESOURCES
         self.stone = Village.STARTING_RESOURCES
         self.wood = Village.STARTING_RESOURCES
+        self.spies = Spies()
         self.warriors = Warriors()
         self.archers = Archers()
         self.catapults = Catapults()
@@ -74,6 +77,9 @@ class Village:
     def get_wood(self):
         return self.wood
 
+    def get_spies(self):
+        return self.spies
+
     def get_warriors(self):
         return self.warriors
 
@@ -87,7 +93,8 @@ class Village:
         return self.cavalrymen
 
     def get_troops(self):
-        return self.warriors.get_n() + self.archers.get_n() + self.catapults.get_n() + self.cavalrymen.get_n()
+        return self.spies.get_n() + self.warriors.get_n() + self.archers.get_n() + \
+               self.catapults.get_n() + self.cavalrymen.get_n()
 
     # UPGRADES
 
@@ -114,6 +121,11 @@ class Village:
 
     # RECRUITMENTS
 
+    def recruit_spies(self, n):
+        free_capacity = self.farm.capacity() - self.get_troops()
+        self.iron, self.stone, self.wood = self.spies.recruit(self.iron, self.stone, self.wood,
+                                                              n, self.barracks.get_level(), free_capacity)
+
     def recruit_warriors(self, n):
         free_capacity = self.farm.capacity() - self.get_troops()
         self.iron, self.stone, self.wood = self.warriors.recruit(self.iron, self.stone, self.wood,
@@ -134,6 +146,9 @@ class Village:
         self.iron, self.stone, self.wood = self.cavalrymen.recruit(self.iron, self.stone, self.wood,
                                                                    n, self.barracks.get_level(), free_capacity)
 
+    def demote_spies(self, n):
+        self.spies.demote(n)
+
     def demote_warriors(self, n):
         self.warriors.demote(n)
 
@@ -145,6 +160,12 @@ class Village:
 
     def demote_cavalrymen(self, n):
         self.cavalrymen.demote(n)
+
+    # SPYING
+
+    def spy(self, enemy_village_name):
+        self.spies.send_off(1)
+        return Espionage(self.name, enemy_village_name)
 
     # ATTACKS
 
@@ -269,11 +290,11 @@ class Village:
         string += "******* BUILDINGS *******\n"
         string += f"Barracks level: {self.barracks.get_level()} "
         if self.get_barracks().level == 0:
-            string += f"(no troops unlocked; next unlock: Warriors)\n"
+            string += f"(no troops unlocked; next unlock: Spies, Warriors)\n"
         elif self.get_barracks().level == 1:
-            string += f"(currently unlocked: Warriors; next unlock: Archers, Catapults)\n"
+            string += f"(currently unlocked: Spies, Warriors; next unlock: Archers, Catapults)\n"
         elif self.get_barracks().level == 2:
-            string += f"(currently unlocked: Warriors, Archers, Catapults; next unlock: Cavalrymen)\n"
+            string += f"(currently unlocked: Spies, Warriors, Archers, Catapults; next unlock: Cavalrymen)\n"
         else:
             string += "(all troops unlocked)\n"
         string += f"Farm level: {self.farm.get_level()} "
@@ -289,6 +310,7 @@ class Village:
         string += f"Warehouse level: {self.warehouse.get_level()} "
         string += f"(current capacity: {self.warehouse.capacity()}; upgrade: {self.warehouse.next_capacity()})\n\n"
         string += "******* TROOPS *******\n"
+        string += f"Spies: {self.spies.get_n()}\n"
         string += f"Warriors: {self.warriors.get_n()}\n"
         string += f"Archers: {self.archers.get_n()}\n"
         string += f"Catapults: {self.catapults.get_n()}\n"
