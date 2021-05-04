@@ -1,5 +1,5 @@
-from specificagent import SpecificAgent
-from player import Player
+from agent.specificagent import SpecificAgent
+from agent.player import Player
 from game import start_game
 from sys import argv
 

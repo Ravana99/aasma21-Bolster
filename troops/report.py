@@ -98,3 +98,41 @@ class Report:
         self.ending_defending_archers = None
         self.ending_defending_catapults = None
         self.ending_defending_cavalrymen = None
+
+    def __repr__(self):
+        string = f"Attacking village: {self.attacking_village} "
+        string += f"({'winner' if self.attacking_village == self.winner else 'loser'})\n"
+        string += f"Defending village: {self.defending_village} "
+        string += f"({'winner' if self.defending_village == self.winner else 'loser'})\n"
+        string += f"Attacking luck: {round(self.attacking_luck, 1)}%\n"
+        string += f"Defending luck: {round(self.defending_luck, 1)}%\n"
+        string += f"Casualty luck: {round(self.casualty_luck, 1)}%\n"
+        string += f"Attacking army at the start (total power: {round(self.attacking_power, 1)}): "
+        string += f"{self.starting_attacking_warriors} warriors, "
+        string += f"{self.starting_attacking_archers} archers, "
+        string += f"{self.starting_attacking_catapults} catapults, "
+        string += f"{self.starting_attacking_cavalrymen} cavalrymen\n"
+        if self.defending_power is None:
+            string += f"Defending army at the start (total power: {self.defending_power}): "
+        else:
+            string += f"Defending army at the start (total power: {round(self.defending_power, 1)}): "
+        string += f"{self.starting_defending_warriors} warriors, "
+        string += f"{self.starting_defending_archers} archers, "
+        string += f"{self.starting_defending_catapults} catapults, "
+        string += f"{self.starting_defending_cavalrymen} cavalrymen\n"
+        string += f"Attacking army in the end: "
+        string += f"{self.ending_attacking_warriors} warriors, "
+        string += f"{self.ending_attacking_archers} archers, "
+        string += f"{self.ending_attacking_catapults} catapults, "
+        string += f"{self.ending_attacking_cavalrymen} cavalrymen\n"
+        string += f"Defending army in the end: "
+        string += f"{self.ending_defending_warriors} warriors, "
+        string += f"{self.ending_defending_archers} archers, "
+        string += f"{self.ending_defending_catapults} catapults, "
+        string += f"{self.ending_defending_cavalrymen} cavalrymen\n"
+        string += f"Plundered resources: {self.plundered_resources}\n"
+        string += f"Initial health of defending village: {self.defending_village_health_before}\n"
+        string += f"Damage dealt: {self.damage_dealt}\n"
+        string += f"Current health of defending village: "
+        string += f"{self.defending_village_health_before - self.damage_dealt}\n\n"
+        return string

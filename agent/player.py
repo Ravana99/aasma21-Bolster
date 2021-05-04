@@ -1,4 +1,4 @@
-from agent import Agent
+from agent.agent import Agent
 from troops.spies import Spies
 from troops.warriors import Warriors
 from troops.archers import Archers
