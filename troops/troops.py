@@ -2,6 +2,8 @@ from troops.exceptions import *
 
 
 class Troops:
+    """DO NOT INSTANTIATE!"""
+
     ATTACK = -1
     DEFENSE = -1
     COST = [-1, -1, -1]

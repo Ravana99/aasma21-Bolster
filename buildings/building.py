@@ -2,6 +2,8 @@ from buildings.exceptions import *
 
 
 class Building:
+    """DO NOT INSTANTIATE!"""
+
     UPGRADE_COSTS = []
 
     level = -1

@@ -2,6 +2,7 @@ from village import Village
 
 
 class Agent:
+    """DO NOT INSTANTIATE!"""
 
     def __init__(self, i):
         self.village = Village(i)
