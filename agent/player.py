@@ -1,4 +1,5 @@
 from agent.agent import Agent
+from agent.decisions import *
 from troops.spies import Spies
 from troops.warriors import Warriors
 from troops.archers import Archers
@@ -17,32 +18,34 @@ class Player(Agent):
 
     def upgrade_decision(self):
         while True:
-            try:
-                self.display_upgrade_options()
-                selection = input("> ")
-                print()
-                if selection == "1":
-                    return self.upgrade_barracks()
-                elif selection == "2":
-                    return self.upgrade_farm()
-                elif selection == "3":
-                    return self.upgrade_mine()
-                elif selection == "4":
-                    return self.upgrade_quarry()
-                elif selection == "5":
-                    return self.upgrade_sawmill()
-                elif selection == "6":
-                    return self.upgrade_wall()
-                elif selection == "7":
-                    return self.upgrade_warehouse()
-                elif selection == "0":
-                    return self.upgrade_nothing()
-                else:
-                    print("Invalid selection. Try again.")
+            self.display_upgrade_options()
+            selection = input("> ")
+            print()
+            if selection == "1":
+                decision = UpgradeBarracksDecision(self)
+            elif selection == "2":
+                decision = UpgradeFarmDecision(self)
+            elif selection == "3":
+                decision = UpgradeMineDecision(self)
+            elif selection == "4":
+                decision = UpgradeQuarryDecision(self)
+            elif selection == "5":
+                decision = UpgradeSawmillDecision(self)
+            elif selection == "6":
+                decision = UpgradeWallDecision(self)
+            elif selection == "7":
+                decision = UpgradeWarehouseDecision(self)
+            elif selection == "0":
+                decision = UpgradeNothingDecision(self)
+            else:
+                print("Invalid selection. Try again.")
+                continue
 
+            try:
+                assert issubclass(decision.__class__, UpgradeDecision)
+                return decision.execute()
             except UpgradeMaxedOutBuildingException:
                 print("Building already maxed out. Try again.")
-
             except NotEnoughResourcesToUpgradeException:
                 print("Not enough resources to perform upgrade. Try again.")
 
@@ -53,65 +56,69 @@ class Player(Agent):
                 selection = input("> ")
                 print()
                 if selection == "1":
-                    return self.recruit_spies(input("How many? "))
+                    decision = RecruitSpiesDecision(self, input("How many? "))
                 elif selection == "2":
-                    return self.recruit_warriors(input("How many? "))
+                    decision = RecruitWarriorsDecision(self, input("How many? "))
                 elif selection == "3":
-                    return self.recruit_archers(input("How many? "))
+                    decision = RecruitArchersDecision(self, input("How many? "))
                 elif selection == "4":
-                    return self.recruit_catapults(input("How many? "))
+                    decision = RecruitCatapultsDecision(self, input("How many? "))
                 elif selection == "5":
-                    return self.recruit_cavalrymen(input("How many? "))
+                    decision = RecruitCavalrymenDecision(self, input("How many? "))
                 elif selection == "6":
-                    return self.demote_spies(input("How many? "))
+                    decision = DemoteSpiesDecision(self, input("How many? "))
                 elif selection == "7":
-                    return self.demote_warriors(input("How many? "))
+                    decision = DemoteWarriorsDecision(self, input("How many? "))
                 elif selection == "8":
-                    return self.demote_archers(input("How many? "))
+                    decision = DemoteArchersDecision(self, input("How many? "))
                 elif selection == "9":
-                    return self.demote_catapults(input("How many? "))
+                    decision = DemoteCatapultsDecision(self, input("How many? "))
                 elif selection == "10":
-                    return self.demote_cavalrymen(input("How many? "))
+                    decision = DemoteCavalrymenDecision(self, input("How many? "))
                 elif selection == "0":
-                    return self.recruit_nothing()
+                    decision = RecruitNothingDecision(self)
                 else:
                     print("Invalid selection. Try again.")
+                    continue
 
+                assert issubclass(decision.__class__, RecruitDecision)
+                return decision.execute(decision.n)
+
+            except InvalidDecisionException:
+                print("Invalid decision. Try again.")
             except InvalidTroopsToRecruitException:
                 print("Invalid number of troops to recruit. Try again.")
-
             except BarracksLevelTooLowException:
                 print("Barracks level too low to recruit that unit. Try again.")
-
             except NotEnoughFarmCapacityException:
                 print("Farm capacity too low to recruit that many units. Try again.")
-
             except NotEnoughResourcesToRecruitException:
                 print("Not enough resources to recruit that many units. Try again.")
-
             except InvalidTroopsToDemoteException:
                 print("Invalid number of troops to demote. Try again.")
-
             except TooManyTroopsToDemoteException:
                 print("Too many troops to demote. Try again.")
 
     def spying_decision(self):
         while True:
-            try:
-                self.display_spying_options()
-                selection = input("> ")
-                print()
-                if not (isinstance(selection, int) or selection.isdigit()):
-                    print("Invalid selection. Try again.")
-                    continue
-                selection = int(selection)
-                if selection < 0 or selection > len(self.other_villages):
-                    print("Invalid selection. Try again.")
-                elif selection == 0:
-                    return self.spy_nothing()
-                else:
-                    return self.spy(self.other_villages[selection - 1])
+            self.display_spying_options()
+            selection = input("> ")
+            print()
+            if not (isinstance(selection, int) or selection.isdigit()):
+                print("Invalid selection. Try again.")
+                continue
+            selection = int(selection)
+            if selection < 0 or selection > len(self.other_villages):
+                print("Invalid selection. Try again.")
+                continue
+            elif selection == 0:
+                decision = SpyNothingDecision(self)
+            else:
+                decision = SpyVillageDecision(self, self.other_villages[selection - 1])
 
+            try:
+                assert issubclass(decision.__class__, SpyingDecision)
+                return decision.execute()
             except InvalidTroopsToSendOffException:
                 print("No spies available. Try again.")
 
@@ -127,19 +134,25 @@ class Player(Agent):
                 selection = int(selection)
                 if selection < 0 or selection > len(self.other_villages):
                     print("Invalid selection. Try again.")
+                    continue
                 elif selection == 0:
-                    return self.attack_nothing()
+                    decision = AttackNothingDecision(self)
                 else:
                     n_warriors = input("How many warriors? ")
                     n_archers = input("How many archers? ")
                     n_catapults = input("How many catapults? ")
                     n_cavalrymen = input("How many cavalrymen? ")
-                    return self.send_attack(n_warriors, n_archers, n_catapults, n_cavalrymen,
-                                            self.other_villages[selection - 1])
+                    decision = AttackVillageDecision(self, n_warriors, n_archers, n_catapults, n_cavalrymen,
+                                                     self.other_villages[selection - 1])
 
+                assert issubclass(decision.__class__, AttackDecision)
+                return decision.execute(decision.n_warriors, decision.n_archers,
+                                        decision.n_catapults, decision.n_cavalrymen)
+
+            except InvalidDecisionException:
+                print("Invalid decision. Try again.")
             except InvalidTroopsToSendOffException:
                 print("Invalid number of troops to send off. Try again.")
-
             except AttackWithNoArmyException:
                 print("Cannot attack with no troops. Try again.")
 

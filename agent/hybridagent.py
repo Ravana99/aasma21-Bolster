@@ -1,20 +1,33 @@
 from agent.agent import Agent
+from agent.decisions import *
 
 
 class HybridAgent(Agent):
 
     def upgrade_decision(self):
         # TODO
-        return self.upgrade_nothing()
+        decision = UpgradeNothingDecision(self)
+
+        assert issubclass(decision.__class__, UpgradeDecision)
+        return decision.execute()
 
     def recruit_decision(self):
         # TODO
-        return self.recruit_nothing()
+        decision = RecruitNothingDecision(self)
+
+        assert issubclass(decision.__class__, RecruitDecision)
+        return decision.execute()
 
     def spying_decision(self):
         # TODO
-        return self.spy_nothing()
+        decision = SpyNothingDecision(self)
+
+        assert issubclass(decision.__class__, SpyingDecision)
+        return decision.execute()
 
     def attack_decision(self):
         # TODO
-        return self.attack_nothing()
+        decision = AttackNothingDecision(self)
+
+        assert issubclass(decision.__class__, AttackDecision)
+        return decision.execute()

@@ -121,10 +121,6 @@ class Agent:
     def recruit_cavalrymen(self, n):
         self.village.recruit_cavalrymen(n)
 
-    @staticmethod
-    def recruit_nothing():
-        pass
-
     def demote_spies(self, n):
         self.village.demote_spies(n)
 
@@ -139,6 +135,10 @@ class Agent:
 
     def demote_cavalrymen(self, n):
         self.village.demote_cavalrymen(n)
+
+    @staticmethod
+    def recruit_nothing():
+        pass
 
     # ACTUATORS - SPYING
 
