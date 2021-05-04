@@ -1,7 +1,7 @@
 from agent.agent import Agent
 
 
-class SpecificAgent(Agent):
+class HybridAgent(Agent):
 
     def upgrade_decision(self):
         # TODO
