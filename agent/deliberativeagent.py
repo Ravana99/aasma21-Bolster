@@ -103,13 +103,14 @@ class DeliberativeAgent(Agent):
             if isinstance(desire, UpgradeWallDecision):
                 return desire
 
-        # Warehouse (if full of at least one resource)
         if self.village.get_iron() == self.village.get_warehouse().capacity() or \
            self.village.get_stone() == self.village.get_warehouse().capacity() or \
            self.village.get_wood() == self.village.get_warehouse().capacity():
+            # Warehouse (if full of at least one resource)
             for desire in self.desires:
                 if isinstance(desire, UpgradeWarehouseDecision):
                     return desire
+            # Farm (if warehouse is full of at least one resource, just to dump resources)
             for desire in self.desires:
                 if isinstance(desire, UpgradeFarmDecision):
                     return desire
@@ -125,11 +126,9 @@ class DeliberativeAgent(Agent):
         return [self.intention]
 
     def succeeded_intention(self):
-        # TODO
         return False
 
     def impossible_intention(self):
-        # TODO
         return False
 
     def sound(self):
@@ -156,21 +155,18 @@ class DeliberativeAgent(Agent):
         return True
 
     def recruit_decision(self):
-        # TODO
         action = RecruitNothingDecision(self)
 
         assert issubclass(action.__class__, RecruitDecision)
         return action.execute()
 
     def spying_decision(self):
-        # TODO
         action = SpyNothingDecision(self)
 
         assert issubclass(action.__class__, SpyingDecision)
         return action.execute()
 
     def attack_decision(self):
-        # TODO
         action = AttackNothingDecision(self)
 
         assert issubclass(action.__class__, AttackDecision)
