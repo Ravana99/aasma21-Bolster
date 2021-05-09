@@ -14,7 +14,7 @@ def start_game(agent_list, village_list):
 
     turn = 1
 
-    while turn <= 400:
+    while turn <= 200:
         print(f"\n\n*************** TURN {turn} ***************\n\n")
 
         print_all_villages()

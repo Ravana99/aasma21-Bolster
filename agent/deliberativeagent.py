@@ -68,6 +68,11 @@ class DeliberativeAgent(Agent):
                 if isinstance(desire, UpgradeWarehouseDecision):
                     return desire
 
+        # Barracks
+        for desire in self.desires:
+            if isinstance(desire, UpgradeBarracksDecision):
+                return desire
+
         # Resource camp
         if self.village.get_iron() >= self.village.get_stone() >= self.village.get_wood():
             priorities = [UpgradeMineDecision(self), UpgradeQuarryDecision(self), UpgradeSawmillDecision(self)]
@@ -85,11 +90,6 @@ class DeliberativeAgent(Agent):
             for desire in self.desires:
                 if isinstance(desire, priorities[i].__class__):
                     return desire
-
-        # Barracks
-        for desire in self.desires:
-            if isinstance(desire, UpgradeBarracksDecision):
-                return desire
 
         # Wall
         for desire in self.desires:

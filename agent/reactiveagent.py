@@ -63,6 +63,11 @@ class ReactiveAgent(Agent):
                 if isinstance(decision, UpgradeWarehouseDecision):
                     return decision
 
+        # Barracks
+        for decision in self.possible_upgrade_decisions:
+            if isinstance(decision, UpgradeBarracksDecision):
+                return decision
+
         # Resource camp
         if self.village.get_iron() >= self.village.get_stone() >= self.village.get_wood():
             priorities = [UpgradeMineDecision(self), UpgradeQuarryDecision(self), UpgradeSawmillDecision(self)]
@@ -80,11 +85,6 @@ class ReactiveAgent(Agent):
             for decision in self.possible_upgrade_decisions:
                 if isinstance(decision, priorities[i].__class__):
                     return decision
-
-        # Barracks
-        for decision in self.possible_upgrade_decisions:
-            if isinstance(decision, UpgradeBarracksDecision):
-                return decision
 
         # Wall
         for decision in self.possible_upgrade_decisions:
@@ -242,10 +242,21 @@ class ReactiveAgent(Agent):
         return action.execute()
 
     def spying_options(self):
-        return [SpyNothingDecision(self)]
+        if self.village.get_spies().get_n() == 0:
+            return [SpyNothingDecision(self)]
+        options = []
+        for village in self.get_other_villages():
+            options.append(SpyVillageDecision(self, village))
+        options.append(SpyNothingDecision(self))
+        return options
 
     def spying_filter(self):
-        return self.possible_spying_decisions[0]
+        # TODO
+        for decision in self.possible_spying_decisions:
+            if isinstance(decision, SpyNothingDecision):
+                return decision
+
+        raise Exception("Should not get here! Failed in spying_filter()")
 
     def attack_decision(self):
         self.possible_attack_decisions = self.attack_options()
@@ -254,10 +265,26 @@ class ReactiveAgent(Agent):
         return action.execute()
 
     def attack_options(self):
-        return [AttackNothingDecision(self)]
+        if self.village.get_troops() == 0:
+            return [AttackNothingDecision(self)]
+        options = []
+        for village in self.get_other_villages():
+            options.append(AttackVillageDecision(self,
+                                                 self.village.get_warriors().get_n(),
+                                                 self.village.get_archers().get_n(),
+                                                 self.village.get_catapults().get_n(),
+                                                 self.village.get_cavalrymen().get_n(),
+                                                 village))
+        options.append(AttackNothingDecision(self))
+        return options
 
     def attack_filter(self):
-        return self.possible_attack_decisions[0]
+        # TODO
+        for decision in self.possible_attack_decisions:
+            if isinstance(decision, AttackNothingDecision):
+                return decision
+
+        raise Exception("Should not get here! Failed in attack_filter()")
 
     # AUX
 

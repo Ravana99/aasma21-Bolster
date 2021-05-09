@@ -189,6 +189,9 @@ class Agent:
     def get_village(self):
         return self.village
 
+    def get_other_villages(self):
+        return self.other_villages
+
     def set_other_villages(self, villages):
         self.other_villages = villages
 
