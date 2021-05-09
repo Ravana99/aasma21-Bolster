@@ -3,6 +3,7 @@ class Espionage:
         self.village_name = village_name
         self.enemy_village_name = enemy_village_name
         self.spied_village = None
+        self.new = True
 
     def get_village_name(self):
         return self.village_name
@@ -15,3 +16,6 @@ class Espionage:
 
     def set_spied_village(self, enemy_village):
         self.spied_village = enemy_village
+
+    def set_new(self, new):
+        self.new = new

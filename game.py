@@ -1,6 +1,7 @@
 from random import shuffle
 from copy import deepcopy
 
+
 agents = []
 villages = []
 
@@ -13,7 +14,7 @@ def start_game(agent_list, village_list):
 
     turn = 1
 
-    while turn <= 100:
+    while turn <= 400:
         print(f"\n\n*************** TURN {turn} ***************\n\n")
 
         print_all_villages()
@@ -27,6 +28,11 @@ def start_game(agent_list, village_list):
         for agent in agents:
             agent.recruit_decision()
 
+        # "New" espionages become "old"
+        for agent in agents:
+            for espionage in agent.get_spy_log():
+                espionage.set_new(False)
+
         # print_player_village()
 
         spying_missions = []
@@ -35,9 +41,13 @@ def start_game(agent_list, village_list):
             if decision is not None:
                 spying_missions.append(decision)
 
-        old_len_spy_log = len(agents[0].get_spy_log())
+        # "New" espionages become "old"
+        for agent in agents:
+            for espionage in agent.get_spy_log():
+                espionage.set_new(False)
+
         process_spying(spying_missions)
-        if agents[0].get_name() == "Player" and len(agents[0].get_spy_log()) != old_len_spy_log:
+        if agents[0].get_name() == "Player" and agents[0].get_spy_log() and agents[0].get_spy_log()[0].new:
             print()
             print()
             print("~~~~~~~~~~ NEW ESPIONAGE ~~~~~~~~~~")
@@ -54,6 +64,11 @@ def start_game(agent_list, village_list):
 
         all_reports = process_attacks(armies)
         return_home(armies, all_reports)
+
+        # "New" reports become "old"
+        for agent in agents:
+            for report in agent.get_report_log():
+                report.set_new(False)
 
         for report in all_reports:
             winning_village = report.get_winner()
@@ -96,7 +111,6 @@ def show_player_reports():
         for report in agents[0].get_report_log():
             # Didn't feel like writing dozens of getters for the report...
             if report.new:
-                report.set_new(False)
                 print()
                 print()
                 print("~~~~~~~~~~ NEW REPORT ~~~~~~~~~~")

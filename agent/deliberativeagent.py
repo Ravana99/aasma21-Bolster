@@ -1,12 +1,5 @@
 from agent.agent import Agent
 from agent.decisions import *
-from buildings.barracks import Barracks
-from buildings.farm import Farm
-from buildings.mine import Mine
-from buildings.quarry import Quarry
-from buildings.sawmill import Sawmill
-from buildings.wall import Wall
-from buildings.warehouse import Warehouse
 
 
 class DeliberativeAgent(Agent):
@@ -120,7 +113,7 @@ class DeliberativeAgent(Agent):
             if isinstance(desire, UpgradeNothingDecision):
                 return desire
 
-        raise Exception("Should not get here! Failed in filter()")
+        raise Exception("Should not get here! Failed in upgrade_filter()")
 
     def make_plan(self):
         return [self.intention]
@@ -171,40 +164,3 @@ class DeliberativeAgent(Agent):
 
         assert issubclass(action.__class__, AttackDecision)
         return action.execute()
-
-    # AUX
-
-    def can_upgrade(self, building):
-        if building.is_max_level():
-            return False
-        village_resources = [self.village.get_iron(), self.village.get_stone(), self.village.get_wood()]
-        building_costs = building.get_cost_of_upgrade()
-        for c1, c2 in zip(village_resources, building_costs):
-            if c1 < c2:
-                return False
-        return True
-
-    def building_to_upgrade_action(self, building):
-        if isinstance(building, Barracks):
-            return UpgradeBarracksDecision(self)
-        elif isinstance(building, Farm):
-            return UpgradeFarmDecision(self)
-        elif isinstance(building, Mine):
-            return UpgradeMineDecision(self)
-        elif isinstance(building, Quarry):
-            return UpgradeQuarryDecision(self)
-        elif isinstance(building, Sawmill):
-            return UpgradeSawmillDecision(self)
-        elif isinstance(building, Wall):
-            return UpgradeWallDecision(self)
-        elif isinstance(building, Warehouse):
-            return UpgradeWarehouseDecision(self)
-        else:
-            return UpgradeNothingDecision(self)
-
-    @staticmethod
-    def cost_of_upgrade_action(action):
-        if isinstance(action, UpgradeNothingDecision):
-            return [0, 0, 0]
-        else:
-            return action.to_building().get_cost_of_upgrade()

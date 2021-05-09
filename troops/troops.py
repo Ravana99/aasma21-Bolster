@@ -18,6 +18,9 @@ class Troops:
     def set_n(self, n):
         self.n = n
 
+    def cost(self, n):
+        return [n * self.COST[0], n * self.COST[1], n * self.COST[2]]
+
     def get_attack_power(self):
         return self.n * self.ATTACK
 

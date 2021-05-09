@@ -205,8 +205,8 @@ class DemoteCavalrymenDecision(RecruitDecision):
 
 
 class RecruitNothingDecision(RecruitDecision):
-    def execute(self, n=None):
-        print(f"{self.agent.get_name()} has demoted nothing.")
+    def execute(self, n="0"):
+        print(f"{self.agent.get_name()} has recruited nothing.")
         print()
         return self.agent.recruit_nothing()
 
