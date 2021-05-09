@@ -1,4 +1,4 @@
-from agent.hybridagent import HybridAgent
+from agent.deliberativeagent import DeliberativeAgent
 from agent.player import Player
 from game import start_game
 from sys import argv
@@ -15,7 +15,8 @@ def main():
     play_again = True
 
     while play_again:
-        agents = [HybridAgent(i) if i > 0 else Player(i) for i in range(n_players)]
+        agents = [DeliberativeAgent(i) for i in range(n_players)]
+        # agents = [HybridAgent(i) if i > 0 else Player(i) for i in range(n_players)]
         villages = [agent.get_village() for agent in agents]
         for i, agent in enumerate(agents):
             agent.set_other_villages([village.name for j, village in enumerate(villages) if i != j])

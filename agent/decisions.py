@@ -19,41 +19,57 @@ class UpgradeDecision(Decision):
 
 class UpgradeBarracksDecision(UpgradeDecision):
     def execute(self):
+        print(f"{self.agent.get_name()} has upgraded the Barracks.")
+        print()
         return self.agent.upgrade_barracks()
 
 
 class UpgradeFarmDecision(UpgradeDecision):
     def execute(self):
+        print(f"{self.agent.get_name()} has upgraded the Farm.")
+        print()
         return self.agent.upgrade_farm()
 
 
 class UpgradeMineDecision(UpgradeDecision):
     def execute(self):
+        print(f"{self.agent.get_name()} has upgraded the Mine.")
+        print()
         return self.agent.upgrade_mine()
 
 
 class UpgradeQuarryDecision(UpgradeDecision):
     def execute(self):
+        print(f"{self.agent.get_name()} has upgraded the Quarry.")
+        print()
         return self.agent.upgrade_quarry()
 
 
 class UpgradeSawmillDecision(UpgradeDecision):
     def execute(self):
+        print(f"{self.agent.get_name()} has upgraded the Sawmill.")
+        print()
         return self.agent.upgrade_sawmill()
 
 
 class UpgradeWallDecision(UpgradeDecision):
     def execute(self):
+        print(f"{self.agent.get_name()} has upgraded the Wall.")
+        print()
         return self.agent.upgrade_wall()
 
 
 class UpgradeWarehouseDecision(UpgradeDecision):
     def execute(self):
+        print(f"{self.agent.get_name()} has upgraded the Warehouse.")
+        print()
         return self.agent.upgrade_warehouse()
 
 
 class UpgradeNothingDecision(UpgradeDecision):
     def execute(self):
+        print(f"{self.agent.get_name()} has upgraded nothing.")
+        print()
         return self.agent.upgrade_nothing()
 
 
@@ -84,65 +100,87 @@ class RecruitDecision(Decision):
 class RecruitSpiesDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        print(f"{self.agent.get_name()} has recruited {n} Spies.")
+        print()
         return self.agent.recruit_spies(n)
 
 
 class RecruitWarriorsDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        print(f"{self.agent.get_name()} has recruited {n} Warriors.")
+        print()
         return self.agent.recruit_warriors(n)
 
 
 class RecruitArchersDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        print(f"{self.agent.get_name()} has recruited {n} Archers.")
+        print()
         return self.agent.recruit_archers(n)
 
 
 class RecruitCatapultsDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        print(f"{self.agent.get_name()} has recruited {n} Catapults.")
+        print()
         return self.agent.recruit_catapults(n)
 
 
 class RecruitCavalrymenDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        print(f"{self.agent.get_name()} has recruited {n} Cavalrymen.")
+        print()
         return self.agent.recruit_cavalrymen(n)
 
 
 class DemoteSpiesDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        print(f"{self.agent.get_name()} has demoted {n} Spies.")
+        print()
         return self.agent.demote_spies(n)
 
 
 class DemoteWarriorsDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        print(f"{self.agent.get_name()} has demoted {n} Warriors.")
+        print()
         return self.agent.demote_warriors(n)
 
 
 class DemoteArchersDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        print(f"{self.agent.get_name()} has demoted {n} Archers.")
+        print()
         return self.agent.demote_archers(n)
 
 
 class DemoteCatapultsDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        print(f"{self.agent.get_name()} has demoted {n} Catapults.")
+        print()
         return self.agent.demote_catapults(n)
 
 
 class DemoteCavalrymenDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        print(f"{self.agent.get_name()} has demoted {n} Cavalrymen.")
+        print()
         return self.agent.demote_cavalrymen(n)
 
 
 class RecruitNothingDecision(RecruitDecision):
     def execute(self, n=None):
+        print(f"{self.agent.get_name()} has demoted nothing.")
+        print()
         return self.agent.recruit_nothing()
 
 
@@ -161,11 +199,15 @@ class SpyVillageDecision(SpyingDecision):
         self.enemy_village_name = enemy_village_name
 
     def execute(self):
+        print(f"{self.agent.get_name()} has spied {self.enemy_village_name}.")
+        print()
         return self.agent.spy(self.enemy_village_name)
 
 
 class SpyNothingDecision(SpyingDecision):
     def execute(self):
+        print(f"{self.agent.get_name()} has spied nothing.")
+        print()
         return self.agent.spy_nothing()
 
 
@@ -220,9 +262,14 @@ class AttackVillageDecision(AttackDecision):
 
     def execute(self, n_warriors, n_archers, n_catapults, n_cavalrymen):
         super().execute(n_warriors, n_archers, n_catapults, n_cavalrymen)
+        print(f"{self.agent.get_name()} has attacked {self.enemy_village_name} using ", end="")
+        print(f"{n_warriors} warriors, {n_archers} archers, {n_catapults} catapults, and {n_cavalrymen} cavalrymen.")
+        print()
         return self.agent.send_attack(n_warriors, n_archers, n_catapults, n_cavalrymen, self.enemy_village_name)
 
 
 class AttackNothingDecision(AttackDecision):
     def execute(self, n_warriors=None, n_archers=None, n_catapults=None, n_cavalrymen=None):
+        print(f"{self.agent.get_name()} has attacked nothing.")
+        print()
         return self.agent.attack_nothing()

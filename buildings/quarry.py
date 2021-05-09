@@ -2,8 +2,8 @@ from buildings.building import Building
 
 
 class Quarry(Building):
-    UPGRADE_COSTS = [None, [90, 90, 50], [200, 200, 125], [500, 500, 300], [1250, 1250, 750]]
-    PRODUCTIONS = [None, 5, 10, 20, 40, 80]
+    UPGRADE_COSTS = [None, [90, 50, 90], [200, 125, 200], [500, 300, 500], [1250, 750, 1250]]
+    PRODUCTIONS = [None, 20, 40, 80, 160, 320]
 
     def __init__(self):
         self.level = 1

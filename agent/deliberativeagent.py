@@ -2,7 +2,7 @@ from agent.agent import Agent
 from agent.decisions import *
 
 
-class HybridAgent(Agent):
+class DeliberativeAgent(Agent):
 
     desires = []
     intention = None

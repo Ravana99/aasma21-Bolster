@@ -16,17 +16,18 @@ def start_game(agent_list, village_list):
     while True:
         print(f"\n\n*************** TURN {turn} ***************\n\n")
 
-        print_player_village()
+        print_all_villages()
+        # print_player_village()
 
         for agent in agents:
             agent.upgrade_decision()
 
-        print_player_village()
+        # print_player_village()
 
         for agent in agents:
             agent.recruit_decision()
 
-        print_player_village()
+        # print_player_village()
 
         spying_missions = []
         for agent in agents:
@@ -43,7 +44,7 @@ def start_game(agent_list, village_list):
             print()
             print(agents[0].get_spy_log()[0].get_spied_village())
 
-        print_player_village()
+        # print_player_village()
 
         armies = []
         for agent in agents:
