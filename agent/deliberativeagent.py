@@ -1,5 +1,12 @@
 from agent.agent import Agent
 from agent.decisions import *
+from buildings.barracks import Barracks
+from buildings.farm import Farm
+from buildings.mine import Mine
+from buildings.quarry import Quarry
+from buildings.sawmill import Sawmill
+from buildings.wall import Wall
+from buildings.warehouse import Warehouse
 
 
 class DeliberativeAgent(Agent):
@@ -37,31 +44,21 @@ class DeliberativeAgent(Agent):
 
     def options(self):
         options = []
-        if self.can_upgrade(self.village.get_barracks()):
-            options.append(UpgradeBarracksDecision(self))
-        if self.can_upgrade(self.village.get_farm()):
-            options.append(UpgradeFarmDecision(self))
-        if self.can_upgrade(self.village.get_mine()):
-            options.append(UpgradeMineDecision(self))
-        if self.can_upgrade(self.village.get_quarry()):
-            options.append(UpgradeQuarryDecision(self))
-        if self.can_upgrade(self.village.get_sawmill()):
-            options.append(UpgradeSawmillDecision(self))
-        if self.can_upgrade(self.village.get_wall()):
-            options.append(UpgradeWallDecision(self))
-        if self.can_upgrade(self.village.get_warehouse()):
-            options.append(UpgradeWarehouseDecision(self))
+        for building in self.village.get_all_buildings():
+            if self.can_upgrade(building):
+                options.append(self.building_to_upgrade_action(building))
         options.append(UpgradeNothingDecision(self))
         return options
 
     def filter(self):
-        # Priority system, as follows (SUBJECT TO LOTS OF CHANGES):
+        # Priority system as follows (SUBJECT TO LOTS OF CHANGES, namely considering desires from other decision types):
         # - Upgrade farm if farm is full
         # - Upgrade warehouse if production of a resource is > 0.5 * warehouse capacity
-        # - Upgrade resource camp of resource with lowest amount
+        # - Upgrade resource camp, prioritizing resource with lowest amount
         # - Upgrade barracks
         # - Upgrade wall
         # - Upgrade warehouse if full
+        # - Upgrade farm if warehouse is full (just as a resource dump)
         # - Upgrade nothing
 
         # Farm
@@ -113,6 +110,9 @@ class DeliberativeAgent(Agent):
             for desire in self.desires:
                 if isinstance(desire, UpgradeWarehouseDecision):
                     return desire
+            for desire in self.desires:
+                if isinstance(desire, UpgradeFarmDecision):
+                    return desire
 
         # Nothing
         for desire in self.desires:
@@ -134,15 +134,15 @@ class DeliberativeAgent(Agent):
 
     def sound(self):
         for action in self.plan:
-            if self.building_of_action(action).is_max_level():
+            if action.to_building().is_max_level():
                 return False
         total_iron = 0
         total_stone = 0
         total_wood = 0
         for action in self.plan:
-            total_iron += self.cost_of_action(action)[0]
-            total_stone += self.cost_of_action(action)[1]
-            total_wood += self.cost_of_action(action)[2]
+            total_iron += self.cost_of_upgrade_action(action)[0]
+            total_stone += self.cost_of_upgrade_action(action)[1]
+            total_wood += self.cost_of_upgrade_action(action)[2]
         if total_iron > self.village.get_wood() or \
            total_stone > self.village.get_stone() or \
            total_wood > self.village.get_wood():
@@ -188,38 +188,27 @@ class DeliberativeAgent(Agent):
                 return False
         return True
 
-    def building_of_action(self, action):
-        if isinstance(action, UpgradeBarracksDecision):
-            return self.village.get_barracks()
-        elif isinstance(action, UpgradeFarmDecision):
-            return self.village.get_farm()
-        elif isinstance(action, UpgradeMineDecision):
-            return self.village.get_mine()
-        elif isinstance(action, UpgradeQuarryDecision):
-            return self.village.get_quarry()
-        elif isinstance(action, UpgradeSawmillDecision):
-            return self.village.get_sawmill()
-        elif isinstance(action, UpgradeWallDecision):
-            return self.village.get_wall()
-        elif isinstance(action, UpgradeWarehouseDecision):
-            return self.village.get_warehouse()
+    def building_to_upgrade_action(self, building):
+        if isinstance(building, Barracks):
+            return UpgradeBarracksDecision(self)
+        elif isinstance(building, Farm):
+            return UpgradeFarmDecision(self)
+        elif isinstance(building, Mine):
+            return UpgradeMineDecision(self)
+        elif isinstance(building, Quarry):
+            return UpgradeQuarryDecision(self)
+        elif isinstance(building, Sawmill):
+            return UpgradeSawmillDecision(self)
+        elif isinstance(building, Wall):
+            return UpgradeWallDecision(self)
+        elif isinstance(building, Warehouse):
+            return UpgradeWarehouseDecision(self)
         else:
-            return None
+            return UpgradeNothingDecision(self)
 
-    def cost_of_action(self, action):
-        if isinstance(action, UpgradeBarracksDecision):
-            return self.village.get_barracks().get_cost_of_upgrade()
-        elif isinstance(action, UpgradeFarmDecision):
-            return self.village.get_farm().get_cost_of_upgrade()
-        elif isinstance(action, UpgradeMineDecision):
-            return self.village.get_mine().get_cost_of_upgrade()
-        elif isinstance(action, UpgradeQuarryDecision):
-            return self.village.get_quarry().get_cost_of_upgrade()
-        elif isinstance(action, UpgradeSawmillDecision):
-            return self.village.get_sawmill().get_cost_of_upgrade()
-        elif isinstance(action, UpgradeWallDecision):
-            return self.village.get_wall().get_cost_of_upgrade()
-        elif isinstance(action, UpgradeWarehouseDecision):
-            return self.village.get_warehouse().get_cost_of_upgrade()
-        else:
+    @staticmethod
+    def cost_of_upgrade_action(action):
+        if isinstance(action, UpgradeNothingDecision):
             return [0, 0, 0]
+        else:
+            return action.to_building().get_cost_of_upgrade()

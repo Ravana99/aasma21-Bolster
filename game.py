@@ -13,7 +13,7 @@ def start_game(agent_list, village_list):
 
     turn = 1
 
-    while True:
+    while turn <= 100:
         print(f"\n\n*************** TURN {turn} ***************\n\n")
 
         print_all_villages()
@@ -85,6 +85,10 @@ def start_game(agent_list, village_list):
             village.regenerate()
 
         turn += 1
+
+    print()
+    print()
+    print("Turn limit reached.")
 
 
 def show_player_reports():
@@ -183,7 +187,7 @@ def get_agent_by_village_name(name):
 def print_all_villages():
     for village in villages:
         print(village)
-    input("\nPress Enter to continue...\n")
+    # input("\nPress Enter to continue...\n")
 
 
 def print_player_village():

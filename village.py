@@ -65,6 +65,9 @@ class Village:
     def get_warehouse(self):
         return self.warehouse
 
+    def get_all_buildings(self):
+        return [self.barracks, self.farm, self.mine, self.quarry, self.sawmill, self.wall, self.warehouse]
+
     def get_health(self):
         return self.health
 

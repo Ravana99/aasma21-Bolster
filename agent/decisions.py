@@ -13,11 +13,17 @@ class Decision:
 class UpgradeDecision(Decision):
     """DO NOT INSTANTIATE!"""
 
+    def to_building(self):
+        raise NotImplementedError()
+
     def execute(self):
         raise NotImplementedError()
 
 
 class UpgradeBarracksDecision(UpgradeDecision):
+    def to_building(self):
+        return self.agent.get_barracks()
+
     def execute(self):
         print(f"{self.agent.get_name()} has upgraded the Barracks.")
         print()
@@ -25,6 +31,9 @@ class UpgradeBarracksDecision(UpgradeDecision):
 
 
 class UpgradeFarmDecision(UpgradeDecision):
+    def to_building(self):
+        return self.agent.get_farm()
+
     def execute(self):
         print(f"{self.agent.get_name()} has upgraded the Farm.")
         print()
@@ -32,6 +41,9 @@ class UpgradeFarmDecision(UpgradeDecision):
 
 
 class UpgradeMineDecision(UpgradeDecision):
+    def to_building(self):
+        return self.agent.get_mine()
+
     def execute(self):
         print(f"{self.agent.get_name()} has upgraded the Mine.")
         print()
@@ -39,6 +51,9 @@ class UpgradeMineDecision(UpgradeDecision):
 
 
 class UpgradeQuarryDecision(UpgradeDecision):
+    def to_building(self):
+        return self.agent.get_quarry()
+
     def execute(self):
         print(f"{self.agent.get_name()} has upgraded the Quarry.")
         print()
@@ -46,6 +61,9 @@ class UpgradeQuarryDecision(UpgradeDecision):
 
 
 class UpgradeSawmillDecision(UpgradeDecision):
+    def to_building(self):
+        return self.agent.get_sawmill()
+
     def execute(self):
         print(f"{self.agent.get_name()} has upgraded the Sawmill.")
         print()
@@ -53,6 +71,9 @@ class UpgradeSawmillDecision(UpgradeDecision):
 
 
 class UpgradeWallDecision(UpgradeDecision):
+    def to_building(self):
+        return self.agent.get_wall()
+
     def execute(self):
         print(f"{self.agent.get_name()} has upgraded the Wall.")
         print()
@@ -60,6 +81,9 @@ class UpgradeWallDecision(UpgradeDecision):
 
 
 class UpgradeWarehouseDecision(UpgradeDecision):
+    def to_building(self):
+        return self.agent.get_warehouse()
+
     def execute(self):
         print(f"{self.agent.get_name()} has upgraded the Warehouse.")
         print()
@@ -67,6 +91,9 @@ class UpgradeWarehouseDecision(UpgradeDecision):
 
 
 class UpgradeNothingDecision(UpgradeDecision):
+    def to_building(self):
+        return None
+
     def execute(self):
         print(f"{self.agent.get_name()} has upgraded nothing.")
         print()
