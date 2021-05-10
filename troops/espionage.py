@@ -21,6 +21,9 @@ class Espionage:
     def set_new(self, new):
         self.new = new
 
+    def get_turn(self):
+        return self.turn
+
     def set_turn(self, turn):
         self.turn = turn
 

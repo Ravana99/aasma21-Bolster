@@ -1,4 +1,4 @@
-from random import random
+import random
 from agent.agent import Agent
 from agent.decisions import *
 from math import ceil
@@ -111,11 +111,11 @@ class ReactiveAgent(Agent):
         raise Exception("Should not get here! Failed in upgrade_filter()")
 
     def recruit_decision(self):
-        # TODO: add way for agent to adapt its stance based on new reports and new espionages
+        # TODO: add way for agent to adapt its stance based on recent reports and recent espionages
         self.possible_recruit_decisions = self.recruit_options()
         action = self.recruit_filter()
         assert issubclass(action.__class__, RecruitDecision)
-        return action.execute(ceil(action.n * self.troop_focus * random()))
+        return action.execute(ceil(action.n * self.troop_focus * random.random()))
 
     def recruit_options(self):
         options = []
@@ -251,7 +251,29 @@ class ReactiveAgent(Agent):
         return options
 
     def spying_filter(self):
-        # TODO
+        # Priority system:
+        # - If village has no spies, don't spy (obviously)
+        # - Among villages that haven't been spied in the last 10 turns, pick one at random
+
+        if len(self.possible_spying_decisions) == 1:
+            return self.possible_spying_decisions[0]
+
+        villages_to_spy = [decision.enemy_village_name
+                           for decision in self.possible_spying_decisions
+                           if isinstance(decision, SpyVillageDecision)]
+
+        print(villages_to_spy)
+        for espionage in self.spy_log:
+            if espionage.get_turn() > self.turn - 10:
+                villages_to_spy.remove(espionage.enemy_village_name)
+        print(villages_to_spy)
+
+        if len(villages_to_spy) > 0:
+            village_to_spy = random.choice(villages_to_spy)
+            for decision in self.possible_spying_decisions:
+                if decision.enemy_village_name == village_to_spy:
+                    return decision
+
         for decision in self.possible_spying_decisions:
             if isinstance(decision, SpyNothingDecision):
                 return decision
@@ -279,7 +301,13 @@ class ReactiveAgent(Agent):
         return options
 
     def attack_filter(self):
-        # TODO
+        if self.stance == Stance.NEUTRAL:
+            pass
+        elif self.stance == Stance.OFFENSIVE:
+            pass
+        else:
+            pass
+
         for decision in self.possible_attack_decisions:
             if isinstance(decision, AttackNothingDecision):
                 return decision
