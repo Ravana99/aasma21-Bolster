@@ -18,6 +18,7 @@ class Agent:
         self.other_villages = []
         self.report_log = []
         self.spy_log = []
+        self.turn = 0
 
     def upgrade_decision(self):
         raise NotImplementedError()
@@ -195,7 +196,8 @@ class Agent:
     def set_other_villages(self, villages):
         self.other_villages = villages
 
-    # AUX
+    def set_turn(self, turn):
+        self.turn = turn
 
     def can_upgrade(self, building):
         if building.is_max_level():

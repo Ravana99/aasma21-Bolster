@@ -42,6 +42,8 @@ class Report:
         self.defending_village_health_before = None
         self.damage_dealt = None
 
+        self.turn = -1
+
     def get_winner(self):
         return self.winner
 
@@ -62,6 +64,9 @@ class Report:
 
     def set_new(self, new):
         self.new = new
+
+    def set_turn(self, turn):
+        self.turn = turn
 
     def set_ending_troops(self, ending_attacking_warriors, ending_attacking_archers,
                           ending_attacking_catapults, ending_attacking_cavalrymen,
@@ -100,7 +105,9 @@ class Report:
         self.ending_defending_cavalrymen = None
 
     def __repr__(self):
-        string = f"Attacking village: {self.attacking_village} "
+        string = "\n\n~~~~~~~~~~ NEW REPORT ~~~~~~~~~~\n"
+        string += f"(on turn {self.turn})\n"
+        string += f"Attacking village: {self.attacking_village} "
         string += f"({'winner' if self.attacking_village == self.winner else 'loser'})\n"
         string += f"Defending village: {self.defending_village} "
         string += f"({'winner' if self.defending_village == self.winner else 'loser'})\n"

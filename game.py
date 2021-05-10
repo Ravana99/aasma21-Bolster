@@ -17,6 +17,9 @@ def start_game(agent_list, village_list):
     while turn <= 200:
         print(f"\n\n*************** TURN {turn} ***************\n\n")
 
+        for agent in agents:
+            agent.set_turn(turn)
+
         print_all_villages()
         # print_player_village()
 
@@ -46,13 +49,9 @@ def start_game(agent_list, village_list):
             for espionage in agent.get_spy_log():
                 espionage.set_new(False)
 
-        process_spying(spying_missions)
+        process_spying(spying_missions, turn)
         if agents[0].get_name() == "Player" and agents[0].get_spy_log() and agents[0].get_spy_log()[0].new:
-            print()
-            print()
-            print("~~~~~~~~~~ NEW ESPIONAGE ~~~~~~~~~~")
-            print()
-            print(agents[0].get_spy_log()[0].get_spied_village())
+            print(agents[0].get_spy_log()[0])
 
         # print_player_village()
 
@@ -62,7 +61,7 @@ def start_game(agent_list, village_list):
             if decision is not None:
                 armies.append(decision)
 
-        all_reports = process_attacks(armies)
+        all_reports = process_attacks(armies, turn)
         return_home(armies, all_reports)
 
         # "New" reports become "old"
@@ -111,22 +110,19 @@ def show_player_reports():
         for report in agents[0].get_report_log():
             # Didn't feel like writing dozens of getters for the report...
             if report.new:
-                print()
-                print()
-                print("~~~~~~~~~~ NEW REPORT ~~~~~~~~~~")
-                print()
                 print(report)
 
 
-def process_spying(spying_missions):
+def process_spying(spying_missions, turn):
     for mission in spying_missions:
         agent = get_agent_by_village_name(mission.get_village_name())
         enemy_village = deepcopy(get_village_by_name(mission.get_enemy_village_name()))
         mission.set_spied_village(enemy_village)
+        mission.set_turn(turn)
         agent.add_espionage(mission)
 
 
-def process_attacks(attacking_armies):
+def process_attacks(attacking_armies, turn):
     shuffle(attacking_armies)      # Order of attacks is randomized in case of multiple attacks on the same village
 
     all_reports = []
@@ -138,6 +134,7 @@ def process_attacks(attacking_armies):
         plundered_resources = defending_village.plundered(report.get_resources_to_plunder())
         report.set_plundered_resources(plundered_resources)
         report.set_defending_village_health_before(defending_village.get_health())
+        report.set_turn(turn)
         all_reports.append(report)
         defending_village.lower_health(report.get_damage_dealt())
         defending_village.update_troops(defending_army)
