@@ -39,7 +39,7 @@ class ReactiveAgent(Agent):
         return options
 
     def upgrade_filter(self):
-        # Priority system as follows (SUBJECT TO CHANGES):
+        # Priority system as follows:
         # - Upgrade farm if farm is full
         # - Upgrade warehouse if production of a resource is > 0.5 * warehouse capacity
         # - Upgrade resource camp, prioritizing resource with lowest amount
@@ -164,8 +164,8 @@ class ReactiveAgent(Agent):
         # Priority system:
         # - If farm is maxed, full and has at least 20 warriors, demote 20 warriors (to replace with better troops)
         # - If neutral:
-        # --- Spies
         # --- Cavalrymen
+        # --- Spies
         # --- Warriors
         # --- Nothing
         # - If offensive:
@@ -201,13 +201,13 @@ class ReactiveAgent(Agent):
 
         elif self.stance == Stance.OFFENSIVE:
             for decision in self.possible_recruit_decisions:
+                if isinstance(decision, RecruitSpiesDecision):
+                    return decision
+            for decision in self.possible_recruit_decisions:
                 if isinstance(decision, RecruitCavalrymenDecision):
                     return decision
             for decision in self.possible_recruit_decisions:
                 if isinstance(decision, RecruitCatapultsDecision):
-                    return decision
-            for decision in self.possible_recruit_decisions:
-                if isinstance(decision, RecruitSpiesDecision):
                     return decision
             for decision in self.possible_recruit_decisions:
                 if isinstance(decision, RecruitWarriorsDecision):
@@ -218,13 +218,13 @@ class ReactiveAgent(Agent):
 
         else:
             for decision in self.possible_recruit_decisions:
+                if isinstance(decision, RecruitSpiesDecision):
+                    return decision
+            for decision in self.possible_recruit_decisions:
                 if isinstance(decision, RecruitCavalrymenDecision):
                     return decision
             for decision in self.possible_recruit_decisions:
                 if isinstance(decision, RecruitArchersDecision):
-                    return decision
-            for decision in self.possible_recruit_decisions:
-                if isinstance(decision, RecruitSpiesDecision):
                     return decision
             for decision in self.possible_recruit_decisions:
                 if isinstance(decision, RecruitWarriorsDecision):
@@ -262,11 +262,9 @@ class ReactiveAgent(Agent):
                            for decision in self.possible_spying_decisions
                            if isinstance(decision, SpyVillageDecision)]
 
-        print(villages_to_spy)
         for espionage in self.spy_log:
-            if espionage.get_turn() > self.turn - 10:
+            if espionage.get_turn() > self.turn - 10 and espionage.enemy_village_name in villages_to_spy:
                 villages_to_spy.remove(espionage.enemy_village_name)
-        print(villages_to_spy)
 
         if len(villages_to_spy) > 0:
             village_to_spy = random.choice(villages_to_spy)
@@ -284,10 +282,10 @@ class ReactiveAgent(Agent):
         self.possible_attack_decisions = self.attack_options()
         action = self.attack_filter()
         assert issubclass(action.__class__, AttackDecision)
-        return action.execute()
+        return action.execute(action.n_warriors, action.n_archers, action.n_catapults, action.n_cavalrymen)
 
     def attack_options(self):
-        if self.village.get_troops() == 0:
+        if self.village.get_troops() - self.village.get_spies().get_n() == 0:
             return [AttackNothingDecision(self)]
         options = []
         for village in self.get_other_villages():
@@ -301,12 +299,93 @@ class ReactiveAgent(Agent):
         return options
 
     def attack_filter(self):
+        # Priority system:
+        # - If defeated in the last {recovery_turns}, don't attack
+        # - If agent has a victorious attack in the {last_turns} against villages, attack 1 of those at random
+        # - If agent has an espionage in the {last_turns} and self.attack_power > {magnitude} * other.defense_power,
+        #   attack the one with the largest difference (easiest win)
+
         if self.stance == Stance.NEUTRAL:
-            pass
+            recovery_turns = 10
+            last_turns = 5
+            magnitude = 1.1
+            attack_power = self.village.get_attack_power_no_archers()
+            warrior_send_ratio = 1
+            archer_send_ratio = 0
+            catapult_send_ratio = 1
+            cavalrymen_send_ratio = 1
         elif self.stance == Stance.OFFENSIVE:
-            pass
+            recovery_turns = 10
+            last_turns = 10
+            magnitude = 1
+            attack_power = self.village.get_attack_power()
+            warrior_send_ratio = 1
+            archer_send_ratio = 1
+            catapult_send_ratio = 1
+            cavalrymen_send_ratio = 1
         else:
-            pass
+            recovery_turns = 10
+            last_turns = 3
+            magnitude = 2.5
+            attack_power = self.village.get_attack_power_no_archers()
+            warrior_send_ratio = 0.5
+            archer_send_ratio = 0
+            catapult_send_ratio = 1
+            cavalrymen_send_ratio = 0.5
+
+        for report in self.report_log:
+            if report.get_loser() == self.village.get_name() and report.get_turn() > self.turn - recovery_turns:
+                for decision in self.possible_attack_decisions:
+                    if isinstance(decision, AttackNothingDecision):
+                        return decision
+
+        villages_to_attack = []
+        for report in self.report_log:
+            if report.get_turn() > self.turn - last_turns and \
+               report.get_winner() == self.village.get_name() and \
+               report.get_attacking_village() == self.village.get_name() and \
+               report.get_defending_village() in self.other_villages:
+                villages_to_attack.append(report.get_defending_village())
+
+        if len(villages_to_attack) > 0:
+            village_to_attack = random.choice(villages_to_attack)
+            for decision in self.possible_attack_decisions:
+                if decision.enemy_village_name == village_to_attack:
+                    decision.n_warriors = ceil(warrior_send_ratio * decision.n_warriors)
+                    decision.n_archers = ceil(archer_send_ratio * decision.n_archers)
+                    decision.n_catapults = ceil(catapult_send_ratio * decision.n_catapults)
+                    decision.n_cavalrymen = ceil(cavalrymen_send_ratio * decision.n_cavalrymen)
+                    # If agent has no troops suitable for attacking, don't send one
+                    if decision.n_warriors + decision.n_archers + decision.n_catapults + decision.n_cavalrymen <= 0:
+                        for decision2 in self.possible_attack_decisions:
+                            if isinstance(decision2, AttackNothingDecision):
+                                decision = decision2
+                    return decision
+
+        for espionage in self.spy_log:
+            if espionage.get_turn() > self.turn - last_turns and \
+               self.village.get_attack_power() > magnitude * espionage.get_spied_village().get_defense_power() and \
+               espionage.get_enemy_village_name() in self.other_villages:
+                villages_to_attack.append((espionage.get_enemy_village_name(),
+                                           attack_power - espionage.get_spied_village().get_defense_power()))
+
+        if len(villages_to_attack) > 0:
+            village_to_attack = villages_to_attack[0]
+            for village in villages_to_attack[1:]:
+                if village[1] > village_to_attack[1]:
+                    village_to_attack = village
+            for decision in self.possible_attack_decisions:
+                if decision.enemy_village_name == village_to_attack[0]:
+                    decision.n_warriors = ceil(warrior_send_ratio * decision.n_warriors)
+                    decision.n_archers = ceil(archer_send_ratio * decision.n_archers)
+                    decision.n_catapults = ceil(catapult_send_ratio * decision.n_catapults)
+                    decision.n_cavalrymen = ceil(cavalrymen_send_ratio * decision.n_cavalrymen)
+                    # If agent has no troops suitable for attacking, don't send one
+                    if decision.n_warriors + decision.n_archers + decision.n_catapults + decision.n_cavalrymen <= 0:
+                        for decision2 in self.possible_attack_decisions:
+                            if isinstance(decision2, AttackNothingDecision):
+                                decision = decision2
+                    return decision
 
         for decision in self.possible_attack_decisions:
             if isinstance(decision, AttackNothingDecision):

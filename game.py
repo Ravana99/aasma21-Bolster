@@ -4,6 +4,7 @@ from copy import deepcopy
 
 agents = []
 villages = []
+TURN_LIMIT = 500
 
 
 def start_game(agent_list, village_list):
@@ -14,19 +15,16 @@ def start_game(agent_list, village_list):
 
     turn = 1
 
-    while turn <= 200:
+    while turn <= TURN_LIMIT:
         print(f"\n\n*************** TURN {turn} ***************\n\n")
 
         for agent in agents:
             agent.set_turn(turn)
 
-        print_all_villages()
-        # print_player_village()
+        print_villages()
 
         for agent in agents:
             agent.upgrade_decision()
-
-        # print_player_village()
 
         for agent in agents:
             agent.recruit_decision()
@@ -35,8 +33,6 @@ def start_game(agent_list, village_list):
         for agent in agents:
             for espionage in agent.get_spy_log():
                 espionage.set_new(False)
-
-        # print_player_village()
 
         spying_missions = []
         for agent in agents:
@@ -52,8 +48,6 @@ def start_game(agent_list, village_list):
         process_spying(spying_missions, turn)
         if agents[0].get_name() == "Player" and agents[0].get_spy_log() and agents[0].get_spy_log()[0].new:
             print(agents[0].get_spy_log()[0])
-
-        # print_player_village()
 
         armies = []
         for agent in agents:
@@ -102,7 +96,10 @@ def start_game(agent_list, village_list):
 
     print()
     print()
-    print("Turn limit reached.")
+    if turn == TURN_LIMIT:
+        print("Turn limit reached.")
+    else:
+        print(f"Game reached {turn - 1} turns.")
 
 
 def show_player_reports():
@@ -195,11 +192,9 @@ def get_agent_by_village_name(name):
     return None
 
 
-def print_all_villages():
-    for village in villages:
-        print(village)
-    # input("\nPress Enter to continue...\n")
-
-
-def print_player_village():
-    print(villages[0])
+def print_villages():
+    if agents[0].get_name() == "Player":
+        print(villages[0])
+    else:
+        for village in villages:
+            print(village)

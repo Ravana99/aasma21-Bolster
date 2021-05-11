@@ -17,10 +17,9 @@ def main():
     play_again = True
 
     while play_again:
-        agents = [ReactiveAgent(0, Stance.NEUTRAL),
+        agents = [ReactiveAgent(0, Stance.DEFENSIVE),
                   ReactiveAgent(1, Stance.OFFENSIVE),
-                  ReactiveAgent(2, Stance.DEFENSIVE)]
-        # agents = [DeliberativeAgent(i) if i > 0 else Player(i) for i in range(n_players)]
+                  ReactiveAgent(2, Stance.NEUTRAL)]
         villages = [agent.get_village() for agent in agents]
         for i, agent in enumerate(agents):
             agent.set_other_villages([village.name for j, village in enumerate(villages) if i != j])

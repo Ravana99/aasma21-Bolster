@@ -53,6 +53,9 @@ class Report:
     def get_attacking_village(self):
         return self.attacking_village
 
+    def get_defending_village(self):
+        return self.defending_village
+
     def get_resources_to_plunder(self):
         return self.resources_to_plunder
 
@@ -64,6 +67,9 @@ class Report:
 
     def set_new(self, new):
         self.new = new
+
+    def get_turn(self):
+        return self.turn
 
     def set_turn(self, turn):
         self.turn = turn

@@ -17,7 +17,7 @@ from troops.exceptions import InvalidTroopsToSendOffException
 
 class Village:
 
-    MAX_HEALTH = 1000
+    MAX_HEALTH = 10000
     STARTING_RESOURCES = 100
 
     def __init__(self, i):
@@ -234,7 +234,7 @@ class Village:
     # HEALTH
 
     def regenerate(self, health=20):
-        self.health = min(self.health + health, 1000)
+        self.health = min(self.health + health, Village.MAX_HEALTH)
 
     def lower_health(self, health):
         self.health -= health
@@ -271,6 +271,11 @@ class Village:
     def get_attack_power(self):
         return (self.warriors.get_attack_power() +
                 self.archers.get_attack_power() +
+                self.catapults.get_attack_power() +
+                self.cavalrymen.get_attack_power())
+
+    def get_attack_power_no_archers(self):
+        return (self.warriors.get_attack_power() +
                 self.catapults.get_attack_power() +
                 self.cavalrymen.get_attack_power())
 
