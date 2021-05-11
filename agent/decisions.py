@@ -1,4 +1,4 @@
-visualize = False
+visualize = True
 
 
 def vis_print(*kwargs, end="\n"):
