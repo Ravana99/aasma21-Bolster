@@ -19,6 +19,7 @@ class Agent:
         self.report_log = []
         self.spy_log = []
         self.turn = 0
+        self.decision_log = []
 
     def upgrade_decision(self):
         raise NotImplementedError()
@@ -183,6 +184,9 @@ class Agent:
 
     def add_espionage(self, espionage):
         self.spy_log.insert(0, espionage)
+
+    def add_decision(self, decision):
+        self.decision_log.insert(0, decision)
 
     def remove_other_village(self, name):
         self.other_villages.remove(name)
