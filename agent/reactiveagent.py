@@ -42,9 +42,10 @@ class ReactiveAgent(Agent):
         # Priority system as follows:
         # - Upgrade farm if farm is full
         # - Upgrade warehouse if production of a resource is > 0.5 * warehouse capacity
-        # - Upgrade resource camp, prioritizing resource with lowest amount
         # - Upgrade barracks
-        # - Upgrade wall
+        # - Upgrade wall if agent is defensive
+        # - Upgrade resource camp, prioritizing resource with lowest amount
+        # - Upgrade wall if agent is not defensive
         # - Upgrade warehouse if full
         # - Upgrade farm if warehouse is full (just as a resource dump)
         # - Upgrade nothing
@@ -64,6 +65,10 @@ class ReactiveAgent(Agent):
         # Barracks
         decisions.append(self.choose(self.possible_upgrade_decisions, UpgradeBarracksDecision))
 
+        # Wall (if defensive)
+        if self.stance == Stance.DEFENSIVE:
+            decisions.append(self.choose(self.possible_upgrade_decisions, UpgradeWallDecision))
+
         # Resource camp
         if self.village.get_iron() >= self.village.get_stone() >= self.village.get_wood():
             priorities = [UpgradeMineDecision(self), UpgradeQuarryDecision(self), UpgradeSawmillDecision(self)]
@@ -80,8 +85,9 @@ class ReactiveAgent(Agent):
         for i in range(3):
             decisions.append(self.choose(self.possible_upgrade_decisions, priorities[i].__class__))
 
-        # Wall
-        decisions.append(self.choose(self.possible_upgrade_decisions, UpgradeWallDecision))
+        # Wall (if not defensive)
+        if self.stance != Stance.DEFENSIVE:
+            decisions.append(self.choose(self.possible_upgrade_decisions, UpgradeWallDecision))
 
         if self.village.get_iron() == self.village.get_warehouse().capacity() or \
            self.village.get_stone() == self.village.get_warehouse().capacity() or \
@@ -178,25 +184,14 @@ class ReactiveAgent(Agent):
             decisions.append(self.choose(self.possible_recruit_decisions, DemoteArchersDecision, demote_max=20))
             decisions.append(self.choose(self.possible_recruit_decisions, DemoteCatapultsDecision, demote_max=20))
 
-        if self.stance == Stance.NEUTRAL:
-            decisions.append(self.choose(self.possible_recruit_decisions, RecruitSpiesDecision))
+        decisions.append(self.choose(self.possible_recruit_decisions, RecruitSpiesDecision))
+        decisions.append(self.choose(self.possible_recruit_decisions, RecruitCavalrymenDecision))
+        if self.stance == Stance.OFFENSIVE:
             decisions.append(self.choose(self.possible_recruit_decisions, RecruitCavalrymenDecision))
-            decisions.append(self.choose(self.possible_recruit_decisions, RecruitWarriorsDecision))
-            decisions.append(self.choose(self.possible_recruit_decisions, RecruitNothingDecision))
-
-        elif self.stance == Stance.OFFENSIVE:
-            decisions.append(self.choose(self.possible_recruit_decisions, RecruitSpiesDecision))
-            decisions.append(self.choose(self.possible_recruit_decisions, RecruitCavalrymenDecision))
-            decisions.append(self.choose(self.possible_recruit_decisions, RecruitCatapultsDecision))
-            decisions.append(self.choose(self.possible_recruit_decisions, RecruitWarriorsDecision))
-            decisions.append(self.choose(self.possible_recruit_decisions, RecruitNothingDecision))
-
-        else:
-            decisions.append(self.choose(self.possible_recruit_decisions, RecruitSpiesDecision))
-            decisions.append(self.choose(self.possible_recruit_decisions, RecruitCavalrymenDecision))
+        elif self.stance == Stance.DEFENSIVE:
             decisions.append(self.choose(self.possible_recruit_decisions, RecruitArchersDecision))
-            decisions.append(self.choose(self.possible_recruit_decisions, RecruitWarriorsDecision))
-            decisions.append(self.choose(self.possible_recruit_decisions, RecruitNothingDecision))
+        decisions.append(self.choose(self.possible_recruit_decisions, RecruitWarriorsDecision))
+        decisions.append(self.choose(self.possible_recruit_decisions, RecruitNothingDecision))
 
         return self.final_decision(decisions)
 
