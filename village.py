@@ -280,7 +280,8 @@ class Village:
                 self.cavalrymen.get_attack_power())
 
     def get_defense_power(self):
-        return (self.warriors.get_defense_power() +
+        return self.wall.defense_bonus() * \
+               (self.warriors.get_defense_power() +
                 self.archers.get_defense_power() +
                 self.catapults.get_defense_power() +
                 self.cavalrymen.get_defense_power())

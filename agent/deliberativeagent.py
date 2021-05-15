@@ -4,9 +4,11 @@ from agent.decisions import *
 
 class DeliberativeAgent(Agent):
 
-    desires = []
-    intention = None
-    plan = []
+    def __init__(self, i):
+        super().__init__(i)
+        self.desires = []
+        self.intention = None
+        self.plan = []
 
     def upgrade_decision(self):
         self.brf()
@@ -32,119 +34,40 @@ class DeliberativeAgent(Agent):
                     assert issubclass(action.__class__, UpgradeDecision)
                     return action.execute()
 
-    def brf(self):
+    @staticmethod
+    def brf():
         pass
 
-    def options(self):
-        options = []
-        for building in self.village.get_all_buildings():
-            if self.can_upgrade(building):
-                options.append(self.building_to_upgrade_action(building))
-        options.append(UpgradeNothingDecision(self))
-        return options
+    @staticmethod
+    def options():
+        return []
 
-    def filter(self):
-        # Priority system as follows (SUBJECT TO LOTS OF CHANGES, namely considering desires from other decision types):
-        # - Upgrade farm if farm is full
-        # - Upgrade warehouse if production of a resource is > 0.5 * warehouse capacity
-        # - Upgrade resource camp, prioritizing resource with lowest amount
-        # - Upgrade barracks
-        # - Upgrade wall
-        # - Upgrade warehouse if full
-        # - Upgrade farm if warehouse is full (just as a resource dump)
-        # - Upgrade nothing
+    @staticmethod
+    def filter():
+        return 0
 
-        # Farm
-        if self.village.get_troops() == self.get_farm().capacity():
-            for desire in self.desires:
-                if isinstance(desire, UpgradeFarmDecision):
-                    return desire
+    @staticmethod
+    def make_plan():
+        return []
 
-        # Warehouse (if producing a lot)
-        if self.village.get_mine().production() > 0.5 * self.village.get_warehouse().capacity() or \
-           self.village.get_quarry().production() > 0.5 * self.village.get_warehouse().capacity() or \
-           self.village.get_sawmill().production() > 0.5 * self.village.get_warehouse().capacity():
-            for desire in self.desires:
-                if isinstance(desire, UpgradeWarehouseDecision):
-                    return desire
-
-        # Barracks
-        for desire in self.desires:
-            if isinstance(desire, UpgradeBarracksDecision):
-                return desire
-
-        # Resource camp
-        if self.village.get_iron() >= self.village.get_stone() >= self.village.get_wood():
-            priorities = [UpgradeMineDecision(self), UpgradeQuarryDecision(self), UpgradeSawmillDecision(self)]
-        elif self.village.get_iron() >= self.village.get_wood() >= self.village.get_stone():
-            priorities = [UpgradeMineDecision(self), UpgradeSawmillDecision(self), UpgradeQuarryDecision(self)]
-        elif self.village.get_stone() >= self.village.get_iron() >= self.village.get_wood():
-            priorities = [UpgradeQuarryDecision(self), UpgradeMineDecision(self), UpgradeSawmillDecision(self)]
-        elif self.village.get_stone() >= self.village.get_wood() >= self.village.get_iron():
-            priorities = [UpgradeQuarryDecision(self), UpgradeSawmillDecision(self), UpgradeMineDecision(self)]
-        elif self.village.get_wood() >= self.village.get_iron() >= self.village.get_stone():
-            priorities = [UpgradeSawmillDecision(self), UpgradeMineDecision(self), UpgradeQuarryDecision(self)]
-        else:
-            priorities = [UpgradeSawmillDecision(self), UpgradeQuarryDecision(self), UpgradeMineDecision(self)]
-        for i in range(3):
-            for desire in self.desires:
-                if isinstance(desire, priorities[i].__class__):
-                    return desire
-
-        # Wall
-        for desire in self.desires:
-            if isinstance(desire, UpgradeWallDecision):
-                return desire
-
-        if self.village.get_iron() == self.village.get_warehouse().capacity() or \
-           self.village.get_stone() == self.village.get_warehouse().capacity() or \
-           self.village.get_wood() == self.village.get_warehouse().capacity():
-            # Warehouse (if full of at least one resource)
-            for desire in self.desires:
-                if isinstance(desire, UpgradeWarehouseDecision):
-                    return desire
-            # Farm (if warehouse is full of at least one resource, just to dump resources)
-            for desire in self.desires:
-                if isinstance(desire, UpgradeFarmDecision):
-                    return desire
-
-        # Nothing
-        for desire in self.desires:
-            if isinstance(desire, UpgradeNothingDecision):
-                return desire
-
-        raise Exception("Should not get here! Failed in upgrade_filter()")
-
-    def make_plan(self):
-        return [self.intention]
-
-    def succeeded_intention(self):
+    @staticmethod
+    def succeeded_intention():
         return False
 
-    def impossible_intention(self):
+    @staticmethod
+    def impossible_intention():
         return False
 
-    def sound(self):
-        for action in self.plan:
-            if action.to_building().is_max_level():
-                return False
-        total_iron = 0
-        total_stone = 0
-        total_wood = 0
-        for action in self.plan:
-            total_iron += self.cost_of_upgrade_action(action)[0]
-            total_stone += self.cost_of_upgrade_action(action)[1]
-            total_wood += self.cost_of_upgrade_action(action)[2]
-        if total_iron > self.village.get_wood() or \
-           total_stone > self.village.get_stone() or \
-           total_wood > self.village.get_wood():
-            return False
+    @staticmethod
+    def sound():
         return True
 
-    def remake_plan(self):
-        return [UpgradeNothingDecision(self)]
+    @staticmethod
+    def remake_plan():
+        return []
 
-    def reconsider(self):
+    @staticmethod
+    def reconsider():
         return True
 
     def recruit_decision(self):

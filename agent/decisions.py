@@ -251,17 +251,15 @@ class RecruitNothingDecision(RecruitDecision):
 class SpyingDecision(Decision):
     """DO NOT INSTANTIATE!"""
 
-    enemy_village_name = ""
+    def __init__(self, agent, enemy_village_name=""):
+        super().__init__(agent)
+        self.enemy_village_name = enemy_village_name
 
     def execute(self):
         raise NotImplementedError()
 
 
 class SpyVillageDecision(SpyingDecision):
-    def __init__(self, agent, enemy_village_name):
-        super().__init__(agent)
-        self.enemy_village_name = enemy_village_name
-
     def execute(self):
         vis_print(f"{self.agent.get_name()} has spied {self.enemy_village_name}.")
         vis_print()

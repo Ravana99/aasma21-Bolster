@@ -1,14 +1,8 @@
 import random
 from agent.agent import Agent
 from agent.decisions import *
+from agent.stance import Stance
 from math import ceil
-import enum
-
-
-class Stance(enum.Enum):
-    NEUTRAL = 0
-    OFFENSIVE = 1
-    DEFENSIVE = 2
 
 
 class ReactiveAgent(Agent):
@@ -16,15 +10,22 @@ class ReactiveAgent(Agent):
     def __init__(self, i, stance):
         super().__init__(i)
         self.stance = stance
-
-    possible_upgrade_decisions = []
-    possible_recruit_decisions = []
-    possible_spying_decisions = []
-    possible_attack_decisions = []
-    stance = Stance.DEFENSIVE
-    troop_focus = 0.5
+        self.stance_history = [(0, self.stance)]
+        self.previous_attack_powers = [0] * 10
+        self.possible_upgrade_decisions = []
+        self.possible_recruit_decisions = []
+        self.possible_spying_decisions = []
+        self.possible_attack_decisions = []
+        self.turns_since_last_attack = 0
+        self.turns_since_last_defense = 0
+        self.turns_since_last_attack_loss = 0
+        self.turns_since_last_defense_loss = 0
+        self.troop_focus = 0.5
 
     def upgrade_decision(self):
+        self.update_state()
+        self.change_stance()
+
         self.possible_upgrade_decisions = self.upgrade_options()
         action = self.upgrade_filter()
         assert issubclass(action.__class__, UpgradeDecision)
@@ -265,46 +266,19 @@ class ReactiveAgent(Agent):
         # - If agent has an espionage in the {last_turns} and self.attack_power > {magnitude} * other.defense_power,
         #   attack the one with the largest difference (easiest win)
 
-        if self.stance == Stance.NEUTRAL:
-            recovery_turns = 5
-            last_turns = 5
-            magnitude = 1.1
-            attack_power = self.village.get_attack_power_no_archers()
-            warrior_send_ratio = 1
-            archer_send_ratio = 0
-            catapult_send_ratio = 1
-            cavalrymen_send_ratio = 1
-        elif self.stance == Stance.OFFENSIVE:
-            recovery_turns = 3
-            last_turns = 10
-            magnitude = 1
-            attack_power = self.village.get_attack_power()
-            warrior_send_ratio = 1
-            archer_send_ratio = 1
-            catapult_send_ratio = 1
-            cavalrymen_send_ratio = 1
-        else:
-            recovery_turns = 10
-            last_turns = 3
-            magnitude = 2.5
-            attack_power = self.village.get_attack_power_no_archers()
-            warrior_send_ratio = 0.5
-            archer_send_ratio = 0
-            catapult_send_ratio = 1
-            cavalrymen_send_ratio = 0.5
-
         decisions = []
 
         recovery = False
         for report in self.report_log:
-            if report.get_loser() == self.village.get_name() and report.get_turn() > self.turn - recovery_turns:
+            if report.get_loser() == self.village.get_name() and \
+               report.get_turn() > self.turn - self.stance.get_recovery_turns():
                 recovery = True
 
         villages_to_attack = []
 
         for report in self.report_log:
             if not recovery and \
-               report.get_turn() > self.turn - last_turns and \
+               report.get_turn() > self.turn - self.stance.get_last_turns() and \
                report.get_winner() == self.village.get_name() and \
                report.get_attacking_village() == self.village.get_name() and \
                report.get_defending_village() in self.other_villages:
@@ -314,10 +288,10 @@ class ReactiveAgent(Agent):
             village_to_attack = random.choice(villages_to_attack)
             for decision in self.possible_attack_decisions:
                 if decision.enemy_village_name == village_to_attack:
-                    decision.n_warriors = ceil(warrior_send_ratio * decision.n_warriors)
-                    decision.n_archers = ceil(archer_send_ratio * decision.n_archers)
-                    decision.n_catapults = ceil(catapult_send_ratio * decision.n_catapults)
-                    decision.n_cavalrymen = ceil(cavalrymen_send_ratio * decision.n_cavalrymen)
+                    decision.n_warriors = ceil(self.stance.get_warrior_send_ratio() * decision.n_warriors)
+                    decision.n_archers = ceil(self.stance.get_archer_send_ratio() * decision.n_archers)
+                    decision.n_catapults = ceil(self.stance.get_catapult_send_ratio() * decision.n_catapults)
+                    decision.n_cavalrymen = ceil(self.stance.get_cavalrymen_send_ratio() * decision.n_cavalrymen)
                     # If agent has no troops suitable for attacking, don't send one
                     if decision.n_warriors + decision.n_archers + decision.n_catapults + decision.n_cavalrymen > 0:
                         decisions.append(decision)
@@ -325,11 +299,13 @@ class ReactiveAgent(Agent):
         possibilities = []
 
         for espionage in self.spy_log:
-            if espionage.get_turn() > self.turn - last_turns and \
-               self.village.get_attack_power() > magnitude * espionage.get_spied_village().get_defense_power() and \
+            if espionage.get_turn() > self.turn - self.stance.get_last_turns() and \
+               self.village.get_attack_power() > \
+               self.stance.get_magnitude() * espionage.get_spied_village().get_defense_power() and \
                espionage.get_enemy_village_name() in self.other_villages:
                 possibilities.append((espionage.get_enemy_village_name(),
-                                      attack_power - espionage.get_spied_village().get_defense_power()))
+                                      self.stance.get_attack_power(self) -
+                                      espionage.get_spied_village().get_defense_power()))
 
         if len(possibilities) > 0:
             village_to_attack = possibilities[0]
@@ -338,10 +314,10 @@ class ReactiveAgent(Agent):
                     village_to_attack = village
             for decision in self.possible_attack_decisions:
                 if decision.enemy_village_name == village_to_attack[0]:
-                    decision.n_warriors = ceil(warrior_send_ratio * decision.n_warriors)
-                    decision.n_archers = ceil(archer_send_ratio * decision.n_archers)
-                    decision.n_catapults = ceil(catapult_send_ratio * decision.n_catapults)
-                    decision.n_cavalrymen = ceil(cavalrymen_send_ratio * decision.n_cavalrymen)
+                    decision.n_warriors = ceil(self.stance.get_warrior_send_ratio() * decision.n_warriors)
+                    decision.n_archers = ceil(self.stance.get_archer_send_ratio() * decision.n_archers)
+                    decision.n_catapults = ceil(self.stance.get_catapult_send_ratio() * decision.n_catapults)
+                    decision.n_cavalrymen = ceil(self.stance.get_cavalrymen_send_ratio() * decision.n_cavalrymen)
                     # If agent has no troops suitable for attacking, don't send one
                     if decision.n_warriors + decision.n_archers + decision.n_catapults + decision.n_cavalrymen > 0:
                         decisions.append(decision)
@@ -351,6 +327,57 @@ class ReactiveAgent(Agent):
         return self.final_decision(decisions)
 
     # AUX
+
+    def update_state(self):
+        for report in self.get_report_log():
+            if report.get_turn() == self.turn - 1:
+                if report.get_attacking_village() == self.village.get_name():
+                    self.turns_since_last_attack = 0
+                    if report.get_loser() == self.village.get_name():
+                        self.turns_since_last_attack_loss = 0
+                else:
+                    self.turns_since_last_defense = 0
+                    if report.get_loser() == self.village.get_name():
+                        self.turns_since_last_defense_loss = 0
+
+        self.turns_since_last_attack += 1
+        self.turns_since_last_defense += 1
+        self.turns_since_last_attack_loss += 1
+        self.turns_since_last_defense_loss += 1
+
+        self.previous_attack_powers.append(self.village.get_attack_power())
+        self.previous_attack_powers.pop(0)
+
+    def change_stance(self):
+        if self.village.get_health() < (1/4) * self.village.MAX_HEALTH:
+            self.stance = Stance.DEFENSIVE
+            return
+
+        if self.stance == Stance.DEFENSIVE:
+            if self.turns_since_last_attack > self.stance.get_turns_without_fighting() and \
+               self.turns_since_last_defense > self.stance.get_turns_without_fighting():
+                new_stance = Stance.NEUTRAL
+                self.stance_history.append((self.turn, new_stance))
+                self.stance = new_stance
+        elif self.stance == Stance.NEUTRAL:
+            if self.village.get_attack_power() < 0.05 * max(self.previous_attack_powers):
+                new_stance = Stance.DEFENSIVE
+                self.stance_history.append((self.turn, new_stance))
+                self.stance = new_stance
+            elif self.turns_since_last_attack > self.stance.get_turns_without_fighting() and \
+                    self.turns_since_last_defense > self.stance.get_turns_without_fighting():
+                new_stance = Stance.OFFENSIVE
+                self.stance_history.append((self.turn, new_stance))
+                self.stance = new_stance
+        else:
+            if self.village.get_attack_power() < 0.05 * max(self.previous_attack_powers):
+                new_stance = Stance.DEFENSIVE
+                self.stance_history.append((self.turn, new_stance))
+                self.stance = new_stance
+            elif self.village.get_attack_power() < (1/3) * max(self.previous_attack_powers):
+                new_stance = Stance.NEUTRAL
+                self.stance_history.append((self.turn, new_stance))
+                self.stance = new_stance
 
     def choose(self, options, decision_type, demote_max=None):
         for decision in options:
