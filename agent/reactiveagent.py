@@ -28,7 +28,7 @@ class ReactiveAgent(Agent):
 
     def upgrade_decision(self):
         # New turn - update state/beliefs
-        self.update_state()
+        self.update_reactive_state()
         self.change_stance()
 
         self.possible_upgrade_decisions = self.upgrade_options()
@@ -334,8 +334,9 @@ class ReactiveAgent(Agent):
 
     # AUX
 
-    # Update state-related variables
-    def update_state(self):
+    # Update state-related variables of the reactive agent
+    def update_reactive_state(self):
+        self.update_state()
         for report in self.get_report_log():
             if report.get_turn() == self.turn - 1:
                 if report.get_attacking_village() == self.village.get_name():

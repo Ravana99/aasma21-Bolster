@@ -117,6 +117,21 @@ class Report:
         self.ending_defending_catapults = None
         self.ending_defending_cavalrymen = None
 
+    def get_attacking_casualties(self):
+        return [(-1)*(self.ending_attacking_warriors - self.starting_attacking_warriors),
+                (-1)*(self.ending_attacking_archers - self.starting_attacking_archers),
+                (-1)*(self.ending_attacking_catapults - self.starting_attacking_catapults),
+                (-1)*(self.ending_attacking_cavalrymen - self.starting_attacking_cavalrymen)]
+
+    def get_defending_casualties(self):
+        if self.defending_power is None:
+            return None
+        else:
+            return [(-1) * (self.ending_defending_warriors - self.starting_defending_warriors),
+                    (-1) * (self.ending_defending_archers - self.starting_defending_archers),
+                    (-1) * (self.ending_defending_catapults - self.starting_defending_catapults),
+                    (-1) * (self.ending_defending_cavalrymen - self.starting_defending_cavalrymen)]
+
     def __repr__(self):
         string = "\n\n~~~~~~~~~~ NEW REPORT ~~~~~~~~~~\n"
         string += f"(on turn {self.turn})\n"
