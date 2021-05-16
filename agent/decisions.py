@@ -35,6 +35,7 @@ class UpgradeBarracksDecision(UpgradeDecision):
     def execute(self):
         vis_print(f"{self.agent.get_name()} has upgraded the Barracks.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.upgrade_barracks()
 
 
@@ -45,6 +46,7 @@ class UpgradeFarmDecision(UpgradeDecision):
     def execute(self):
         vis_print(f"{self.agent.get_name()} has upgraded the Farm.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.upgrade_farm()
 
 
@@ -55,6 +57,7 @@ class UpgradeMineDecision(UpgradeDecision):
     def execute(self):
         vis_print(f"{self.agent.get_name()} has upgraded the Mine.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.upgrade_mine()
 
 
@@ -65,6 +68,7 @@ class UpgradeQuarryDecision(UpgradeDecision):
     def execute(self):
         vis_print(f"{self.agent.get_name()} has upgraded the Quarry.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.upgrade_quarry()
 
 
@@ -75,6 +79,7 @@ class UpgradeSawmillDecision(UpgradeDecision):
     def execute(self):
         vis_print(f"{self.agent.get_name()} has upgraded the Sawmill.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.upgrade_sawmill()
 
 
@@ -85,6 +90,7 @@ class UpgradeWallDecision(UpgradeDecision):
     def execute(self):
         vis_print(f"{self.agent.get_name()} has upgraded the Wall.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.upgrade_wall()
 
 
@@ -95,6 +101,7 @@ class UpgradeWarehouseDecision(UpgradeDecision):
     def execute(self):
         vis_print(f"{self.agent.get_name()} has upgraded the Warehouse.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.upgrade_warehouse()
 
 
@@ -105,6 +112,7 @@ class UpgradeNothingDecision(UpgradeDecision):
     def execute(self):
         vis_print(f"{self.agent.get_name()} has upgraded nothing.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.upgrade_nothing()
 
 
@@ -135,80 +143,100 @@ class RecruitDecision(Decision):
 class RecruitSpiesDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        self.n = n
         vis_print(f"{self.agent.get_name()} has recruited {n} Spies.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.recruit_spies(n)
 
 
 class RecruitWarriorsDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        self.n = n
         vis_print(f"{self.agent.get_name()} has recruited {n} Warriors.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.recruit_warriors(n)
 
 
 class RecruitArchersDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        self.n = n
         vis_print(f"{self.agent.get_name()} has recruited {n} Archers.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.recruit_archers(n)
 
 
 class RecruitCatapultsDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        self.n = n
         vis_print(f"{self.agent.get_name()} has recruited {n} Catapults.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.recruit_catapults(n)
 
 
 class RecruitCavalrymenDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        self.n = n
         vis_print(f"{self.agent.get_name()} has recruited {n} Cavalrymen.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.recruit_cavalrymen(n)
 
 
 class DemoteSpiesDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        self.n = n
         vis_print(f"{self.agent.get_name()} has demoted {n} Spies.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.demote_spies(n)
 
 
 class DemoteWarriorsDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        self.n = n
         vis_print(f"{self.agent.get_name()} has demoted {n} Warriors.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.demote_warriors(n)
 
 
 class DemoteArchersDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        self.n = n
         vis_print(f"{self.agent.get_name()} has demoted {n} Archers.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.demote_archers(n)
 
 
 class DemoteCatapultsDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        self.n = n
         vis_print(f"{self.agent.get_name()} has demoted {n} Catapults.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.demote_catapults(n)
 
 
 class DemoteCavalrymenDecision(RecruitDecision):
     def execute(self, n):
         super().execute(n)
+        self.n = n
         vis_print(f"{self.agent.get_name()} has demoted {n} Cavalrymen.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.demote_cavalrymen(n)
 
 
@@ -216,26 +244,26 @@ class RecruitNothingDecision(RecruitDecision):
     def execute(self, n="0"):
         vis_print(f"{self.agent.get_name()} has recruited nothing.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.recruit_nothing()
 
 
 class SpyingDecision(Decision):
     """DO NOT INSTANTIATE!"""
 
-    enemy_village_name = ""
+    def __init__(self, agent, enemy_village_name=""):
+        super().__init__(agent)
+        self.enemy_village_name = enemy_village_name
 
     def execute(self):
         raise NotImplementedError()
 
 
 class SpyVillageDecision(SpyingDecision):
-    def __init__(self, agent, enemy_village_name):
-        super().__init__(agent)
-        self.enemy_village_name = enemy_village_name
-
     def execute(self):
         vis_print(f"{self.agent.get_name()} has spied {self.enemy_village_name}.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.spy(self.enemy_village_name)
 
 
@@ -243,6 +271,7 @@ class SpyNothingDecision(SpyingDecision):
     def execute(self):
         vis_print(f"{self.agent.get_name()} has spied nothing.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.spy_nothing()
 
 
@@ -297,14 +326,20 @@ class AttackVillageDecision(AttackDecision):
 
     def execute(self, n_warriors, n_archers, n_catapults, n_cavalrymen):
         super().execute(n_warriors, n_archers, n_catapults, n_cavalrymen)
+        self.n_warriors = n_warriors
+        self.n_archers = n_archers
+        self.n_catapults = n_catapults
+        self.n_cavalrymen = n_cavalrymen
         vis_print(f"{self.agent.get_name()} has attacked {self.enemy_village_name} using ", end="")
         vis_print(f"{n_warriors} warriors, {n_archers} archers, {n_catapults} catapults and {n_cavalrymen} cavalrymen.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.send_attack(n_warriors, n_archers, n_catapults, n_cavalrymen, self.enemy_village_name)
 
 
 class AttackNothingDecision(AttackDecision):
-    def execute(self, n_warriors=None, n_archers=None, n_catapults=None, n_cavalrymen=None):
+    def execute(self, n_warriors="0", n_archers="0", n_catapults="0", n_cavalrymen="0"):
         vis_print(f"{self.agent.get_name()} has attacked nothing.")
         vis_print()
+        self.agent.add_decision(self)
         return self.agent.attack_nothing()

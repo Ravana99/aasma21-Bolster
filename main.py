@@ -1,9 +1,6 @@
-from agent.reactiveagent import ReactiveAgent
-from agent.deliberativeagent import DeliberativeAgent
-from agent.player import Player
+from agent.reactiveagent import ReactiveAgent, Stance
 from game import start_game
 from sys import argv
-from agent.reactiveagent import Stance
 
 
 def main():
@@ -17,9 +14,9 @@ def main():
     play_again = True
 
     while play_again:
-        agents = [ReactiveAgent(0, Stance.DEFENSIVE),
-                  ReactiveAgent(1, Stance.OFFENSIVE),
-                  ReactiveAgent(2, Stance.NEUTRAL)]
+        # 0 = NEUTRAL, 1 = OFFENSIVE, 2 = DEFENSIVE
+        agents = [ReactiveAgent(i, Stance(i % 3)) for i in range(n_players)]
+        print([agent.stance for agent in agents])
         villages = [agent.get_village() for agent in agents]
         for i, agent in enumerate(agents):
             agent.set_other_villages([village.name for j, village in enumerate(villages) if i != j])

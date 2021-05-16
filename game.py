@@ -4,7 +4,8 @@ from copy import deepcopy
 
 agents = []
 villages = []
-TURN_LIMIT = 500
+TURN_LIMIT = 750
+STALEMATE_LIMIT = 100
 
 
 def start_game(agent_list, village_list):
@@ -14,6 +15,8 @@ def start_game(agent_list, village_list):
     villages = village_list
 
     turn = 1
+
+    turn_of_last_attack = 0
 
     while turn <= TURN_LIMIT:
         print(f"\n\n*************** TURN {turn} ***************\n\n")
@@ -58,6 +61,9 @@ def start_game(agent_list, village_list):
         all_reports = process_attacks(armies, turn)
         return_home(armies, all_reports)
 
+        if armies:
+            turn_of_last_attack = turn
+
         # "New" reports become "old"
         for agent in agents:
             for report in agent.get_report_log():
@@ -81,6 +87,9 @@ def start_game(agent_list, village_list):
                 losing_agent.add_report(report)
 
         show_player_reports()
+
+        if check_stalemate(turn, turn_of_last_attack):
+            break
 
         old_agents = agents.copy()
         eliminate_players()
@@ -157,6 +166,17 @@ def eliminate_players():
                 if agent != other_agent:
                     other_agent.remove_other_village(agent.get_village().get_name())
     agents = [agent for agent in agents if agent not in agents_to_delete]
+
+
+def check_stalemate(turn, turn_of_last_attack):
+    if turn - turn_of_last_attack > STALEMATE_LIMIT:
+        print("~~~~~~~~~~Stalemate between players:~~~~~~~~~~")
+        for agent in agents:
+            print(agent.get_name())
+        print()
+        print()
+        return True
+    return False
 
 
 def check_winner(old_agents):
