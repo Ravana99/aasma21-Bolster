@@ -1,11 +1,15 @@
 from random import shuffle
 from copy import deepcopy
 
+# Maximum number of turns per game (if the game reaches this amount of turns, end the game)
+TURN_LIMIT = 750
+
+# Maximum number of turns with no players sending out attacks until a stalemate is declared
+STALEMATE_LIMIT = 100
+
 
 agents = []
 villages = []
-TURN_LIMIT = 750
-STALEMATE_LIMIT = 100
 
 
 def start_game(agent_list, village_list):
@@ -16,19 +20,24 @@ def start_game(agent_list, village_list):
 
     turn = 1
 
+    # Stalemate tracker
     turn_of_last_attack = 0
 
     while turn <= TURN_LIMIT:
         print(f"\n\n*************** TURN {turn} ***************\n\n")
 
+        # Update turn counter for each agent
         for agent in agents:
             agent.set_turn(turn)
 
+        # If a human player is playing, display their village; otherwise, display villages of all agents
         print_villages()
 
+        # Upgrade decision
         for agent in agents:
             agent.upgrade_decision()
 
+        # Recruit decision
         for agent in agents:
             agent.recruit_decision()
 
@@ -37,6 +46,7 @@ def start_game(agent_list, village_list):
             for espionage in agent.get_spy_log():
                 espionage.set_new(False)
 
+        # Spying decision
         spying_missions = []
         for agent in agents:
             decision = agent.spying_decision()
@@ -48,19 +58,27 @@ def start_game(agent_list, village_list):
             for espionage in agent.get_spy_log():
                 espionage.set_new(False)
 
+        # Send out spies and collect espionages
         process_spying(spying_missions, turn)
+
+        # If a human player is playing and they have a new espionage, display it
         if agents[0].get_name() == "Player" and agents[0].get_spy_log() and agents[0].get_spy_log()[0].new:
             print(agents[0].get_spy_log()[0])
 
+        # Attack decision
         armies = []
         for agent in agents:
             decision = agent.attack_decision()
             if decision is not None:
                 armies.append(decision)
 
+        # Send out attacks and collect reports
         all_reports = process_attacks(armies, turn)
+
+        # After all attacks are done processing, send surviving troops back to their villages
         return_home(armies, all_reports)
 
+        # If at least one attack was sent, reset stalemate tracker
         if armies:
             turn_of_last_attack = turn
 
@@ -69,10 +87,12 @@ def start_game(agent_list, village_list):
             for report in agent.get_report_log():
                 report.set_new(False)
 
+        # Distribute reports
         for report in all_reports:
             winning_village = report.get_winner()
             losing_village = report.get_loser()
             attacking_village = report.get_attacking_village()
+            # If attacker lost, don't give that player information regarding the defending troops
             if attacking_village == losing_village:
                 truncated_report = deepcopy(report)
                 truncated_report.truncate_losing_report()
@@ -86,22 +106,30 @@ def start_game(agent_list, village_list):
                 winning_agent.add_report(report)
                 losing_agent.add_report(report)
 
-        show_player_reports()
+        # If a human player is playing, display their new reports
+        if agents[0].get_name() == "Player":
+            for report in agents[0].get_report_log():
+                if report.is_new():
+                    print(report)
 
+        # Checks if a stalemate has occurred based on number of turns without agents sending attacks
         if check_stalemate(turn, turn_of_last_attack):
             break
 
+        # Determine players that lost (village dropped to below 0 HP) and check if there is a winner
         old_agents = agents.copy()
         eliminate_players()
-
         if check_winner(old_agents):
             break
 
+        # Do end-of-turn village updates (produce resources and regenerate health)
         for village in villages:
-            village.produce_resources()
-            village.regenerate()
+            village.end_of_turn()
 
         turn += 1
+
+        print()
+        print()
 
     print()
     print()
@@ -111,17 +139,18 @@ def start_game(agent_list, village_list):
         print(f"Game reached {turn - 1} turns.")
 
 
-def show_player_reports():
+def print_villages():
     if agents[0].get_name() == "Player":
-        for report in agents[0].get_report_log():
-            # Didn't feel like writing dozens of getters for the report...
-            if report.new:
-                print(report)
+        print(villages[0])
+    else:
+        for village in villages:
+            print(village)
 
 
 def process_spying(spying_missions, turn):
     for mission in spying_missions:
         agent = get_agent_by_village_name(mission.get_village_name())
+        # Get deep copy of enemy village for espionage
         enemy_village = deepcopy(get_village_by_name(mission.get_enemy_village_name()))
         mission.set_spied_village(enemy_village)
         mission.set_turn(turn)
@@ -129,10 +158,12 @@ def process_spying(spying_missions, turn):
 
 
 def process_attacks(attacking_armies, turn):
-    shuffle(attacking_armies)      # Order of attacks is randomized in case of multiple attacks on the same village
+    # Order of attacks is randomized in case of multiple attacks on the same village
+    shuffle(attacking_armies)
 
     all_reports = []
 
+    # Perform attacks, set missing report attributes, plunder resources and lower village healths
     for attacking_army in attacking_armies:
         defending_village = get_village_by_name(attacking_army.get_enemy_village_name())
         defending_army = defending_village.create_defensive_army()
@@ -155,6 +186,17 @@ def return_home(surviving_armies, all_reports):
         village.add_resources(report.get_plundered_resources())
 
 
+def check_stalemate(turn, turn_of_last_attack):
+    if turn - turn_of_last_attack > STALEMATE_LIMIT:
+        print("~~~~~~~~~~Stalemate between players:~~~~~~~~~~")
+        for agent in agents:
+            print(agent.get_name())
+        print()
+        print()
+        return True
+    return False
+
+
 def eliminate_players():
     agents_to_delete = []
     global agents
@@ -168,28 +210,19 @@ def eliminate_players():
     agents = [agent for agent in agents if agent not in agents_to_delete]
 
 
-def check_stalemate(turn, turn_of_last_attack):
-    if turn - turn_of_last_attack > STALEMATE_LIMIT:
-        print("~~~~~~~~~~Stalemate between players:~~~~~~~~~~")
-        for agent in agents:
-            print(agent.get_name())
-        print()
-        print()
-        return True
-    return False
-
-
 def check_winner(old_agents):
-    print()
+    # 2+ players simultaneously killed each other - a tie is declared
     if len(agents) == 0:
-        print("~~~~~~~~~~Tie between players:~~~~~~~~~~")
+        print("\n~~~~~~~~~~Tie between players:~~~~~~~~~~")
         for agent in old_agents:
             print(agent.get_name())
         print()
         print()
         return True
+
+    # 1 player left
     elif len(agents) == 1:
-        print("~~~~~~~~~~Winner:~~~~~~~~~~")
+        print("\n~~~~~~~~~~Winner:~~~~~~~~~~")
         print(agents[0].get_name())
         print()
         print()
@@ -198,7 +231,10 @@ def check_winner(old_agents):
         return False
 
 
+# AUX
+
 def get_village_by_name(name):
+    # Village names are unique
     for village in villages:
         if name == village.get_name():
             return village
@@ -206,15 +242,8 @@ def get_village_by_name(name):
 
 
 def get_agent_by_village_name(name):
+    # Village names are unique
     for agent in agents:
         if name == agent.get_village().get_name():
             return agent
     return None
-
-
-def print_villages():
-    if agents[0].get_name() == "Player":
-        print(villages[0])
-    else:
-        for village in villages:
-            print(village)

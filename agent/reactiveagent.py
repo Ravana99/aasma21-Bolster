@@ -11,6 +11,7 @@ class ReactiveAgent(Agent):
         super().__init__(i)
         self.stance = stance
         self.stance_history = [(0, self.stance)]
+        # Attack power over the last 10 turns
         self.previous_attack_powers = [0] * 10
         self.possible_upgrade_decisions = []
         self.possible_recruit_decisions = []
@@ -20,9 +21,13 @@ class ReactiveAgent(Agent):
         self.turns_since_last_defense = 0
         self.turns_since_last_attack_loss = 0
         self.turns_since_last_defense_loss = 0
+        # Fraction of resources that the agent is willing to spend on troops in a single turn
         self.troop_focus = 0.5
 
+    # UPGRADE DECISION
+
     def upgrade_decision(self):
+        # New turn - update state/beliefs
         self.update_state()
         self.change_stance()
 
@@ -47,7 +52,7 @@ class ReactiveAgent(Agent):
         # - Upgrade wall if agent is defensive
         # - Upgrade resource camp, prioritizing resource with lowest amount
         # - Upgrade wall if agent is not defensive
-        # - Upgrade warehouse if full
+        # - Upgrade warehouse if full of at least one resource
         # - Upgrade farm if warehouse is full (just as a resource dump)
         # - Upgrade nothing
 
@@ -103,8 +108,9 @@ class ReactiveAgent(Agent):
 
         return self.final_decision(decisions)
 
+    # RECRUIT DECISION
+
     def recruit_decision(self):
-        # TODO: add way for agent to adapt its stance based on recent reports and recent espionages
         self.possible_recruit_decisions = self.recruit_options()
         action = self.recruit_filter()
         assert issubclass(action.__class__, RecruitDecision)
@@ -113,7 +119,7 @@ class ReactiveAgent(Agent):
     def recruit_options(self):
         options = []
 
-        # Won't recruit more spies if it has 5 already, and can only recruit 3 spies at once
+        # Won't recruit more spies if it has more than 5, and can only recruit 3 spies at once
         how_many_spies = self.how_many_can_recruit(self.village.get_spies())
         if how_many_spies > 0 and self.village.get_spies().get_n() <= 5:
             options.append(RecruitSpiesDecision(self, min(how_many_spies, 3)))
@@ -155,27 +161,17 @@ class ReactiveAgent(Agent):
 
     def recruit_filter(self):
         # Priority system:
-        # - If farm is maxed, full and has at least 20 non-cavalrymen, demote 20 units (to replace with cavalrymen)
-        # - If neutral:
-        # --- Cavalrymen
-        # --- Spies
-        # --- Warriors
-        # --- Nothing
-        # - If offensive:
-        # --- Cavalrymen
-        # --- Catapults
-        # --- Spies
-        # --- Warriors
-        # --- Nothing
-        # - If defensive:
-        # --- Cavalrymen
-        # --- Archers
-        # --- Spies
-        # --- Warriors
-        # --- Nothing
+        # - If farm is maxed out, full and has at least 20 non-cavalrymen, demote 20 units (to replace with cavalrymen)
+        # - Spies
+        # - Cavalrymen
+        # - Catapults (if offensive)
+        # - Archers (if defensive)
+        # - Warriors
+        # - Nothing
 
         decisions = []
 
+        # Demote troops to replace with cavalrymen (prioritize demoting warriors)
         if self.village.get_farm().is_max_level() and self.village.get_farm().capacity() == self.village.get_troops():
             decisions.append(self.choose(self.possible_recruit_decisions, DemoteWarriorsDecision, demote_max=20))
             if self.stance == Stance.OFFENSIVE:
@@ -185,16 +181,19 @@ class ReactiveAgent(Agent):
             decisions.append(self.choose(self.possible_recruit_decisions, DemoteArchersDecision, demote_max=20))
             decisions.append(self.choose(self.possible_recruit_decisions, DemoteCatapultsDecision, demote_max=20))
 
+        # Recruit spies, cavalrymen, {catapults / archers / -}, warriors, nothing
         decisions.append(self.choose(self.possible_recruit_decisions, RecruitSpiesDecision))
         decisions.append(self.choose(self.possible_recruit_decisions, RecruitCavalrymenDecision))
         if self.stance == Stance.OFFENSIVE:
-            decisions.append(self.choose(self.possible_recruit_decisions, RecruitCavalrymenDecision))
+            decisions.append(self.choose(self.possible_recruit_decisions, RecruitCatapultsDecision))
         elif self.stance == Stance.DEFENSIVE:
             decisions.append(self.choose(self.possible_recruit_decisions, RecruitArchersDecision))
         decisions.append(self.choose(self.possible_recruit_decisions, RecruitWarriorsDecision))
         decisions.append(self.choose(self.possible_recruit_decisions, RecruitNothingDecision))
 
         return self.final_decision(decisions)
+
+    # SPYING DECISION
 
     def spying_decision(self):
         self.possible_spying_decisions = self.spying_options()
@@ -218,17 +217,19 @@ class ReactiveAgent(Agent):
 
         decisions = []
 
+        # Only possible decision is SpyNothing - do that
         if len(self.possible_spying_decisions) == 1:
             return self.possible_spying_decisions[0]
 
+        # Initialize list with all possible villages that can be spied, then remove villages with recent espionages
         villages_to_spy = [decision.enemy_village_name
                            for decision in self.possible_spying_decisions
                            if isinstance(decision, SpyVillageDecision)]
-
         for espionage in self.spy_log:
             if espionage.get_turn() > self.turn - 10 and espionage.enemy_village_name in villages_to_spy:
                 villages_to_spy.remove(espionage.enemy_village_name)
 
+        # Out of the villages that can be spied, spy one at random
         if len(villages_to_spy) > 0:
             village_to_spy = random.choice(villages_to_spy)
             for decision in self.possible_spying_decisions:
@@ -238,6 +239,8 @@ class ReactiveAgent(Agent):
         decisions.append(self.choose(self.possible_spying_decisions, SpyNothingDecision))
 
         return self.final_decision(decisions)
+
+    # ATTACK DECISION
 
     def attack_decision(self):
         self.possible_attack_decisions = self.attack_options()
@@ -261,21 +264,23 @@ class ReactiveAgent(Agent):
 
     def attack_filter(self):
         # Priority system:
-        # - If defeated in the last {recovery_turns}, don't attack
-        # - If agent has a victorious attack in the {last_turns} against villages, attack 1 of those at random
-        # - If agent has an espionage in the {last_turns} and self.attack_power > {magnitude} * other.defense_power,
+        # - If agent has victorious attacks in the {stance.get_last_turns()} against villages and
+        #   is not in recovery mode, attack one of those villages at random
+        # - If agent has an espionage in the {stance.get_last_turns()} and
+        #   its own attack_power is greater than {stance.get_magnitude()} times the defense power of the spied village,
         #   attack the one with the largest difference (easiest win)
 
         decisions = []
 
+        # If defeated recently, enter recovery mode
         recovery = False
         for report in self.report_log:
             if report.get_loser() == self.village.get_name() and \
                report.get_turn() > self.turn - self.stance.get_recovery_turns():
                 recovery = True
 
+        # Attack village recently victorious against
         villages_to_attack = []
-
         for report in self.report_log:
             if not recovery and \
                report.get_turn() > self.turn - self.stance.get_last_turns() and \
@@ -292,12 +297,13 @@ class ReactiveAgent(Agent):
                     decision.n_archers = ceil(self.stance.get_archer_send_ratio() * decision.n_archers)
                     decision.n_catapults = ceil(self.stance.get_catapult_send_ratio() * decision.n_catapults)
                     decision.n_cavalrymen = ceil(self.stance.get_cavalrymen_send_ratio() * decision.n_cavalrymen)
-                    # If agent has no troops suitable for attacking, don't send one
+                    # Only send an attack if agent has troops suitable for attacking
                     if decision.n_warriors + decision.n_archers + decision.n_catapults + decision.n_cavalrymen > 0:
                         decisions.append(decision)
 
+        # Attack village that recent espionage claims to be favored against
+        # Possibilities list is a list of tuples (enemy village name, power difference)
         possibilities = []
-
         for espionage in self.spy_log:
             if espionage.get_turn() > self.turn - self.stance.get_last_turns() and \
                self.village.get_attack_power() > \
@@ -318,7 +324,7 @@ class ReactiveAgent(Agent):
                     decision.n_archers = ceil(self.stance.get_archer_send_ratio() * decision.n_archers)
                     decision.n_catapults = ceil(self.stance.get_catapult_send_ratio() * decision.n_catapults)
                     decision.n_cavalrymen = ceil(self.stance.get_cavalrymen_send_ratio() * decision.n_cavalrymen)
-                    # If agent has no troops suitable for attacking, don't send one
+                    # Only send an attack if agent has troops suitable for attacking
                     if decision.n_warriors + decision.n_archers + decision.n_catapults + decision.n_cavalrymen > 0:
                         decisions.append(decision)
 
@@ -328,6 +334,7 @@ class ReactiveAgent(Agent):
 
     # AUX
 
+    # Update state-related variables
     def update_state(self):
         for report in self.get_report_log():
             if report.get_turn() == self.turn - 1:
@@ -344,13 +351,26 @@ class ReactiveAgent(Agent):
         self.turns_since_last_defense += 1
         self.turns_since_last_attack_loss += 1
         self.turns_since_last_defense_loss += 1
-
         self.previous_attack_powers.append(self.village.get_attack_power())
         self.previous_attack_powers.pop(0)
 
+    # Adapt agent stance given the game-specific circumstances
     def change_stance(self):
-        if self.village.get_health() < (1/4) * self.village.MAX_HEALTH:
-            self.stance = Stance.DEFENSIVE
+        # Stance changes abide to the following rules:
+        # - If health is below 25%, immediately adopt defensive stance
+        # - If agent is currently defensive:
+        # --- If agent has not been involved in any fights in a certain number of turns, become neutral
+        # - If agent is currently neutral:
+        # --- If agent has recently lost at least 95% of its attack power, become defensive
+        # --- If agent has not been involved in any fights in a certain number of turns, become offensive
+        # If agent is currently offensive:
+        # --- If agent has recently lost at least 95% of its attack power, become defensive
+        # --- If agent has recently lost at least two thirds of its attack power, become neutral
+
+        if self.stance != Stance.DEFENSIVE and self.village.get_health() < (1/4) * self.village.MAX_HEALTH:
+            new_stance = Stance.DEFENSIVE
+            self.stance_history.append((self.turn, new_stance))
+            self.stance = new_stance
             return
 
         if self.stance == Stance.DEFENSIVE:
@@ -379,6 +399,7 @@ class ReactiveAgent(Agent):
                 self.stance_history.append((self.turn, new_stance))
                 self.stance = new_stance
 
+    # Return a specific decision given a list of decisions and a decision type
     def choose(self, options, decision_type, demote_max=None):
         for decision in options:
             if isinstance(decision, decision_type):
@@ -388,6 +409,7 @@ class ReactiveAgent(Agent):
                     return decision
         return None
 
+    # Return the highest priority decision (the one that comes first)
     @staticmethod
     def final_decision(decisions):
         for decision in decisions:
@@ -395,6 +417,7 @@ class ReactiveAgent(Agent):
                 return decision
         raise Exception("Should not get here! Failed in a filter()")
 
+    # Compute how many units of a specific unit type can be recruited given the resources and farm space in the village
     def how_many_can_recruit(self, troop):
         if self.village.get_barracks().get_level() < troop.MIN_BARRACKS_LEVEL:
             return 0

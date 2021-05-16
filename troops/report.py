@@ -10,6 +10,7 @@ class Report:
         self.attacking_village = attacking_village
         self.defending_village = defending_village
 
+        # Converts [0.8, 1.2) luck values to [0, 100)% interval
         self.attacking_luck = ((attacking_luck - 0.8) / 0.4) * 100
         self.defending_luck = ((defending_luck - 0.8) / 0.4) * 100
 
@@ -24,7 +25,10 @@ class Report:
 
         self.winner = winner
         self.loser = loser
+
+        # Converts [2, 6) luck value to [0, 100)% interval
         self.casualty_luck = ((casualty_luck - 2) / 4) * 100
+
         self.attacking_power = attacking_power
         self.defending_power = defending_power
 
@@ -43,6 +47,9 @@ class Report:
         self.damage_dealt = None
 
         self.turn = -1
+
+    def is_new(self):
+        return self.new
 
     def get_winner(self):
         return self.winner

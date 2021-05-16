@@ -233,13 +233,17 @@ class Village:
 
     # HEALTH
 
-    def regenerate(self, health=20):
+    def regenerate(self, health=100):
         self.health = min(self.health + health, Village.MAX_HEALTH)
 
     def lower_health(self, health):
         self.health -= health
 
     # OTHER
+
+    def end_of_turn(self):
+        self.produce_resources()
+        self.regenerate()
 
     def send_off(self, n_warriors, n_archers, n_catapults, n_cavalrymen):
         original_warriors, original_archers, original_catapults, original_cavalrymen = \
