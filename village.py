@@ -100,15 +100,7 @@ class Village:
                self.catapults.get_n() + self.cavalrymen.get_n()
 
     def get_prosperity_rating(self):
-        prosperity = 0
-        prosperity += 2 ** (self.barracks.get_level())
-        prosperity += 2 ** (self.farm.get_level())
-        prosperity += 2 ** (self.mine.get_level())
-        prosperity += 2 ** (self.quarry.get_level())
-        prosperity += 2 ** (self.sawmill.get_level())
-        prosperity += 2 ** (self.wall.get_level())
-        prosperity += 2 ** (self.warehouse.get_level())
-        return prosperity
+        return sum(2 ** building.get_level() for building in self.get_all_buildings())
 
     # UPGRADES
 

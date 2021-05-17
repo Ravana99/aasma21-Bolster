@@ -10,7 +10,7 @@ class ReactiveAgent(Agent):
     def __init__(self, i, stance):
         super().__init__(i)
         self.stance = stance
-        self.stance_history = [(0, self.stance)]
+        self.stance_history = [(self.stance, 0)]
         # Attack power over the last 10 turns
         self.previous_attack_powers = [0] * 10
         self.possible_upgrade_decisions = []
@@ -370,7 +370,7 @@ class ReactiveAgent(Agent):
 
         if self.stance != Stance.DEFENSIVE and self.village.get_health() < (1/4) * self.village.MAX_HEALTH:
             new_stance = Stance.DEFENSIVE
-            self.stance_history.append((self.turn, new_stance))
+            self.stance_history.append((new_stance, self.turn))
             self.stance = new_stance
             return
 
@@ -378,26 +378,26 @@ class ReactiveAgent(Agent):
             if self.turns_since_last_attack > self.stance.get_turns_without_fighting() and \
                self.turns_since_last_defense > self.stance.get_turns_without_fighting():
                 new_stance = Stance.NEUTRAL
-                self.stance_history.append((self.turn, new_stance))
+                self.stance_history.append((new_stance, self.turn))
                 self.stance = new_stance
         elif self.stance == Stance.NEUTRAL:
             if self.village.get_attack_power() < 0.05 * max(self.previous_attack_powers):
                 new_stance = Stance.DEFENSIVE
-                self.stance_history.append((self.turn, new_stance))
+                self.stance_history.append((new_stance, self.turn))
                 self.stance = new_stance
             elif self.turns_since_last_attack > self.stance.get_turns_without_fighting() and \
                     self.turns_since_last_defense > self.stance.get_turns_without_fighting():
                 new_stance = Stance.OFFENSIVE
-                self.stance_history.append((self.turn, new_stance))
+                self.stance_history.append((new_stance, self.turn))
                 self.stance = new_stance
         else:
             if self.village.get_attack_power() < 0.05 * max(self.previous_attack_powers):
                 new_stance = Stance.DEFENSIVE
-                self.stance_history.append((self.turn, new_stance))
+                self.stance_history.append((new_stance, self.turn))
                 self.stance = new_stance
             elif self.village.get_attack_power() < (1/3) * max(self.previous_attack_powers):
                 new_stance = Stance.NEUTRAL
-                self.stance_history.append((self.turn, new_stance))
+                self.stance_history.append((new_stance, self.turn))
                 self.stance = new_stance
 
     # Return a specific decision given a list of decisions and a decision type
