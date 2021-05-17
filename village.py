@@ -99,6 +99,9 @@ class Village:
         return self.spies.get_n() + self.warriors.get_n() + self.archers.get_n() + \
                self.catapults.get_n() + self.cavalrymen.get_n()
 
+    def get_prosperity_rating(self):
+        return sum(2 ** building.get_level() for building in self.get_all_buildings())
+
     # UPGRADES
 
     def upgrade_barracks(self):

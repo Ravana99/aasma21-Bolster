@@ -17,6 +17,7 @@ class Player(Agent):
         self.name = "Player"
 
     def upgrade_decision(self):
+        self.update_state()
         while True:
             self.display_upgrade_options()
             selection = input("> ")
