@@ -20,6 +20,19 @@ class Agent:
         self.spy_log = []
         self.turn = 0
         self.decision_log = []
+        self.attack_power_history = [(0, 0)]
+        self.defense_power_history = [(0, 0)]
+        self.hp_history = [(self.village.MAX_HEALTH, 0)]
+        self.troop_casualties_history = []
+        self.prosperity_rating_history = [(self.village.get_prosperity_rating(), 0)]
+        self.successful_attacks = 0
+        self.failed_attacks = 0
+        self.successful_defenses = 0
+        self.failed_defenses = 0
+        self.warrior_casualties = 0
+        self.archer_casualties = 0
+        self.catapult_casualties = 0
+        self.cavalrymen_casualties = 0
 
     def upgrade_decision(self):
         raise NotImplementedError()
@@ -237,3 +250,38 @@ class Agent:
             return [0, 0, 0]
         else:
             return action.to_building().get_cost_of_upgrade()
+
+    # Update state-related variables
+    def update_state(self):
+        for report in self.get_report_log():
+            if report.get_turn() == self.turn - 1:
+                # Village attacked last turn
+                if report.get_attacking_village() == self.village.get_name():
+                    if report.get_loser() == self.village.get_name():
+                        self.failed_attacks += 1
+                    else:
+                        self.successful_attacks += 1
+                    casualties = report.get_attacking_casualties()
+                # Village defended last turn
+                else:
+                    if report.get_loser() == self.village.get_name():
+                        self.failed_defenses += 1
+                    else:
+                        self.successful_defenses += 1
+                    casualties = report.get_defending_casualties()
+                # Update overall casualty information
+                if sum(casualties.values()) > 0:
+                    self.troop_casualties_history.append((casualties, self.turn))
+                    self.warrior_casualties += casualties["warriors"]
+                    self.archer_casualties += casualties["archers"]
+                    self.catapult_casualties += casualties["catapults"]
+                    self.cavalrymen_casualties += casualties["cavalrymen"]
+
+        if self.village.health != self.hp_history[-1][0]:
+            self.hp_history.append((self.village.health, self.turn))
+        if self.village.get_attack_power() != self.attack_power_history[-1][0]:
+            self.attack_power_history.append((self.village.get_attack_power(), self.turn))
+        if self.village.get_defense_power() != self.defense_power_history[-1][0]:
+            self.defense_power_history.append((self.village.get_defense_power(), self.turn))
+        if self.village.get_prosperity_rating() != self.prosperity_rating_history[-1][0]:
+            self.prosperity_rating_history.append((self.village.get_prosperity_rating(), self.turn))

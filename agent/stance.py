@@ -15,7 +15,7 @@ class Stance(Enum):
         else:
             return 10
 
-    # Amount of most recent turns that agents can formulate their beliefs based on
+    # Amount of most recent turns that agents can formulate their beliefs based on (reports, espionages...)
     def get_last_turns(self):
         if self == Stance.NEUTRAL:
             return 5
@@ -47,7 +47,7 @@ class Stance(Enum):
         if self == Stance.NEUTRAL:
             return 50
         elif self == Stance.OFFENSIVE:
-            raise Exception("Should not get here! Check stance.get_turns_without_fighting() code")
+            raise Exception("Should not get here! Check code that calls stance.get_turns_without_fighting()")
         else:
             return 25
 

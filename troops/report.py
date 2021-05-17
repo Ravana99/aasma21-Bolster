@@ -10,6 +10,7 @@ class Report:
         self.attacking_village = attacking_village
         self.defending_village = defending_village
 
+        # Converts [0.8, 1.2) luck values to [0, 100)% interval
         self.attacking_luck = ((attacking_luck - 0.8) / 0.4) * 100
         self.defending_luck = ((defending_luck - 0.8) / 0.4) * 100
 
@@ -24,7 +25,10 @@ class Report:
 
         self.winner = winner
         self.loser = loser
+
+        # Converts [2, 6) luck value to [0, 100)% interval
         self.casualty_luck = ((casualty_luck - 2) / 4) * 100
+
         self.attacking_power = attacking_power
         self.defending_power = defending_power
 
@@ -43,6 +47,9 @@ class Report:
         self.damage_dealt = None
 
         self.turn = -1
+
+    def is_new(self):
+        return self.new
 
     def get_winner(self):
         return self.winner
@@ -109,6 +116,21 @@ class Report:
         self.ending_defending_archers = None
         self.ending_defending_catapults = None
         self.ending_defending_cavalrymen = None
+
+    def get_attacking_casualties(self):
+        return {"warriors": self.starting_attacking_warriors - self.ending_attacking_warriors,
+                "archers": self.starting_attacking_archers - self.ending_attacking_archers,
+                "catapults": self.starting_attacking_catapults - self.ending_attacking_catapults,
+                "cavalrymen": self.starting_attacking_cavalrymen - self.ending_attacking_cavalrymen}
+
+    def get_defending_casualties(self):
+        if self.defending_power is None:
+            raise Exception("Should not get here! Check get_defending_casualties() code")
+        else:
+            return {"warriors": self.starting_defending_warriors - self.ending_defending_warriors,
+                    "archers": self.starting_defending_archers - self.ending_defending_archers,
+                    "catapults": self.starting_defending_catapults - self.ending_defending_catapults,
+                    "cavalrymen": self.starting_defending_cavalrymen - self.ending_defending_cavalrymen}
 
     def __repr__(self):
         string = "\n\n~~~~~~~~~~ NEW REPORT ~~~~~~~~~~\n"

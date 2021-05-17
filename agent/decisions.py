@@ -4,12 +4,9 @@ visualize = True
 def vis_print(*kwargs, end="\n"):
     if visualize:
         print(*kwargs, end=end)
-        
 
-class InvalidDecisionException(BaseException):
-    def __init__(self):
-        super().__init__("Invalid decision made. Double check the agent code.")
 
+# ABSTRACT DECISION CLASS
 
 class Decision:
     """DO NOT INSTANTIATE!"""
@@ -17,6 +14,8 @@ class Decision:
     def __init__(self, agent):
         self.agent = agent
 
+
+# UPGRADE DECISIONS
 
 class UpgradeDecision(Decision):
     """DO NOT INSTANTIATE!"""
@@ -115,6 +114,8 @@ class UpgradeNothingDecision(UpgradeDecision):
         self.agent.add_decision(self)
         return self.agent.upgrade_nothing()
 
+
+# RECRUIT DECISIONS
 
 class RecruitDecision(Decision):
     """DO NOT INSTANTIATE!"""
@@ -248,6 +249,8 @@ class RecruitNothingDecision(RecruitDecision):
         return self.agent.recruit_nothing()
 
 
+# SPYING DECISIONS
+
 class SpyingDecision(Decision):
     """DO NOT INSTANTIATE!"""
 
@@ -274,6 +277,8 @@ class SpyNothingDecision(SpyingDecision):
         self.agent.add_decision(self)
         return self.agent.spy_nothing()
 
+
+# ATTACK DECISIONS
 
 class AttackDecision(Decision):
     """DO NOT INSTANTIATE!"""
@@ -343,3 +348,10 @@ class AttackNothingDecision(AttackDecision):
         vis_print()
         self.agent.add_decision(self)
         return self.agent.attack_nothing()
+
+
+# EXCEPTION
+
+class InvalidDecisionException(BaseException):
+    def __init__(self):
+        super().__init__("Invalid decision made. Double check the agent code.")
