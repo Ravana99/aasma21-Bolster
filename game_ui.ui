@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>700</height>
+    <height>800</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -69,6 +69,9 @@
     </property>
     <property name="value">
      <number>100</number>
+    </property>
+    <property name="textVisible">
+     <bool>true</bool>
     </property>
     <property name="invertedAppearance">
      <bool>false</bool>
@@ -145,7 +148,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>1</string>
     </property>
    </widget>
    <widget class="QLabel" name="BarracksNextLevel">
@@ -153,12 +156,12 @@
      <rect>
       <x>280</x>
       <y>95</y>
-      <width>60</width>
+      <width>75</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>[100,100,100]</string>
     </property>
    </widget>
    <widget class="QLabel" name="FarmIcon">
@@ -203,7 +206,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>1</string>
     </property>
    </widget>
    <widget class="QLabel" name="FarmNextLevel">
@@ -211,12 +214,12 @@
      <rect>
       <x>280</x>
       <y>130</y>
-      <width>60</width>
+      <width>75</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>[100,100,100]</string>
     </property>
    </widget>
    <widget class="QLabel" name="MineIcon">
@@ -261,7 +264,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>1</string>
     </property>
    </widget>
    <widget class="QLabel" name="MineNextLevel">
@@ -269,19 +272,19 @@
      <rect>
       <x>280</x>
       <y>165</y>
-      <width>60</width>
+      <width>75</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>[100,100,100]</string>
     </property>
    </widget>
    <widget class="QLabel" name="Iron">
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>240</y>
+      <y>350</y>
       <width>60</width>
       <height>15</height>
      </rect>
@@ -297,13 +300,13 @@
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>270</y>
+      <y>380</y>
       <width>60</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>300</string>
+     <string>0</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -313,7 +316,7 @@
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>240</y>
+      <y>350</y>
       <width>60</width>
       <height>15</height>
      </rect>
@@ -329,13 +332,13 @@
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>270</y>
+      <y>380</y>
       <width>60</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>400</string>
+     <string>0</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -345,7 +348,7 @@
     <property name="geometry">
      <rect>
       <x>290</x>
-      <y>240</y>
+      <y>350</y>
       <width>60</width>
       <height>15</height>
      </rect>
@@ -361,13 +364,13 @@
     <property name="geometry">
      <rect>
       <x>290</x>
-      <y>270</y>
+      <y>380</y>
       <width>60</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>200</string>
+     <string>0</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -377,7 +380,7 @@
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>340</y>
+      <y>450</y>
       <width>60</width>
       <height>15</height>
      </rect>
@@ -393,7 +396,7 @@
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>370</y>
+      <y>480</y>
       <width>60</width>
       <height>15</height>
      </rect>
@@ -406,7 +409,7 @@
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>405</y>
+      <y>515</y>
       <width>60</width>
       <height>15</height>
      </rect>
@@ -419,7 +422,7 @@
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>440</y>
+      <y>550</y>
       <width>60</width>
       <height>15</height>
      </rect>
@@ -432,7 +435,7 @@
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>475</y>
+      <y>585</y>
       <width>60</width>
       <height>15</height>
      </rect>
@@ -445,7 +448,7 @@
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>510</y>
+      <y>620</y>
       <width>60</width>
       <height>15</height>
      </rect>
@@ -458,7 +461,7 @@
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>340</y>
+      <y>450</y>
       <width>60</width>
       <height>15</height>
      </rect>
@@ -471,7 +474,7 @@
     <property name="geometry">
      <rect>
       <x>240</x>
-      <y>340</y>
+      <y>450</y>
       <width>60</width>
       <height>15</height>
      </rect>
@@ -484,7 +487,7 @@
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>340</y>
+      <y>450</y>
       <width>60</width>
       <height>15</height>
      </rect>
@@ -497,7 +500,7 @@
     <property name="geometry">
      <rect>
       <x>5</x>
-      <y>540</y>
+      <y>650</y>
       <width>390</width>
       <height>130</height>
      </rect>
@@ -507,202 +510,202 @@
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>370</y>
+      <y>480</y>
       <width>60</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="ArchersNum">
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>405</y>
+      <y>515</y>
       <width>60</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="CatapultsNum">
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>440</y>
+      <y>550</y>
       <width>60</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="CavalrymenNum">
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>475</y>
+      <y>585</y>
       <width>60</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="TotalNum">
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>510</y>
+      <y>620</y>
       <width>60</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="WarriorsOffensive">
     <property name="geometry">
      <rect>
       <x>240</x>
-      <y>370</y>
+      <y>480</y>
       <width>60</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="ArchersOffensive">
     <property name="geometry">
      <rect>
       <x>240</x>
-      <y>405</y>
+      <y>515</y>
       <width>60</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="CatapultsOffensive">
     <property name="geometry">
      <rect>
       <x>240</x>
-      <y>440</y>
+      <y>550</y>
       <width>60</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="CavalrymenOffensive">
     <property name="geometry">
      <rect>
       <x>240</x>
-      <y>475</y>
+      <y>585</y>
       <width>60</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="TotalOffensive">
     <property name="geometry">
      <rect>
       <x>240</x>
-      <y>510</y>
+      <y>620</y>
       <width>60</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="WarriorsDefensive">
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>370</y>
+      <y>480</y>
       <width>60</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="ArchersDefensive">
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>405</y>
+      <y>515</y>
       <width>60</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="CatapultsDefensive">
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>440</y>
+      <y>550</y>
       <width>60</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="CavalrymenDefensive">
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>475</y>
+      <y>585</y>
       <width>60</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="TotalDefensive">
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>510</y>
+      <y>620</y>
       <width>60</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="CavalrymenIcon">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>465</y>
+      <y>575</y>
       <width>35</width>
       <height>35</height>
      </rect>
@@ -721,7 +724,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>430</y>
+      <y>540</y>
       <width>35</width>
       <height>35</height>
      </rect>
@@ -740,7 +743,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>395</y>
+      <y>505</y>
       <width>35</width>
       <height>35</height>
      </rect>
@@ -759,7 +762,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>360</y>
+      <y>470</y>
       <width>35</width>
       <height>35</height>
      </rect>
@@ -778,7 +781,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>190</y>
+      <y>225</y>
       <width>35</width>
       <height>35</height>
      </rect>
@@ -797,7 +800,7 @@
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>200</y>
+      <y>235</y>
       <width>60</width>
       <height>15</height>
      </rect>
@@ -810,46 +813,33 @@
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>200</y>
+      <y>235</y>
       <width>60</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>1</string>
     </property>
    </widget>
    <widget class="QLabel" name="SawmillNextLevel">
     <property name="geometry">
      <rect>
       <x>280</x>
-      <y>200</y>
-      <width>60</width>
+      <y>235</y>
+      <width>75</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="SpyButton">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>303</y>
-      <width>75</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Spies</string>
+     <string>[100,100,100]</string>
     </property>
    </widget>
    <widget class="QLabel" name="VillageCapacity">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>310</y>
+      <x>60</x>
+      <y>420</y>
       <width>80</width>
       <height>15</height>
      </rect>
@@ -861,14 +851,233 @@
    <widget class="QLabel" name="VillageCapacityValue">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>310</y>
+      <x>170</x>
+      <y>420</y>
       <width>50</width>
       <height>15</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>1</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="SpiesValue">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>420</y>
+      <width>50</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>0</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Spies">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>420</y>
+      <width>80</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Spies</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="SpiesIcon">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>410</y>
+      <width>35</width>
+      <height>35</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>ui_icons/Spy_icon_%28Civ6%29.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="QuarryIcon">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>190</y>
+      <width>35</width>
+      <height>35</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>ui_icons/Quarry_%28Civ6%29.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Quarry">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>200</y>
+      <width>60</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Quarry</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="QuarryLevel">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>200</y>
+      <width>60</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>1</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="QuarryNextLevel">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>200</y>
+      <width>75</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>[100,100,100</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="WallIcon">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>260</y>
+      <width>35</width>
+      <height>35</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>ui_icons/Great_Wall_%28Civ6%29.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="WarehouseIcon">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>295</y>
+      <width>35</width>
+      <height>35</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>ui_icons/Feitoria_%28Civ6%29.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Wall">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>270</y>
+      <width>60</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Wall</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Warehouse">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>305</y>
+      <width>60</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Warehouse</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="WallLevel">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>270</y>
+      <width>60</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>1</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="WarehouseLevel">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>305</y>
+      <width>60</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>1</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="WallNextLevel">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>270</y>
+      <width>75</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>[100,100,100]</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="WarehouseNextLevel">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>305</y>
+      <width>75</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>[100,100,100]</string>
     </property>
    </widget>
   </widget>
