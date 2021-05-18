@@ -9,10 +9,19 @@ class ReactiveAgent(Agent):
 
     def __init__(self, i, stance):
         super().__init__(i)
+
+        # Starting stance (neutral, offensive or defensive)
         self.stance = stance
+
+        # Fraction of resources that the agent is willing to spend on troops in a single recruit decision
+        self.troop_focus = random.uniform(0.3, 0.7)
+
+        # Stance history throughout the game
         self.stance_history = [(self.stance, 0)]
+
         # Attack power over the last 10 turns
         self.previous_attack_powers = [0] * 10
+
         self.possible_upgrade_decisions = []
         self.possible_recruit_decisions = []
         self.possible_spying_decisions = []
@@ -21,8 +30,6 @@ class ReactiveAgent(Agent):
         self.turns_since_last_defense = 0
         self.turns_since_last_attack_loss = 0
         self.turns_since_last_defense_loss = 0
-        # Fraction of resources that the agent is willing to spend on troops in a single turn
-        self.troop_focus = 0.5
 
     # UPGRADE DECISION
 
@@ -114,7 +121,7 @@ class ReactiveAgent(Agent):
         self.possible_recruit_decisions = self.recruit_options()
         action = self.recruit_filter()
         assert issubclass(action.__class__, RecruitDecision)
-        return action.execute(ceil(action.n * self.troop_focus * random.random()))
+        return action.execute(ceil(action.n * self.troop_focus * random.uniform(0.5, 1.0)))
 
     def recruit_options(self):
         options = []
