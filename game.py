@@ -20,6 +20,8 @@ def start_game(agent_list, village_list):
 
     turn = 1
 
+    winners = []
+
     # Stalemate tracker
     turn_of_last_attack = 0
 
@@ -113,13 +115,15 @@ def start_game(agent_list, village_list):
                     print(report)
 
         # Checks if a stalemate has occurred based on number of turns without agents sending attacks
-        if check_stalemate(turn, turn_of_last_attack):
+        winners = check_stalemate(turn, turn_of_last_attack)
+        if winners:
             break
 
         # Determine players that lost (village dropped to below 0 HP) and check if there is a winner
         old_agents = agents.copy()
         eliminate_players()
-        if check_winner(old_agents):
+        winners = check_winner(old_agents)
+        if winners:
             break
 
         # Do end-of-turn village updates (produce resources and regenerate health)
@@ -133,10 +137,12 @@ def start_game(agent_list, village_list):
 
     print()
     print()
-    if turn == TURN_LIMIT:
+    if turn > TURN_LIMIT:
         print("Turn limit reached.")
     else:
-        print(f"Game reached {turn - 1} turns.")
+        print(f"Game reached {turn} turns.")
+
+    return winners
 
 
 def print_villages():
@@ -193,8 +199,8 @@ def check_stalemate(turn, turn_of_last_attack):
             print(agent.get_name())
         print()
         print()
-        return True
-    return False
+        return ["stalemate", [agent.get_name() for agent in agents]]
+    return []
 
 
 def eliminate_players():
@@ -218,7 +224,7 @@ def check_winner(old_agents):
             print(agent.get_name())
         print()
         print()
-        return True
+        return ["tie", [agent.get_name() for agent in old_agents]]
 
     # 1 player left
     elif len(agents) == 1:
@@ -226,9 +232,9 @@ def check_winner(old_agents):
         print(agents[0].get_name())
         print()
         print()
-        return True
+        return ["victory", [agents[0].get_name()]]
     else:
-        return False
+        return []
 
 
 # AUX
