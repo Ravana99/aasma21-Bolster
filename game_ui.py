@@ -44,7 +44,7 @@ class Ui_MainWindow(object):
             self.villages[i].VillageName.setObjectName("VillageName" + str(i+1))
             self.villages[i].VillageName.setScaledContents(True)
             self.villages[i].VillageType = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].VillageType.setGeometry(QtCore.QRect(w + 175, 20, 50, 15))
+            self.villages[i].VillageType.setGeometry(QtCore.QRect(w + 172, 20, 55, 15))
             self.villages[i].VillageType.setObjectName("VillageType" + str(i+1))
             self.villages[i].VillageType.setScaledContents(True)
             self.villages[i].HealthBar = QtWidgets.QProgressBar(self.scrollAreaWidgetContents)
