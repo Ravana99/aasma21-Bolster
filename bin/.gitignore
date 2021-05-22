@@ -1,3 +1,4 @@
 *
 !.gitignore
-!outcomes100.pickle
+!outcomes100static.pickle
+!outcomes100dynamic.pickle

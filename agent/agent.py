@@ -183,6 +183,9 @@ class Agent:
 
     # AUX
 
+    def get_turn(self):
+        return self.turn
+
     def get_name(self):
         return self.name
 

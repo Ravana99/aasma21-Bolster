@@ -6,7 +6,7 @@ import pickle
 
 n_players = 12
 n_games = 2500
-target = f"bin/outcomes{n_games}.pickle"
+target = f"bin/outcomes{n_games}dynamic.pickle"
 
 
 def get_data():
