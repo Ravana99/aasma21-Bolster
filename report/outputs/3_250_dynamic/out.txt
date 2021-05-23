@@ -1,0 +1,40 @@
+Victories: 193
+Ties: 0
+Stalemates: 57
+Percentage of victories: 77.2%
+Percentage of ties: 0.0%
+Percentage of stalemates: 22.8%
+Games won by initially defensive agent: 45
+Games won by initially neutral agent: 53
+Games won by initially offensive agent: 95
+Percentage of victories won by initially defensive agent: 23.316062176165804%
+Percentage of victories won by initially neutral agent: 27.46113989637306%
+Percentage of victories won by initially offensive agent: 49.22279792746114%
+Games won by ending defensive agent: 10
+Games won by ending neutral agent: 101
+Games won by ending offensive agent: 82
+Percentage of victories won by ending defensive agent: 5.181347150259067%
+Percentage of victories won by ending neutral agent: 52.33160621761658%
+Percentage of victories won by ending offensive agent: 42.487046632124354%
+Games stalemated by initially defensive agent: 48
+Games stalemated by initially neutral agent: 34
+Games stalemated by initially offensive agent: 36
+Percentage of stalemates stalemated by initially defensive agent: 40.67796610169491%
+Percentage of stalemates stalemated by initially neutral agent: 28.8135593220339%
+Percentage of stalemates stalemated by initially offensive agent: 30.508474576271187%
+Games stalemated by ending defensive agent: 0
+Games stalemated by ending neutral agent: 0
+Games stalemated by ending offensive agent: 118
+Percentage of stalemates stalemated by ending defensive agent: 0.0%
+Percentage of stalemates stalemated by ending neutral agent: 0.0%
+Percentage of stalemates stalemated by ending offensive agent: 100.0%
+Average placements per starting stance: {<Stance.NEUTRAL: 0>: 2.128, <Stance.OFFENSIVE: 1>: 1.86, <Stance.DEFENSIVE: 2>: 2.012}
+Average turns per game: 140.588
+Average turns per victory: 117.62176165803109
+Average turns per stalemate: 218.35087719298247
+Average casualties per starting defensive agent: {'warriors': 32.879, 'archers': 5.192, 'catapults': 0.0, 'cavalrymen': 0.11}
+Average casualties per starting neutral agent: {'warriors': 47.327, 'archers': 5.582, 'catapults': 0.0, 'cavalrymen': 0.095}
+Average casualties per starting offensive agent: {'warriors': 38.975, 'archers': 5.103, 'catapults': 4.557, 'cavalrymen': 0.008}
+Percentage of turns spent in defensive stance: 0.4025593456170679
+Percentage of turns spent in neutral stance: 0.3333579289117511
+Percentage of turns spent in offensive stance: 0.264082725471181

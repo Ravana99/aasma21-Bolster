@@ -1,0 +1,46 @@
+Victories: 1425
+Ties: 2
+Stalemates: 1073
+Percentage of victories: 57.0%
+Percentage of ties: 0.08%
+Percentage of stalemates: 42.92%
+Games won by initially defensive agent: 145
+Games won by initially neutral agent: 226
+Games won by initially offensive agent: 1054
+Percentage of victories won by initially defensive agent: 10.175438596491228%
+Percentage of victories won by initially neutral agent: 15.859649122807017%
+Percentage of victories won by initially offensive agent: 73.96491228070175%
+Games won by ending defensive agent: 145
+Games won by ending neutral agent: 226
+Games won by ending offensive agent: 1054
+Percentage of victories won by ending defensive agent: 10.175438596491228%
+Percentage of victories won by ending neutral agent: 15.859649122807017%
+Percentage of victories won by ending offensive agent: 73.96491228070175%
+Games stalemated by initially defensive agent: 1739
+Games stalemated by initially neutral agent: 237
+Games stalemated by initially offensive agent: 512
+Percentage of stalemates stalemated by initially defensive agent: 69.89549839228296%
+Percentage of stalemates stalemated by initially neutral agent: 9.52572347266881%
+Percentage of stalemates stalemated by initially offensive agent: 20.578778135048232%
+Games stalemated by ending defensive agent: 1739
+Games stalemated by ending neutral agent: 237
+Games stalemated by ending offensive agent: 512
+Percentage of stalemates stalemated by ending defensive agent: 69.89549839228296%
+Percentage of stalemates stalemated by ending neutral agent: 9.52572347266881%
+Percentage of stalemates stalemated by ending offensive agent: 20.578778135048232%
+Average placements per starting stance: {<Stance.NEUTRAL: 0>: 7.5136, <Stance.OFFENSIVE: 1>: 7.0072, <Stance.DEFENSIVE: 2>: 4.9792000000000005}
+Top-half placements for defensive agents: 7116
+Top-half placements for neutral agents: 3637
+Top-half placements for offensive agents: 4294
+Percentage of top-half placements for defensive agents: 47.44%
+Percentage of top-half placements for neutral agents: 24.246666666666666%
+Percentage of top-half placements for offensive agents: 28.626666666666665%
+Average turns per game: 198.1424
+Average turns per victory: 145.80280701754387
+Average turns per stalemate: 267.8182665424045
+Average casualties per starting defensive agent: {'warriors': 97.3865, 'archers': 16.4753, 'catapults': 0.0, 'cavalrymen': 0.0003}
+Average casualties per starting neutral agent: {'warriors': 226.411, 'archers': 0.0, 'catapults': 0.0, 'cavalrymen': 0.0005}
+Average casualties per starting offensive agent: {'warriors': 152.6659, 'archers': 0.0, 'catapults': 28.2937, 'cavalrymen': 0.0006}
+Percentage of turns spent in defensive stance: 0.3998958781818661
+Percentage of turns spent in neutral stance: 0.29298484741979985
+Percentage of turns spent in offensive stance: 0.30711927439833403
