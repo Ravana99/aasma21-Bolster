@@ -383,7 +383,8 @@ class ReactiveAgent(Agent):
 
         if self.stance == Stance.DEFENSIVE:
             if self.turns_since_last_attack > self.stance.get_turns_without_fighting() and \
-               self.turns_since_last_defense > self.stance.get_turns_without_fighting():
+               self.turns_since_last_defense > self.stance.get_turns_without_fighting() and \
+               self.turn > 75:
                 new_stance = Stance.NEUTRAL
                 self.stance_history.append((new_stance, self.turn))
                 self.stance = new_stance
@@ -393,7 +394,8 @@ class ReactiveAgent(Agent):
                 self.stance_history.append((new_stance, self.turn))
                 self.stance = new_stance
             elif self.turns_since_last_attack > self.stance.get_turns_without_fighting() and \
-                    self.turns_since_last_defense > self.stance.get_turns_without_fighting():
+                    self.turns_since_last_defense > self.stance.get_turns_without_fighting() and \
+                    self.turn > 100:
                 new_stance = Stance.OFFENSIVE
                 self.stance_history.append((new_stance, self.turn))
                 self.stance = new_stance
@@ -443,3 +445,9 @@ class ReactiveAgent(Agent):
                     break
 
         return min(n, self.village.get_farm().capacity() - self.village.get_troops())
+
+    def get_starting_stance(self):
+        return self.stance_history[0][0]
+
+    def get_ending_stance(self):
+        return self.stance_history[-1][0]
