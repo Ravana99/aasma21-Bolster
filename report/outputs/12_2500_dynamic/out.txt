@@ -32,9 +32,9 @@ Average placements per starting stance: {<Stance.NEUTRAL: 0>: 7.11285, <Stance.O
 Top-half placements for defensive agents: 6535
 Top-half placements for neutral agents: 4122
 Top-half placements for offensive agents: 4359
-Percentage of top-half placements for defensive agents: 43.56666666666667%
-Percentage of top-half placements for neutral agents: 27.48%
-Percentage of top-half placements for offensive agents: 29.06%
+Percentage of top-half placements for defensive agents: 43.52%
+Percentage of top-half placements for neutral agents: 27.45%
+Percentage of top-half placements for offensive agents: 29.03%
 Average turns per game: 195.8632
 Average turns per victory: 169.42235710672736
 Average turns per stalemate: 295.8126195028681

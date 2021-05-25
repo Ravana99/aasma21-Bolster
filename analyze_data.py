@@ -37,6 +37,14 @@ def analyze_data():
         print(f"Percentage of ties: {number_of_ties * 100 / n_games}%")
         print(f"Percentage of stalemates: {number_of_stalemates * 100 / n_games}%")
 
+        # Analyze ties
+        ties = []
+        tie_participants = []
+        for ending_condition, winner, game in zip(ending_conditions, winners, games):
+            if ending_condition == "tie":
+                ties.append(game)
+                tie_participants.append(winner)
+
         # How many agents of each starting stance won a game
 
         starting_stances = []
@@ -121,6 +129,19 @@ def analyze_data():
         print(f"Percentage of stalemates stalemated by ending offensive agent: "
               f"{games_stale_by_end_off * 100 / (games_stale_by_def + games_stale_by_neut + games_stale_by_off)}%")
 
+        ending_stances = []
+        for ending_condition, winner, game in zip(ending_conditions, winners, games):
+            for agent in game:
+                if agent.get_name() not in winner:
+                    ending_stances.append(agent.get_ending_stance())
+
+        games_lost_by_end_def = sum(1 for stance in ending_stances if stance == Stance.DEFENSIVE)
+        games_lost_by_end_neut = sum(1 for stance in ending_stances if stance == Stance.NEUTRAL)
+        games_lost_by_end_off = sum(1 for stance in ending_stances if stance == Stance.OFFENSIVE)
+        print(f"Games lost by ending defensive agent: {games_lost_by_end_def}")
+        print(f"Games lost by ending neutral agent: {games_lost_by_end_neut}")
+        print(f"Games lost by ending offensive agent: {games_lost_by_end_off}")
+
         # Average placement by starting stance
 
         all_placements = []
@@ -165,11 +186,11 @@ def analyze_data():
         print(f"Top-half placements for neutral agents: {neut_top_half_rank}")
         print(f"Top-half placements for offensive agents: {off_top_half_rank}")
         print(f"Percentage of top-half placements for defensive agents: "
-              f"{def_top_half_rank * 100 / (n_games * 6)}%")
+              f"{def_top_half_rank * 100 / (def_top_half_rank + neut_top_half_rank + off_top_half_rank)}%")
         print(f"Percentage of top-half placements for neutral agents: "
-              f"{neut_top_half_rank * 100 / (n_games * 6)}%")
+              f"{neut_top_half_rank * 100 / (def_top_half_rank + neut_top_half_rank + off_top_half_rank)}%")
         print(f"Percentage of top-half placements for offensive agents: "
-              f"{off_top_half_rank * 100 / (n_games * 6)}%")
+              f"{off_top_half_rank * 100 / (def_top_half_rank + neut_top_half_rank + off_top_half_rank)}%")
 
         # Average number of turns per game
         avg_turns_per_game = mean(max(agent.get_turn() for agent in game) for game in games)
