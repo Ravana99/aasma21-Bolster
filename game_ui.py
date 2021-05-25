@@ -11,12 +11,24 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QDesktopWidget, QMainWindow
 
+from agent.reactiveagent import ReactiveAgent, Stance
 from ui.VillageUI import VillageUI
 from ui.mylogwindow import MyLogWindow
+from agent.reactiveagent import ReactiveAgent, Stance
+from sys import argv
+from random import shuffle
+from copy import deepcopy
 
 
 class Ui_MainWindow(QMainWindow):
     # noinspection PyPep8Naming
+
+    def __init__(self):
+        self.TURN_LIMIT = 750
+        self.STALEMATE_LIMIT = 100
+        self.agents = []
+        self.villages = []
+
     def setupUi(self, MainWindow, numAgents):
         MainWindow.setObjectName("MainWindow")
         availableSize = QDesktopWidget().availableGeometry()
@@ -35,384 +47,383 @@ class Ui_MainWindow(QMainWindow):
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 425 * numAgents, 780))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
-        self.villages = []
+        self.villageWidgets = []
         for i in range(0, numAgents):
             w = 425 * i
-            self.villages.insert(i, VillageUI())
-            self.villages[i].name = "Village " + str(i)
-            self.villages[i].VillageName = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].VillageName.setGeometry(QtCore.QRect(w + 175, 5, 50, 15))
-            self.villages[i].VillageName.setAlignment(QtCore.Qt.AlignCenter)
-            self.villages[i].VillageName.setObjectName("VillageName" + str(i + 1))
-            self.villages[i].VillageName.setScaledContents(True)
-            self.villages[i].VillageType = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].VillageType.setGeometry(QtCore.QRect(w + 172, 20, 55, 15))
-            self.villages[i].VillageType.setObjectName("VillageType" + str(i + 1))
-            self.villages[i].VillageType.setScaledContents(True)
-            self.villages[i].HealthBar = QtWidgets.QProgressBar(self.scrollAreaWidgetContents)
-            self.villages[i].HealthBar.setGeometry(QtCore.QRect(w + 5, 38, 415, 20))
+            self.villageWidgets.insert(i, VillageUI())
+            self.villageWidgets[i].name = "Village " + str(i)
+            self.villageWidgets[i].VillageName = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].VillageName.setGeometry(QtCore.QRect(w + 175, 5, 50, 15))
+            self.villageWidgets[i].VillageName.setAlignment(QtCore.Qt.AlignCenter)
+            self.villageWidgets[i].VillageName.setObjectName("VillageName" + str(i + 1))
+            self.villageWidgets[i].VillageName.setScaledContents(True)
+            self.villageWidgets[i].VillageType = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].VillageType.setGeometry(QtCore.QRect(w + 172, 20, 55, 15))
+            self.villageWidgets[i].VillageType.setObjectName("VillageType" + str(i + 1))
+            self.villageWidgets[i].VillageType.setScaledContents(True)
+            self.villageWidgets[i].HealthBar = QtWidgets.QProgressBar(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].HealthBar.setGeometry(QtCore.QRect(w + 5, 38, 415, 20))
             font = QtGui.QFont()
             font.setBold(True)
             font.setUnderline(False)
             font.setWeight(75)
             font.setKerning(True)
             font.setStyleStrategy(QtGui.QFont.PreferDefault)
-            self.villages[i].HealthBar.setFont(font)
-            self.villages[i].HealthBar.setLayoutDirection(QtCore.Qt.LeftToRight)
-            self.villages[i].HealthBar.setAutoFillBackground(False)
-            self.villages[i].HealthBar.setProperty("value", 100)
-            self.villages[i].HealthBar.setTextVisible(True)
-            self.villages[i].HealthBar.setInvertedAppearance(False)
-            self.villages[i].HealthBar.setObjectName("HealthBar" + str(i + 1))
-            self.villages[i].BarracksIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].BarracksIcon.setGeometry(QtCore.QRect(w + 10, 85, 35, 35))
-            self.villages[i].BarracksIcon.setText("")
-            self.villages[i].BarracksIcon.setPixmap(QtGui.QPixmap("ui_icons/Fort_%28Civ6%29.png"))
-            self.villages[i].BarracksIcon.setScaledContents(True)
-            self.villages[i].BarracksIcon.setAlignment(QtCore.Qt.AlignCenter)
-            self.villages[i].BarracksIcon.setObjectName("BarracksIcon" + str(i + 1))
-            self.villages[i].BuildingLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].BuildingLevel.setGeometry(QtCore.QRect(w + 170, 65, 60, 15))
-            self.villages[i].BuildingLevel.setObjectName("BuildingLevel" + str(i + 1))
-            self.villages[i].BuildingLevel.setScaledContents(True)
-            self.villages[i].BuildingNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].BuildingNextLevel.setGeometry(QtCore.QRect(w + 280, 65, 60, 15))
-            self.villages[i].BuildingNextLevel.setObjectName("BuildingNextLevel" + str(i + 1))
-            self.villages[i].BuildingNextLevel.setScaledContents(True)
-            self.villages[i].Barracks = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].Barracks.setGeometry(QtCore.QRect(w + 70, 95, 60, 15))
-            self.villages[i].Barracks.setObjectName("Barracks" + str(i + 1))
-            self.villages[i].BarracksLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].BarracksLevel.setGeometry(QtCore.QRect(w + 170, 95, 60, 15))
-            self.villages[i].BarracksLevel.setObjectName("BarracksLevel" + str(i + 1))
-            self.villages[i].BarracksNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].BarracksNextLevel.setGeometry(QtCore.QRect(w + 280, 95, 75, 15))
-            self.villages[i].BarracksNextLevel.setObjectName("BarracksNextLevel" + str(i + 1))
-            self.villages[i].FarmIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].FarmIcon.setGeometry(QtCore.QRect(w + 10, 120, 35, 35))
-            self.villages[i].FarmIcon.setText("")
-            self.villages[i].FarmIcon.setPixmap(QtGui.QPixmap("ui_icons/Farm_%28Civ6%29.png"))
-            self.villages[i].FarmIcon.setScaledContents(True)
-            self.villages[i].FarmIcon.setObjectName("FarmIcon" + str(i + 1))
-            self.villages[i].Farm = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].Farm.setGeometry(QtCore.QRect(w + 70, 130, 60, 15))
-            self.villages[i].Farm.setObjectName("Farm" + str(i + 1))
-            self.villages[i].FarmLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].FarmLevel.setGeometry(QtCore.QRect(w + 170, 130, 60, 15))
-            self.villages[i].FarmLevel.setObjectName("FarmLevel" + str(i + 1))
-            self.villages[i].FarmNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].FarmNextLevel.setGeometry(QtCore.QRect(w + 280, 130, 75, 15))
-            self.villages[i].FarmNextLevel.setObjectName("FarmNextLevel" + str(i + 1))
-            self.villages[i].MineIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].MineIcon.setGeometry(QtCore.QRect(w + 10, 155, 35, 35))
-            self.villages[i].MineIcon.setText("")
-            self.villages[i].MineIcon.setPixmap(QtGui.QPixmap("ui_icons/Mine_%28Civ6%29.png"))
-            self.villages[i].MineIcon.setScaledContents(True)
-            self.villages[i].MineIcon.setObjectName("MineIcon" + str(i + 1))
-            self.villages[i].Mine = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].Mine.setGeometry(QtCore.QRect(w + 70, 165, 60, 15))
-            self.villages[i].Mine.setObjectName("Mine" + str(i + 1))
-            self.villages[i].MineLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].MineLevel.setGeometry(QtCore.QRect(w + 170, 165, 60, 15))
-            self.villages[i].MineLevel.setObjectName("MineLevel" + str(i + 1))
-            self.villages[i].MineNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].MineNextLevel.setGeometry(QtCore.QRect(w + 280, 165, 75, 15))
-            self.villages[i].MineNextLevel.setObjectName("MineNextLevel" + str(i + 1))
-            self.villages[i].Iron = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].Iron.setGeometry(QtCore.QRect(w + 50, 350, 60, 15))
-            self.villages[i].Iron.setAlignment(QtCore.Qt.AlignCenter)
-            self.villages[i].Iron.setObjectName("Iron" + str(i + 1))
-            self.villages[i].IronValue = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].IronValue.setGeometry(QtCore.QRect(w + 50, 380, 60, 15))
-            self.villages[i].IronValue.setAlignment(QtCore.Qt.AlignCenter)
-            self.villages[i].IronValue.setObjectName("IronValue" + str(i + 1))
-            self.villages[i].Stone = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].Stone.setGeometry(QtCore.QRect(w + 170, 350, 60, 15))
-            self.villages[i].Stone.setAlignment(QtCore.Qt.AlignCenter)
-            self.villages[i].Stone.setObjectName("Stone" + str(i + 1))
-            self.villages[i].StoneValue = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].StoneValue.setGeometry(QtCore.QRect(w + 170, 380, 60, 15))
-            self.villages[i].StoneValue.setAlignment(QtCore.Qt.AlignCenter)
-            self.villages[i].StoneValue.setObjectName("StoneValue" + str(i + 1))
-            self.villages[i].Wood = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].Wood.setGeometry(QtCore.QRect(w + 290, 350, 60, 15))
-            self.villages[i].Wood.setAlignment(QtCore.Qt.AlignCenter)
-            self.villages[i].Wood.setObjectName("Wood" + str(i + 1))
-            self.villages[i].WoodValue = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].WoodValue.setGeometry(QtCore.QRect(w + 290, 380, 60, 15))
-            self.villages[i].WoodValue.setAlignment(QtCore.Qt.AlignCenter)
-            self.villages[i].WoodValue.setObjectName("WoodValue" + str(i + 1))
-            self.villages[i].Army = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].Army.setGeometry(QtCore.QRect(w + 90, 450, 60, 15))
-            self.villages[i].Army.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
-            self.villages[i].Army.setObjectName("Army" + str(i + 1))
-            self.villages[i].Warriors = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].Warriors.setGeometry(QtCore.QRect(w + 90, 480, 60, 15))
-            self.villages[i].Warriors.setObjectName("Warriors" + str(i + 1))
-            self.villages[i].Archers = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].Archers.setGeometry(QtCore.QRect(w + 90, 515, 60, 15))
-            self.villages[i].Archers.setObjectName("Archers" + str(i + 1))
-            self.villages[i].Catapults = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].Catapults.setGeometry(QtCore.QRect(w + 90, 550, 60, 15))
-            self.villages[i].Catapults.setObjectName("Catapults" + str(i + 1))
-            self.villages[i].Cavalrymen = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].Cavalrymen.setGeometry(QtCore.QRect(w + 90, 585, 60, 15))
-            self.villages[i].Cavalrymen.setObjectName("Cavalrymen" + str(i + 1))
-            self.villages[i].TotalArmy = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].TotalArmy.setGeometry(QtCore.QRect(w + 90, 620, 60, 15))
-            self.villages[i].TotalArmy.setObjectName("TotalArmy" + str(i + 1))
-            self.villages[i].NumSoldiers = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].NumSoldiers.setGeometry(QtCore.QRect(w + 170, 450, 60, 15))
-            self.villages[i].NumSoldiers.setObjectName("NumSoldiers" + str(i + 1))
-            self.villages[i].Offensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].Offensive.setGeometry(QtCore.QRect(w + 240, 450, 60, 15))
-            self.villages[i].Offensive.setObjectName("Offensive" + str(i + 1))
-            self.villages[i].Defensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].Defensive.setGeometry(QtCore.QRect(w + 320, 450, 60, 15))
-            self.villages[i].Defensive.setObjectName("Defensive" + str(i + 1))
-            self.villages[i].Log = MyLogWindow(self.scrollAreaWidgetContents)
-            self.villages[i].Log.setGeometry(QtCore.QRect(w + 5, 650, 415, 130))
-            self.villages[i].Log.setObjectName("Log" + str(i + 1))
-            self.villages[i].WarriorsNum = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].WarriorsNum.setGeometry(QtCore.QRect(w + 170, 480, 60, 15))
-            self.villages[i].WarriorsNum.setObjectName("WarriorsNum" + str(i + 1))
-            self.villages[i].ArchersNum = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].ArchersNum.setGeometry(QtCore.QRect(w + 170, 515, 60, 15))
-            self.villages[i].ArchersNum.setObjectName("ArchersNum" + str(i + 1))
-            self.villages[i].CatapultsNum = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].CatapultsNum.setGeometry(QtCore.QRect(w + 170, 550, 60, 15))
-            self.villages[i].CatapultsNum.setObjectName("CatapultsNum" + str(i + 1))
-            self.villages[i].CavalrymenNum = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].CavalrymenNum.setGeometry(QtCore.QRect(w + 170, 585, 60, 15))
-            self.villages[i].CavalrymenNum.setObjectName("CavalrymenNum" + str(i + 1))
-            self.villages[i].TotalNum = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].TotalNum.setGeometry(QtCore.QRect(w + 170, 620, 60, 15))
-            self.villages[i].TotalNum.setObjectName("TotalNum" + str(i + 1))
-            self.villages[i].WarriorsOffensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].WarriorsOffensive.setGeometry(QtCore.QRect(w + 240, 480, 60, 15))
-            self.villages[i].WarriorsOffensive.setObjectName("WarriorsOffensive" + str(i + 1))
-            self.villages[i].ArchersOffensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].ArchersOffensive.setGeometry(QtCore.QRect(w + 240, 515, 60, 15))
-            self.villages[i].ArchersOffensive.setObjectName("ArchersOffensive" + str(i + 1))
-            self.villages[i].CatapultsOffensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].CatapultsOffensive.setGeometry(QtCore.QRect(w + 240, 550, 60, 15))
-            self.villages[i].CatapultsOffensive.setObjectName("CatapultsOffensive" + str(i + 1))
-            self.villages[i].CavalrymenOffensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].CavalrymenOffensive.setGeometry(QtCore.QRect(w + 240, 585, 60, 15))
-            self.villages[i].CavalrymenOffensive.setObjectName("CavalrymenOffensive" + str(i + 1))
-            self.villages[i].TotalOffensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].TotalOffensive.setGeometry(QtCore.QRect(w + 240, 620, 60, 15))
-            self.villages[i].TotalOffensive.setObjectName("TotalOffensive" + str(i + 1))
-            self.villages[i].WarriorsDefensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].WarriorsDefensive.setGeometry(QtCore.QRect(w + 320, 480, 60, 15))
-            self.villages[i].WarriorsDefensive.setObjectName("WarriorsDefensive" + str(i + 1))
-            self.villages[i].ArchersDefensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].ArchersDefensive.setGeometry(QtCore.QRect(w + 320, 515, 60, 15))
-            self.villages[i].ArchersDefensive.setObjectName("ArchersDefensive" + str(i + 1))
-            self.villages[i].CatapultsDefensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].CatapultsDefensive.setGeometry(QtCore.QRect(w + 320, 550, 60, 15))
-            self.villages[i].CatapultsDefensive.setObjectName("CatapultsDefensive" + str(i + 1))
-            self.villages[i].CavalrymenDefensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].CavalrymenDefensive.setGeometry(QtCore.QRect(w + 320, 585, 60, 15))
-            self.villages[i].CavalrymenDefensive.setObjectName("CavalrymenDefensive" + str(i + 1))
-            self.villages[i].TotalDefensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].TotalDefensive.setGeometry(QtCore.QRect(w + 320, 620, 60, 15))
-            self.villages[i].TotalDefensive.setObjectName("TotalDefensive" + str(i + 1))
-            self.villages[i].CavalrymenIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].CavalrymenIcon.setGeometry(QtCore.QRect(w + 20, 575, 35, 35))
-            self.villages[i].CavalrymenIcon.setText("")
-            self.villages[i].CavalrymenIcon.setPixmap(QtGui.QPixmap("ui_icons/Horseman_icon_%28Civ6%29.png"))
-            self.villages[i].CavalrymenIcon.setScaledContents(True)
-            self.villages[i].CavalrymenIcon.setObjectName("CavalrymenIcon" + str(i + 1))
-            self.villages[i].CatapultsIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].CatapultsIcon.setGeometry(QtCore.QRect(w + 20, 540, 35, 35))
-            self.villages[i].CatapultsIcon.setText("")
-            self.villages[i].CatapultsIcon.setPixmap(QtGui.QPixmap("ui_icons/Catapult_icon_%28Civ6%29.png"))
-            self.villages[i].CatapultsIcon.setScaledContents(True)
-            self.villages[i].CatapultsIcon.setObjectName("CatapultsIcon" + str(i + 1))
-            self.villages[i].ArchersIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].ArchersIcon.setGeometry(QtCore.QRect(w + 20, 505, 35, 35))
-            self.villages[i].ArchersIcon.setText("")
-            self.villages[i].ArchersIcon.setPixmap(QtGui.QPixmap("ui_icons/Archer_icon_%28Civ6%29.png"))
-            self.villages[i].ArchersIcon.setScaledContents(True)
-            self.villages[i].ArchersIcon.setObjectName("ArchersIcon" + str(i + 1))
-            self.villages[i].WarriorsIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].WarriorsIcon.setGeometry(QtCore.QRect(w + 20, 470, 35, 35))
-            self.villages[i].WarriorsIcon.setText("")
-            self.villages[i].WarriorsIcon.setPixmap(QtGui.QPixmap("ui_icons/Warrior_icon_%28Civ6%29.png"))
-            self.villages[i].WarriorsIcon.setScaledContents(True)
-            self.villages[i].WarriorsIcon.setObjectName("WarriorsIcon" + str(i + 1))
-            self.villages[i].SawMillIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].SawMillIcon.setGeometry(QtCore.QRect(w + 10, 225, 35, 35))
-            self.villages[i].SawMillIcon.setText("")
-            self.villages[i].SawMillIcon.setPixmap(QtGui.QPixmap("ui_icons/Lumber_Mill_%28Civ6%29.png"))
-            self.villages[i].SawMillIcon.setScaledContents(True)
-            self.villages[i].SawMillIcon.setObjectName("SawMillIcon" + str(i + 1))
-            self.villages[i].SawMill = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].SawMill.setGeometry(QtCore.QRect(w + 70, 235, 60, 15))
-            self.villages[i].SawMill.setObjectName("SawMill" + str(i + 1))
-            self.villages[i].SawMilLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].SawMilLevel.setGeometry(QtCore.QRect(w + 170, 235, 60, 15))
-            self.villages[i].SawMilLevel.setObjectName("SawMilLevel" + str(i + 1))
-            self.villages[i].SawMillNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].SawMillNextLevel.setGeometry(QtCore.QRect(w + 280, 235, 75, 15))
-            self.villages[i].SawMillNextLevel.setObjectName("SawMillNextLevel" + str(i + 1))
-            self.villages[i].VillageCapacity = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].VillageCapacity.setGeometry(QtCore.QRect(w + 60, 420, 80, 15))
-            self.villages[i].VillageCapacity.setObjectName("VillageCapacity" + str(i + 1))
-            self.villages[i].VillageCapacityValue = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].VillageCapacityValue.setGeometry(QtCore.QRect(w + 170, 420, 50, 15))
-            self.villages[i].VillageCapacityValue.setObjectName("VillageCapacityValue" + str(i + 1))
-            self.villages[i].SpiesValue = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].SpiesValue.setGeometry(QtCore.QRect(w + 320, 420, 50, 15))
-            self.villages[i].SpiesValue.setObjectName("SpiesValue" + str(i + 1))
-            self.villages[i].Spies = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].Spies.setGeometry(QtCore.QRect(w + 280, 420, 80, 15))
-            self.villages[i].Spies.setObjectName("Spies" + str(i + 1))
-            self.villages[i].SpiesIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].SpiesIcon.setGeometry(QtCore.QRect(w + 240, 410, 35, 35))
-            self.villages[i].SpiesIcon.setText("")
-            self.villages[i].SpiesIcon.setPixmap(QtGui.QPixmap("ui_icons/Spy_icon_%28Civ6%29.png"))
-            self.villages[i].SpiesIcon.setScaledContents(True)
-            self.villages[i].SpiesIcon.setObjectName("SpiesIcon" + str(i + 1))
-            self.villages[i].QuarryIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].QuarryIcon.setGeometry(QtCore.QRect(w + 10, 190, 35, 35))
-            self.villages[i].QuarryIcon.setText("")
-            self.villages[i].QuarryIcon.setPixmap(QtGui.QPixmap("ui_icons/Quarry_%28Civ6%29.png"))
-            self.villages[i].QuarryIcon.setScaledContents(True)
-            self.villages[i].QuarryIcon.setObjectName("QuarryIcon" + str(i + 1))
-            self.villages[i].Quarry = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].Quarry.setGeometry(QtCore.QRect(w + 70, 200, 60, 15))
-            self.villages[i].Quarry.setObjectName("Quarry" + str(i + 1))
-            self.villages[i].QuarryLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].QuarryLevel.setGeometry(QtCore.QRect(w + 170, 200, 60, 15))
-            self.villages[i].QuarryLevel.setObjectName("QuarryLevel" + str(i + 1))
-            self.villages[i].QuarryNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].QuarryNextLevel.setGeometry(QtCore.QRect(w + 280, 200, 75, 15))
-            self.villages[i].QuarryNextLevel.setObjectName("QuarryNextLevel" + str(i + 1))
-            self.villages[i].WallIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].WallIcon.setGeometry(QtCore.QRect(w + 10, 260, 35, 35))
-            self.villages[i].WallIcon.setText("")
-            self.villages[i].WallIcon.setPixmap(QtGui.QPixmap("ui_icons/Great_Wall_%28Civ6%29.png"))
-            self.villages[i].WallIcon.setScaledContents(True)
-            self.villages[i].WallIcon.setObjectName("WallIcon" + str(i + 1))
-            self.villages[i].WarehouseIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].WarehouseIcon.setGeometry(QtCore.QRect(w + 10, 295, 35, 35))
-            self.villages[i].WarehouseIcon.setText("")
-            self.villages[i].WarehouseIcon.setPixmap(QtGui.QPixmap("ui_icons/Feitoria_%28Civ6%29.png"))
-            self.villages[i].WarehouseIcon.setScaledContents(True)
-            self.villages[i].WarehouseIcon.setObjectName("WarehouseIcon" + str(i + 1))
-            self.villages[i].Wall = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].Wall.setGeometry(QtCore.QRect(w + 70, 270, 60, 15))
-            self.villages[i].Wall.setObjectName("Wall" + str(i + 1))
-            self.villages[i].Warehouse = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].Warehouse.setGeometry(QtCore.QRect(w + 70, 305, 60, 15))
-            self.villages[i].Warehouse.setObjectName("Warehouse" + str(i + 1))
-            self.villages[i].WallLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].WallLevel.setGeometry(QtCore.QRect(w + 170, 270, 60, 15))
-            self.villages[i].WallLevel.setObjectName("WallLevel" + str(i + 1))
-            self.villages[i].WarehouseLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].WarehouseLevel.setGeometry(QtCore.QRect(w + 170, 305, 60, 15))
-            self.villages[i].WarehouseLevel.setObjectName("WarehouseLevel" + str(i + 1))
-            self.villages[i].WallNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].WallNextLevel.setGeometry(QtCore.QRect(w + 280, 270, 75, 15))
-            self.villages[i].WallNextLevel.setObjectName("WallNextLevel" + str(i + 1))
-            self.villages[i].WarehouseNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villages[i].WarehouseNextLevel.setGeometry(QtCore.QRect(w + 280, 305, 75, 15))
-            self.villages[i].WarehouseNextLevel.setObjectName("WarehouseNextLevel" + str(i + 1))
+            self.villageWidgets[i].HealthBar.setFont(font)
+            self.villageWidgets[i].HealthBar.setLayoutDirection(QtCore.Qt.LeftToRight)
+            self.villageWidgets[i].HealthBar.setAutoFillBackground(False)
+            self.villageWidgets[i].HealthBar.setProperty("value", 100)
+            self.villageWidgets[i].HealthBar.setTextVisible(True)
+            self.villageWidgets[i].HealthBar.setInvertedAppearance(False)
+            self.villageWidgets[i].HealthBar.setObjectName("HealthBar" + str(i + 1))
+            self.villageWidgets[i].BarracksIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].BarracksIcon.setGeometry(QtCore.QRect(w + 10, 85, 35, 35))
+            self.villageWidgets[i].BarracksIcon.setText("")
+            self.villageWidgets[i].BarracksIcon.setPixmap(QtGui.QPixmap("ui_icons/Fort_%28Civ6%29.png"))
+            self.villageWidgets[i].BarracksIcon.setScaledContents(True)
+            self.villageWidgets[i].BarracksIcon.setAlignment(QtCore.Qt.AlignCenter)
+            self.villageWidgets[i].BarracksIcon.setObjectName("BarracksIcon" + str(i + 1))
+            self.villageWidgets[i].BuildingLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].BuildingLevel.setGeometry(QtCore.QRect(w + 170, 65, 60, 15))
+            self.villageWidgets[i].BuildingLevel.setObjectName("BuildingLevel" + str(i + 1))
+            self.villageWidgets[i].BuildingLevel.setScaledContents(True)
+            self.villageWidgets[i].BuildingNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].BuildingNextLevel.setGeometry(QtCore.QRect(w + 280, 65, 60, 15))
+            self.villageWidgets[i].BuildingNextLevel.setObjectName("BuildingNextLevel" + str(i + 1))
+            self.villageWidgets[i].BuildingNextLevel.setScaledContents(True)
+            self.villageWidgets[i].Barracks = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].Barracks.setGeometry(QtCore.QRect(w + 70, 95, 60, 15))
+            self.villageWidgets[i].Barracks.setObjectName("Barracks" + str(i + 1))
+            self.villageWidgets[i].BarracksLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].BarracksLevel.setGeometry(QtCore.QRect(w + 170, 95, 60, 15))
+            self.villageWidgets[i].BarracksLevel.setObjectName("BarracksLevel" + str(i + 1))
+            self.villageWidgets[i].BarracksNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].BarracksNextLevel.setGeometry(QtCore.QRect(w + 280, 95, 75, 15))
+            self.villageWidgets[i].BarracksNextLevel.setObjectName("BarracksNextLevel" + str(i + 1))
+            self.villageWidgets[i].FarmIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].FarmIcon.setGeometry(QtCore.QRect(w + 10, 120, 35, 35))
+            self.villageWidgets[i].FarmIcon.setText("")
+            self.villageWidgets[i].FarmIcon.setPixmap(QtGui.QPixmap("ui_icons/Farm_%28Civ6%29.png"))
+            self.villageWidgets[i].FarmIcon.setScaledContents(True)
+            self.villageWidgets[i].FarmIcon.setObjectName("FarmIcon" + str(i + 1))
+            self.villageWidgets[i].Farm = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].Farm.setGeometry(QtCore.QRect(w + 70, 130, 60, 15))
+            self.villageWidgets[i].Farm.setObjectName("Farm" + str(i + 1))
+            self.villageWidgets[i].FarmLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].FarmLevel.setGeometry(QtCore.QRect(w + 170, 130, 60, 15))
+            self.villageWidgets[i].FarmLevel.setObjectName("FarmLevel" + str(i + 1))
+            self.villageWidgets[i].FarmNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].FarmNextLevel.setGeometry(QtCore.QRect(w + 280, 130, 75, 15))
+            self.villageWidgets[i].FarmNextLevel.setObjectName("FarmNextLevel" + str(i + 1))
+            self.villageWidgets[i].MineIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].MineIcon.setGeometry(QtCore.QRect(w + 10, 155, 35, 35))
+            self.villageWidgets[i].MineIcon.setText("")
+            self.villageWidgets[i].MineIcon.setPixmap(QtGui.QPixmap("ui_icons/Mine_%28Civ6%29.png"))
+            self.villageWidgets[i].MineIcon.setScaledContents(True)
+            self.villageWidgets[i].MineIcon.setObjectName("MineIcon" + str(i + 1))
+            self.villageWidgets[i].Mine = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].Mine.setGeometry(QtCore.QRect(w + 70, 165, 60, 15))
+            self.villageWidgets[i].Mine.setObjectName("Mine" + str(i + 1))
+            self.villageWidgets[i].MineLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].MineLevel.setGeometry(QtCore.QRect(w + 170, 165, 60, 15))
+            self.villageWidgets[i].MineLevel.setObjectName("MineLevel" + str(i + 1))
+            self.villageWidgets[i].MineNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].MineNextLevel.setGeometry(QtCore.QRect(w + 280, 165, 75, 15))
+            self.villageWidgets[i].MineNextLevel.setObjectName("MineNextLevel" + str(i + 1))
+            self.villageWidgets[i].Iron = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].Iron.setGeometry(QtCore.QRect(w + 50, 350, 60, 15))
+            self.villageWidgets[i].Iron.setAlignment(QtCore.Qt.AlignCenter)
+            self.villageWidgets[i].Iron.setObjectName("Iron" + str(i + 1))
+            self.villageWidgets[i].IronValue = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].IronValue.setGeometry(QtCore.QRect(w + 50, 380, 60, 15))
+            self.villageWidgets[i].IronValue.setAlignment(QtCore.Qt.AlignCenter)
+            self.villageWidgets[i].IronValue.setObjectName("IronValue" + str(i + 1))
+            self.villageWidgets[i].Stone = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].Stone.setGeometry(QtCore.QRect(w + 170, 350, 60, 15))
+            self.villageWidgets[i].Stone.setAlignment(QtCore.Qt.AlignCenter)
+            self.villageWidgets[i].Stone.setObjectName("Stone" + str(i + 1))
+            self.villageWidgets[i].StoneValue = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].StoneValue.setGeometry(QtCore.QRect(w + 170, 380, 60, 15))
+            self.villageWidgets[i].StoneValue.setAlignment(QtCore.Qt.AlignCenter)
+            self.villageWidgets[i].StoneValue.setObjectName("StoneValue" + str(i + 1))
+            self.villageWidgets[i].Wood = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].Wood.setGeometry(QtCore.QRect(w + 290, 350, 60, 15))
+            self.villageWidgets[i].Wood.setAlignment(QtCore.Qt.AlignCenter)
+            self.villageWidgets[i].Wood.setObjectName("Wood" + str(i + 1))
+            self.villageWidgets[i].WoodValue = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].WoodValue.setGeometry(QtCore.QRect(w + 290, 380, 60, 15))
+            self.villageWidgets[i].WoodValue.setAlignment(QtCore.Qt.AlignCenter)
+            self.villageWidgets[i].WoodValue.setObjectName("WoodValue" + str(i + 1))
+            self.villageWidgets[i].Army = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].Army.setGeometry(QtCore.QRect(w + 90, 450, 60, 15))
+            self.villageWidgets[i].Army.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+            self.villageWidgets[i].Army.setObjectName("Army" + str(i + 1))
+            self.villageWidgets[i].Warriors = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].Warriors.setGeometry(QtCore.QRect(w + 90, 480, 60, 15))
+            self.villageWidgets[i].Warriors.setObjectName("Warriors" + str(i + 1))
+            self.villageWidgets[i].Archers = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].Archers.setGeometry(QtCore.QRect(w + 90, 515, 60, 15))
+            self.villageWidgets[i].Archers.setObjectName("Archers" + str(i + 1))
+            self.villageWidgets[i].Catapults = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].Catapults.setGeometry(QtCore.QRect(w + 90, 550, 60, 15))
+            self.villageWidgets[i].Catapults.setObjectName("Catapults" + str(i + 1))
+            self.villageWidgets[i].Cavalrymen = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].Cavalrymen.setGeometry(QtCore.QRect(w + 90, 585, 60, 15))
+            self.villageWidgets[i].Cavalrymen.setObjectName("Cavalrymen" + str(i + 1))
+            self.villageWidgets[i].TotalArmy = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].TotalArmy.setGeometry(QtCore.QRect(w + 90, 620, 60, 15))
+            self.villageWidgets[i].TotalArmy.setObjectName("TotalArmy" + str(i + 1))
+            self.villageWidgets[i].NumSoldiers = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].NumSoldiers.setGeometry(QtCore.QRect(w + 170, 450, 60, 15))
+            self.villageWidgets[i].NumSoldiers.setObjectName("NumSoldiers" + str(i + 1))
+            self.villageWidgets[i].Offensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].Offensive.setGeometry(QtCore.QRect(w + 240, 450, 60, 15))
+            self.villageWidgets[i].Offensive.setObjectName("Offensive" + str(i + 1))
+            self.villageWidgets[i].Defensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].Defensive.setGeometry(QtCore.QRect(w + 320, 450, 60, 15))
+            self.villageWidgets[i].Defensive.setObjectName("Defensive" + str(i + 1))
+            self.villageWidgets[i].Log = MyLogWindow(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].Log.setGeometry(QtCore.QRect(w + 5, 650, 415, 130))
+            self.villageWidgets[i].Log.setObjectName("Log" + str(i + 1))
+            self.villageWidgets[i].WarriorsNum = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].WarriorsNum.setGeometry(QtCore.QRect(w + 170, 480, 60, 15))
+            self.villageWidgets[i].WarriorsNum.setObjectName("WarriorsNum" + str(i + 1))
+            self.villageWidgets[i].ArchersNum = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].ArchersNum.setGeometry(QtCore.QRect(w + 170, 515, 60, 15))
+            self.villageWidgets[i].ArchersNum.setObjectName("ArchersNum" + str(i + 1))
+            self.villageWidgets[i].CatapultsNum = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].CatapultsNum.setGeometry(QtCore.QRect(w + 170, 550, 60, 15))
+            self.villageWidgets[i].CatapultsNum.setObjectName("CatapultsNum" + str(i + 1))
+            self.villageWidgets[i].CavalrymenNum = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].CavalrymenNum.setGeometry(QtCore.QRect(w + 170, 585, 60, 15))
+            self.villageWidgets[i].CavalrymenNum.setObjectName("CavalrymenNum" + str(i + 1))
+            self.villageWidgets[i].TotalNum = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].TotalNum.setGeometry(QtCore.QRect(w + 170, 620, 60, 15))
+            self.villageWidgets[i].TotalNum.setObjectName("TotalNum" + str(i + 1))
+            self.villageWidgets[i].WarriorsOffensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].WarriorsOffensive.setGeometry(QtCore.QRect(w + 240, 480, 60, 15))
+            self.villageWidgets[i].WarriorsOffensive.setObjectName("WarriorsOffensive" + str(i + 1))
+            self.villageWidgets[i].ArchersOffensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].ArchersOffensive.setGeometry(QtCore.QRect(w + 240, 515, 60, 15))
+            self.villageWidgets[i].ArchersOffensive.setObjectName("ArchersOffensive" + str(i + 1))
+            self.villageWidgets[i].CatapultsOffensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].CatapultsOffensive.setGeometry(QtCore.QRect(w + 240, 550, 60, 15))
+            self.villageWidgets[i].CatapultsOffensive.setObjectName("CatapultsOffensive" + str(i + 1))
+            self.villageWidgets[i].CavalrymenOffensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].CavalrymenOffensive.setGeometry(QtCore.QRect(w + 240, 585, 60, 15))
+            self.villageWidgets[i].CavalrymenOffensive.setObjectName("CavalrymenOffensive" + str(i + 1))
+            self.villageWidgets[i].TotalOffensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].TotalOffensive.setGeometry(QtCore.QRect(w + 240, 620, 60, 15))
+            self.villageWidgets[i].TotalOffensive.setObjectName("TotalOffensive" + str(i + 1))
+            self.villageWidgets[i].WarriorsDefensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].WarriorsDefensive.setGeometry(QtCore.QRect(w + 320, 480, 60, 15))
+            self.villageWidgets[i].WarriorsDefensive.setObjectName("WarriorsDefensive" + str(i + 1))
+            self.villageWidgets[i].ArchersDefensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].ArchersDefensive.setGeometry(QtCore.QRect(w + 320, 515, 60, 15))
+            self.villageWidgets[i].ArchersDefensive.setObjectName("ArchersDefensive" + str(i + 1))
+            self.villageWidgets[i].CatapultsDefensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].CatapultsDefensive.setGeometry(QtCore.QRect(w + 320, 550, 60, 15))
+            self.villageWidgets[i].CatapultsDefensive.setObjectName("CatapultsDefensive" + str(i + 1))
+            self.villageWidgets[i].CavalrymenDefensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].CavalrymenDefensive.setGeometry(QtCore.QRect(w + 320, 585, 60, 15))
+            self.villageWidgets[i].CavalrymenDefensive.setObjectName("CavalrymenDefensive" + str(i + 1))
+            self.villageWidgets[i].TotalDefensive = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].TotalDefensive.setGeometry(QtCore.QRect(w + 320, 620, 60, 15))
+            self.villageWidgets[i].TotalDefensive.setObjectName("TotalDefensive" + str(i + 1))
+            self.villageWidgets[i].CavalrymenIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].CavalrymenIcon.setGeometry(QtCore.QRect(w + 20, 575, 35, 35))
+            self.villageWidgets[i].CavalrymenIcon.setText("")
+            self.villageWidgets[i].CavalrymenIcon.setPixmap(QtGui.QPixmap("ui_icons/Horseman_icon_%28Civ6%29.png"))
+            self.villageWidgets[i].CavalrymenIcon.setScaledContents(True)
+            self.villageWidgets[i].CavalrymenIcon.setObjectName("CavalrymenIcon" + str(i + 1))
+            self.villageWidgets[i].CatapultsIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].CatapultsIcon.setGeometry(QtCore.QRect(w + 20, 540, 35, 35))
+            self.villageWidgets[i].CatapultsIcon.setText("")
+            self.villageWidgets[i].CatapultsIcon.setPixmap(QtGui.QPixmap("ui_icons/Catapult_icon_%28Civ6%29.png"))
+            self.villageWidgets[i].CatapultsIcon.setScaledContents(True)
+            self.villageWidgets[i].CatapultsIcon.setObjectName("CatapultsIcon" + str(i + 1))
+            self.villageWidgets[i].ArchersIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].ArchersIcon.setGeometry(QtCore.QRect(w + 20, 505, 35, 35))
+            self.villageWidgets[i].ArchersIcon.setText("")
+            self.villageWidgets[i].ArchersIcon.setPixmap(QtGui.QPixmap("ui_icons/Archer_icon_%28Civ6%29.png"))
+            self.villageWidgets[i].ArchersIcon.setScaledContents(True)
+            self.villageWidgets[i].ArchersIcon.setObjectName("ArchersIcon" + str(i + 1))
+            self.villageWidgets[i].WarriorsIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].WarriorsIcon.setGeometry(QtCore.QRect(w + 20, 470, 35, 35))
+            self.villageWidgets[i].WarriorsIcon.setText("")
+            self.villageWidgets[i].WarriorsIcon.setPixmap(QtGui.QPixmap("ui_icons/Warrior_icon_%28Civ6%29.png"))
+            self.villageWidgets[i].WarriorsIcon.setScaledContents(True)
+            self.villageWidgets[i].WarriorsIcon.setObjectName("WarriorsIcon" + str(i + 1))
+            self.villageWidgets[i].SawMillIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].SawMillIcon.setGeometry(QtCore.QRect(w + 10, 225, 35, 35))
+            self.villageWidgets[i].SawMillIcon.setText("")
+            self.villageWidgets[i].SawMillIcon.setPixmap(QtGui.QPixmap("ui_icons/Lumber_Mill_%28Civ6%29.png"))
+            self.villageWidgets[i].SawMillIcon.setScaledContents(True)
+            self.villageWidgets[i].SawMillIcon.setObjectName("SawMillIcon" + str(i + 1))
+            self.villageWidgets[i].SawMill = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].SawMill.setGeometry(QtCore.QRect(w + 70, 235, 60, 15))
+            self.villageWidgets[i].SawMill.setObjectName("SawMill" + str(i + 1))
+            self.villageWidgets[i].SawMilLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].SawMilLevel.setGeometry(QtCore.QRect(w + 170, 235, 60, 15))
+            self.villageWidgets[i].SawMilLevel.setObjectName("SawMilLevel" + str(i + 1))
+            self.villageWidgets[i].SawMillNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].SawMillNextLevel.setGeometry(QtCore.QRect(w + 280, 235, 75, 15))
+            self.villageWidgets[i].SawMillNextLevel.setObjectName("SawMillNextLevel" + str(i + 1))
+            self.villageWidgets[i].VillageCapacity = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].VillageCapacity.setGeometry(QtCore.QRect(w + 60, 420, 80, 15))
+            self.villageWidgets[i].VillageCapacity.setObjectName("VillageCapacity" + str(i + 1))
+            self.villageWidgets[i].VillageCapacityValue = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].VillageCapacityValue.setGeometry(QtCore.QRect(w + 170, 420, 50, 15))
+            self.villageWidgets[i].VillageCapacityValue.setObjectName("VillageCapacityValue" + str(i + 1))
+            self.villageWidgets[i].SpiesValue = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].SpiesValue.setGeometry(QtCore.QRect(w + 320, 420, 50, 15))
+            self.villageWidgets[i].SpiesValue.setObjectName("SpiesValue" + str(i + 1))
+            self.villageWidgets[i].Spies = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].Spies.setGeometry(QtCore.QRect(w + 280, 420, 80, 15))
+            self.villageWidgets[i].Spies.setObjectName("Spies" + str(i + 1))
+            self.villageWidgets[i].SpiesIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].SpiesIcon.setGeometry(QtCore.QRect(w + 240, 410, 35, 35))
+            self.villageWidgets[i].SpiesIcon.setText("")
+            self.villageWidgets[i].SpiesIcon.setPixmap(QtGui.QPixmap("ui_icons/Spy_icon_%28Civ6%29.png"))
+            self.villageWidgets[i].SpiesIcon.setScaledContents(True)
+            self.villageWidgets[i].SpiesIcon.setObjectName("SpiesIcon" + str(i + 1))
+            self.villageWidgets[i].QuarryIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].QuarryIcon.setGeometry(QtCore.QRect(w + 10, 190, 35, 35))
+            self.villageWidgets[i].QuarryIcon.setText("")
+            self.villageWidgets[i].QuarryIcon.setPixmap(QtGui.QPixmap("ui_icons/Quarry_%28Civ6%29.png"))
+            self.villageWidgets[i].QuarryIcon.setScaledContents(True)
+            self.villageWidgets[i].QuarryIcon.setObjectName("QuarryIcon" + str(i + 1))
+            self.villageWidgets[i].Quarry = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].Quarry.setGeometry(QtCore.QRect(w + 70, 200, 60, 15))
+            self.villageWidgets[i].Quarry.setObjectName("Quarry" + str(i + 1))
+            self.villageWidgets[i].QuarryLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].QuarryLevel.setGeometry(QtCore.QRect(w + 170, 200, 60, 15))
+            self.villageWidgets[i].QuarryLevel.setObjectName("QuarryLevel" + str(i + 1))
+            self.villageWidgets[i].QuarryNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].QuarryNextLevel.setGeometry(QtCore.QRect(w + 280, 200, 75, 15))
+            self.villageWidgets[i].QuarryNextLevel.setObjectName("QuarryNextLevel" + str(i + 1))
+            self.villageWidgets[i].WallIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].WallIcon.setGeometry(QtCore.QRect(w + 10, 260, 35, 35))
+            self.villageWidgets[i].WallIcon.setText("")
+            self.villageWidgets[i].WallIcon.setPixmap(QtGui.QPixmap("ui_icons/Great_Wall_%28Civ6%29.png"))
+            self.villageWidgets[i].WallIcon.setScaledContents(True)
+            self.villageWidgets[i].WallIcon.setObjectName("WallIcon" + str(i + 1))
+            self.villageWidgets[i].WarehouseIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].WarehouseIcon.setGeometry(QtCore.QRect(w + 10, 295, 35, 35))
+            self.villageWidgets[i].WarehouseIcon.setText("")
+            self.villageWidgets[i].WarehouseIcon.setPixmap(QtGui.QPixmap("ui_icons/Feitoria_%28Civ6%29.png"))
+            self.villageWidgets[i].WarehouseIcon.setScaledContents(True)
+            self.villageWidgets[i].WarehouseIcon.setObjectName("WarehouseIcon" + str(i + 1))
+            self.villageWidgets[i].Wall = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].Wall.setGeometry(QtCore.QRect(w + 70, 270, 60, 15))
+            self.villageWidgets[i].Wall.setObjectName("Wall" + str(i + 1))
+            self.villageWidgets[i].Warehouse = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].Warehouse.setGeometry(QtCore.QRect(w + 70, 305, 60, 15))
+            self.villageWidgets[i].Warehouse.setObjectName("Warehouse" + str(i + 1))
+            self.villageWidgets[i].WallLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].WallLevel.setGeometry(QtCore.QRect(w + 170, 270, 60, 15))
+            self.villageWidgets[i].WallLevel.setObjectName("WallLevel" + str(i + 1))
+            self.villageWidgets[i].WarehouseLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].WarehouseLevel.setGeometry(QtCore.QRect(w + 170, 305, 60, 15))
+            self.villageWidgets[i].WarehouseLevel.setObjectName("WarehouseLevel" + str(i + 1))
+            self.villageWidgets[i].WallNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].WallNextLevel.setGeometry(QtCore.QRect(w + 280, 270, 75, 15))
+            self.villageWidgets[i].WallNextLevel.setObjectName("WallNextLevel" + str(i + 1))
+            self.villageWidgets[i].WarehouseNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            self.villageWidgets[i].WarehouseNextLevel.setGeometry(QtCore.QRect(w + 280, 305, 75, 15))
+            self.villageWidgets[i].WarehouseNextLevel.setObjectName("WarehouseNextLevel" + str(i + 1))
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         MainWindow.setCentralWidget(self.centralwidget)
-
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        for i in range(0, len(self.villages)):
+        for i in range(0, len(self.villageWidgets)):
             _translate = QtCore.QCoreApplication.translate
             MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-            self.villages[i].VillageName.setText(_translate("MainWindow", "Village " + str(i + 1)))
-            self.villages[i].VillageType.setText(_translate("MainWindow", "Aggressive"))
-            self.villages[i].BuildingLevel.setText(_translate("MainWindow", "Level"))
-            self.villages[i].BuildingNextLevel.setText(_translate("MainWindow", "Next Level"))
-            self.villages[i].Barracks.setText(_translate("MainWindow", "Barracks"))
-            self.villages[i].BarracksLevel.setText(_translate("MainWindow", "1"))
-            self.villages[i].BarracksNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
-            self.villages[i].Farm.setText(_translate("MainWindow", "Farm"))
-            self.villages[i].FarmLevel.setText(_translate("MainWindow", "1"))
-            self.villages[i].FarmNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
-            self.villages[i].Mine.setText(_translate("MainWindow", "Mine"))
-            self.villages[i].MineLevel.setText(_translate("MainWindow", "1"))
-            self.villages[i].MineNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
-            self.villages[i].Iron.setText(_translate("MainWindow", "Iron"))
-            self.villages[i].IronValue.setText(_translate("MainWindow", "0"))
-            self.villages[i].Stone.setText(_translate("MainWindow", "Stone"))
-            self.villages[i].StoneValue.setText(_translate("MainWindow", "0"))
-            self.villages[i].Wood.setText(_translate("MainWindow", "Wood"))
-            self.villages[i].WoodValue.setText(_translate("MainWindow", "0"))
-            self.villages[i].Army.setText(_translate("MainWindow", "Army"))
-            self.villages[i].Warriors.setText(_translate("MainWindow", "Warriors"))
-            self.villages[i].Archers.setText(_translate("MainWindow", "Archers"))
-            self.villages[i].Catapults.setText(_translate("MainWindow", "Catapults"))
-            self.villages[i].Cavalrymen.setText(_translate("MainWindow", "Cavalrymen"))
-            self.villages[i].TotalArmy.setText(_translate("MainWindow", "Total"))
-            self.villages[i].NumSoldiers.setText(_translate("MainWindow", "Num"))
-            self.villages[i].Offensive.setText(_translate("MainWindow", "Offensive"))
-            self.villages[i].Defensive.setText(_translate("MainWindow", "Defensive"))
-            self.villages[i].WarriorsNum.setText(_translate("MainWindow", "0"))
-            self.villages[i].ArchersNum.setText(_translate("MainWindow", "0"))
-            self.villages[i].CatapultsNum.setText(_translate("MainWindow", "0"))
-            self.villages[i].CavalrymenNum.setText(_translate("MainWindow", "0"))
-            self.villages[i].TotalNum.setText(_translate("MainWindow", "0"))
-            self.villages[i].WarriorsOffensive.setText(_translate("MainWindow", "0"))
-            self.villages[i].ArchersOffensive.setText(_translate("MainWindow", "0"))
-            self.villages[i].CatapultsOffensive.setText(_translate("MainWindow", "0"))
-            self.villages[i].CavalrymenOffensive.setText(_translate("MainWindow", "0"))
-            self.villages[i].TotalOffensive.setText(_translate("MainWindow", "0"))
-            self.villages[i].WarriorsDefensive.setText(_translate("MainWindow", "0"))
-            self.villages[i].ArchersDefensive.setText(_translate("MainWindow", "0"))
-            self.villages[i].CatapultsDefensive.setText(_translate("MainWindow", "0"))
-            self.villages[i].CavalrymenDefensive.setText(_translate("MainWindow", "0"))
-            self.villages[i].TotalDefensive.setText(_translate("MainWindow", "0"))
-            self.villages[i].SawMill.setText(_translate("MainWindow", "Saw Mill"))
-            self.villages[i].SawMilLevel.setText(_translate("MainWindow", "1"))
-            self.villages[i].SawMillNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
-            self.villages[i].VillageCapacity.setText(_translate("MainWindow", "Village Capacity:"))
-            self.villages[i].VillageCapacityValue.setText(_translate("MainWindow", "1"))
-            self.villages[i].SpiesValue.setText(_translate("MainWindow", "0"))
-            self.villages[i].Spies.setText(_translate("MainWindow", "Spies"))
-            self.villages[i].Quarry.setText(_translate("MainWindow", "Quarry"))
-            self.villages[i].QuarryLevel.setText(_translate("MainWindow", "1"))
-            self.villages[i].QuarryNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
-            self.villages[i].Wall.setText(_translate("MainWindow", "Wall"))
-            self.villages[i].Warehouse.setText(_translate("MainWindow", "Warehouse"))
-            self.villages[i].WallLevel.setText(_translate("MainWindow", "1"))
-            self.villages[i].WarehouseLevel.setText(_translate("MainWindow", "1"))
-            self.villages[i].WallNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
-            self.villages[i].WarehouseNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
+            self.villageWidgets[i].VillageName.setText(_translate("MainWindow", "Village " + str(i + 1)))
+            self.villageWidgets[i].VillageType.setText(_translate("MainWindow", "Aggressive"))
+            self.villageWidgets[i].BuildingLevel.setText(_translate("MainWindow", "Level"))
+            self.villageWidgets[i].BuildingNextLevel.setText(_translate("MainWindow", "Next Level"))
+            self.villageWidgets[i].Barracks.setText(_translate("MainWindow", "Barracks"))
+            self.villageWidgets[i].BarracksLevel.setText(_translate("MainWindow", "1"))
+            self.villageWidgets[i].BarracksNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
+            self.villageWidgets[i].Farm.setText(_translate("MainWindow", "Farm"))
+            self.villageWidgets[i].FarmLevel.setText(_translate("MainWindow", "1"))
+            self.villageWidgets[i].FarmNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
+            self.villageWidgets[i].Mine.setText(_translate("MainWindow", "Mine"))
+            self.villageWidgets[i].MineLevel.setText(_translate("MainWindow", "1"))
+            self.villageWidgets[i].MineNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
+            self.villageWidgets[i].Iron.setText(_translate("MainWindow", "Iron"))
+            self.villageWidgets[i].IronValue.setText(_translate("MainWindow", "0"))
+            self.villageWidgets[i].Stone.setText(_translate("MainWindow", "Stone"))
+            self.villageWidgets[i].StoneValue.setText(_translate("MainWindow", "0"))
+            self.villageWidgets[i].Wood.setText(_translate("MainWindow", "Wood"))
+            self.villageWidgets[i].WoodValue.setText(_translate("MainWindow", "0"))
+            self.villageWidgets[i].Army.setText(_translate("MainWindow", "Army"))
+            self.villageWidgets[i].Warriors.setText(_translate("MainWindow", "Warriors"))
+            self.villageWidgets[i].Archers.setText(_translate("MainWindow", "Archers"))
+            self.villageWidgets[i].Catapults.setText(_translate("MainWindow", "Catapults"))
+            self.villageWidgets[i].Cavalrymen.setText(_translate("MainWindow", "Cavalrymen"))
+            self.villageWidgets[i].TotalArmy.setText(_translate("MainWindow", "Total"))
+            self.villageWidgets[i].NumSoldiers.setText(_translate("MainWindow", "Num"))
+            self.villageWidgets[i].Offensive.setText(_translate("MainWindow", "Offensive"))
+            self.villageWidgets[i].Defensive.setText(_translate("MainWindow", "Defensive"))
+            self.villageWidgets[i].WarriorsNum.setText(_translate("MainWindow", "0"))
+            self.villageWidgets[i].ArchersNum.setText(_translate("MainWindow", "0"))
+            self.villageWidgets[i].CatapultsNum.setText(_translate("MainWindow", "0"))
+            self.villageWidgets[i].CavalrymenNum.setText(_translate("MainWindow", "0"))
+            self.villageWidgets[i].TotalNum.setText(_translate("MainWindow", "0"))
+            self.villageWidgets[i].WarriorsOffensive.setText(_translate("MainWindow", "0"))
+            self.villageWidgets[i].ArchersOffensive.setText(_translate("MainWindow", "0"))
+            self.villageWidgets[i].CatapultsOffensive.setText(_translate("MainWindow", "0"))
+            self.villageWidgets[i].CavalrymenOffensive.setText(_translate("MainWindow", "0"))
+            self.villageWidgets[i].TotalOffensive.setText(_translate("MainWindow", "0"))
+            self.villageWidgets[i].WarriorsDefensive.setText(_translate("MainWindow", "0"))
+            self.villageWidgets[i].ArchersDefensive.setText(_translate("MainWindow", "0"))
+            self.villageWidgets[i].CatapultsDefensive.setText(_translate("MainWindow", "0"))
+            self.villageWidgets[i].CavalrymenDefensive.setText(_translate("MainWindow", "0"))
+            self.villageWidgets[i].TotalDefensive.setText(_translate("MainWindow", "0"))
+            self.villageWidgets[i].SawMill.setText(_translate("MainWindow", "Saw Mill"))
+            self.villageWidgets[i].SawMilLevel.setText(_translate("MainWindow", "1"))
+            self.villageWidgets[i].SawMillNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
+            self.villageWidgets[i].VillageCapacity.setText(_translate("MainWindow", "Village Capacity:"))
+            self.villageWidgets[i].VillageCapacityValue.setText(_translate("MainWindow", "1"))
+            self.villageWidgets[i].SpiesValue.setText(_translate("MainWindow", "0"))
+            self.villageWidgets[i].Spies.setText(_translate("MainWindow", "Spies"))
+            self.villageWidgets[i].Quarry.setText(_translate("MainWindow", "Quarry"))
+            self.villageWidgets[i].QuarryLevel.setText(_translate("MainWindow", "1"))
+            self.villageWidgets[i].QuarryNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
+            self.villageWidgets[i].Wall.setText(_translate("MainWindow", "Wall"))
+            self.villageWidgets[i].Warehouse.setText(_translate("MainWindow", "Warehouse"))
+            self.villageWidgets[i].WallLevel.setText(_translate("MainWindow", "1"))
+            self.villageWidgets[i].WarehouseLevel.setText(_translate("MainWindow", "1"))
+            self.villageWidgets[i].WallNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
+            self.villageWidgets[i].WarehouseNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
 
     def update_village(self, agent):
         _translate = QtCore.QCoreApplication.translate
-        for i in range(0, len(self.villages)):
-            if self.villages[i].name != agent.village.name:
-                self.villages[i].VillageType.setText(_translate("MainWindow", "Lost"))
+        for i in range(0, len(self.villageWidgets)):
+            if self.villageWidgets[i].name != agent.village.name:
+                self.villageWidgets[i].VillageType.setText(_translate("MainWindow", "Lost"))
                 continue
             else:
                 v = agent.village
                 a = agent
-                self.villages[i].VillageType.setText(_translate("MainWindow", str(a.stance)))
-                self.villages[i].BarracksLevel.setText(_translate("MainWindow", str(v.barracks.get_level())))
+                self.villageWidgets[i].VillageType.setText(_translate("MainWindow", str(a.stance)))
+                self.villageWidgets[i].BarracksLevel.setText(_translate("MainWindow", str(v.barracks.get_level())))
                 barracks_next_upgrade = "" if v.barracks.is_max_level() else str(v.barracks.get_cost_of_upgrade())
-                self.villages[i].BarracksNextLevel.setText(
+                self.villageWidgets[i].BarracksNextLevel.setText(
                     _translate("MainWindow", barracks_next_upgrade))
-                self.villages[i].FarmLevel.setText(_translate("MainWindow", str(v.farm.get_level())))
+                self.villageWidgets[i].FarmLevel.setText(_translate("MainWindow", str(v.farm.get_level())))
                 farm_next_upgrade = "" if v.farm.is_max_level() else str(v.farm.get_cost_of_upgrade())
-                self.villages[i].FarmNextLevel.setText(_translate("MainWindow", farm_next_upgrade))
-                self.villages[i].MineLevel.setText(_translate("MainWindow", str(v.mine.get_level())))
+                self.villageWidgets[i].FarmNextLevel.setText(_translate("MainWindow", farm_next_upgrade))
+                self.villageWidgets[i].MineLevel.setText(_translate("MainWindow", str(v.mine.get_level())))
                 mine_next_upgrade = "" if v.mine.is_max_level() else str(v.mine.get_cost_of_upgrade())
-                self.villages[i].MineNextLevel.setText(_translate("MainWindow", mine_next_upgrade))
-                self.villages[i].IronValue.setText(_translate("MainWindow", str(v.iron)))
-                self.villages[i].StoneValue.setText(_translate("MainWindow", str(v.stone)))
-                self.villages[i].WoodValue.setText(_translate("MainWindow", str(v.wood)))
+                self.villageWidgets[i].MineNextLevel.setText(_translate("MainWindow", mine_next_upgrade))
+                self.villageWidgets[i].IronValue.setText(_translate("MainWindow", str(v.iron)))
+                self.villageWidgets[i].StoneValue.setText(_translate("MainWindow", str(v.stone)))
+                self.villageWidgets[i].WoodValue.setText(_translate("MainWindow", str(v.wood)))
                 num_warriors = v.warriors.get_n()
                 num_archers = v.archers.get_n()
                 num_catapults = v.catapults.get_n()
@@ -428,43 +439,276 @@ class Ui_MainWindow(QMainWindow):
                 catapults_defensive = v.catapults.get_defense_power()
                 cavalrymen_defensive = v.cavalrymen.get_defense_power()
                 total_defensive = warriors_defensive + archers_defensive + catapults_defensive + cavalrymen_defensive
-                self.villages[i].WarriorsNum.setText(_translate("MainWindow", str(num_warriors)))
-                self.villages[i].ArchersNum.setText(_translate("MainWindow", str(num_archers)))
-                self.villages[i].CatapultsNum.setText(_translate("MainWindow", str(num_catapults)))
-                self.villages[i].CavalrymenNum.setText(_translate("MainWindow", str(num_cavalrymen)))
-                self.villages[i].TotalNum.setText(_translate("MainWindow", str(num_total)))
-                self.villages[i].WarriorsOffensive.setText(_translate("MainWindow", str(warriors_defensive)))
-                self.villages[i].ArchersOffensive.setText(_translate("MainWindow", str(archers_offensive)))
-                self.villages[i].CatapultsOffensive.setText(_translate("MainWindow", str(catapults_offensive)))
-                self.villages[i].CavalrymenOffensive.setText(_translate("MainWindow", str(cavalrymen_offensive)))
-                self.villages[i].TotalOffensive.setText(_translate("MainWindow", str(total_offensive)))
-                self.villages[i].WarriorsDefensive.setText(_translate("MainWindow", str(warriors_defensive)))
-                self.villages[i].ArchersDefensive.setText(_translate("MainWindow", str(archers_defensive)))
-                self.villages[i].CatapultsDefensive.setText(_translate("MainWindow", str(catapults_defensive)))
-                self.villages[i].CavalrymenDefensive.setText(_translate("MainWindow", str(cavalrymen_defensive)))
-                self.villages[i].TotalDefensive.setText(_translate("MainWindow", str(total_defensive)))
-                self.villages[i].SawMilLevel.setText(_translate("MainWindow", str(v.sawmill.get_level())))
+                self.villageWidgets[i].WarriorsNum.setText(_translate("MainWindow", str(num_warriors)))
+                self.villageWidgets[i].ArchersNum.setText(_translate("MainWindow", str(num_archers)))
+                self.villageWidgets[i].CatapultsNum.setText(_translate("MainWindow", str(num_catapults)))
+                self.villageWidgets[i].CavalrymenNum.setText(_translate("MainWindow", str(num_cavalrymen)))
+                self.villageWidgets[i].TotalNum.setText(_translate("MainWindow", str(num_total)))
+                self.villageWidgets[i].WarriorsOffensive.setText(_translate("MainWindow", str(warriors_defensive)))
+                self.villageWidgets[i].ArchersOffensive.setText(_translate("MainWindow", str(archers_offensive)))
+                self.villageWidgets[i].CatapultsOffensive.setText(_translate("MainWindow", str(catapults_offensive)))
+                self.villageWidgets[i].CavalrymenOffensive.setText(_translate("MainWindow", str(cavalrymen_offensive)))
+                self.villageWidgets[i].TotalOffensive.setText(_translate("MainWindow", str(total_offensive)))
+                self.villageWidgets[i].WarriorsDefensive.setText(_translate("MainWindow", str(warriors_defensive)))
+                self.villageWidgets[i].ArchersDefensive.setText(_translate("MainWindow", str(archers_defensive)))
+                self.villageWidgets[i].CatapultsDefensive.setText(_translate("MainWindow", str(catapults_defensive)))
+                self.villageWidgets[i].CavalrymenDefensive.setText(_translate("MainWindow", str(cavalrymen_defensive)))
+                self.villageWidgets[i].TotalDefensive.setText(_translate("MainWindow", str(total_defensive)))
+                self.villageWidgets[i].SawMilLevel.setText(_translate("MainWindow", str(v.sawmill.get_level())))
                 sawmill_next_upgrade = "" if v.sawmill.is_max_level() else str(v.sawmill.get_cost_of_upgrade())
-                self.villages[i].SawMillNextLevel.setText(
+                self.villageWidgets[i].SawMillNextLevel.setText(
                     _translate("MainWindow", sawmill_next_upgrade))
-                self.villages[i].VillageCapacityValue.setText(_translate("MainWindow", str(v.farm.capacity())))
-                self.villages[i].SpiesValue.setText(_translate("MainWindow", str(v.spies.get_n())))
-                self.villages[i].QuarryLevel.setText(_translate("MainWindow", str(v.quarry.get_level())))
+                self.villageWidgets[i].VillageCapacityValue.setText(_translate("MainWindow", str(v.farm.capacity())))
+                self.villageWidgets[i].SpiesValue.setText(_translate("MainWindow", str(v.spies.get_n())))
+                self.villageWidgets[i].QuarryLevel.setText(_translate("MainWindow", str(v.quarry.get_level())))
                 quarry_next_upgrade = "" if v.quarry.is_max_level() else str(v.quarry.get_cost_of_upgrade())
-                self.villages[i].QuarryNextLevel.setText(_translate("MainWindow", quarry_next_upgrade))
-                self.villages[i].WallLevel.setText(_translate("MainWindow", str(v.warehouse.get_level())))
-                self.villages[i].WarehouseLevel.setText(_translate("MainWindow", str(v.warehouse.get_level())))
+                self.villageWidgets[i].QuarryNextLevel.setText(_translate("MainWindow", quarry_next_upgrade))
+                self.villageWidgets[i].WallLevel.setText(_translate("MainWindow", str(v.warehouse.get_level())))
+                self.villageWidgets[i].WarehouseLevel.setText(_translate("MainWindow", str(v.warehouse.get_level())))
                 wall_next_upgrade = "" if v.wall.is_max_level() else str(v.wall.get_cost_of_upgrade())
-                self.villages[i].WallNextLevel.setText(_translate("MainWindow", wall_next_upgrade))
+                self.villageWidgets[i].WallNextLevel.setText(_translate("MainWindow", wall_next_upgrade))
                 warehouse_next_upgrade = "" if v.warehouse.is_max_level() else str(v.warehouse.get_cost_of_upgrade())
-                self.villages[i].WarehouseNextLevel.setText(
+                self.villageWidgets[i].WarehouseNextLevel.setText(
                     _translate("MainWindow", warehouse_next_upgrade))
 
+    def print_message(self, agent, message):
+        for i in range(0, len(self.villageWidgets)):
+            if self.villageWidgets[i].name == agent.village.name:
+                self.villageWidgets[i].Log.append_message(message)
 
-def print_message(self, agent, message):
-    for i in range(0, len(self.villages)):
-        if self.villages[i].name == agent.village.name:
-            self.villages[i].Log.append_message(message)
+    def start_game(self, agent_list, village_list):
+
+        self.agents = agent_list
+        self.villages = village_list
+
+        turn = 1
+
+        winners = []
+
+        # Stalemate tracker
+        turn_of_last_attack = 0
+
+        while turn <= self.TURN_LIMIT:
+            print(f"\n\n*************** TURN {turn} ***************\n\n")
+
+            # Update turn counter for each agent
+            for agent in self.agents:
+                agent.set_turn(turn)
+                self.print_message(agent, "Turn")
+
+            # If a human player is playing, display their village; otherwise, display villages of all agents
+            # print_villages()
+            for i in range(0, len(self.agents)):
+               self.update_village(self.agents[i])
+
+            # Upgrade decision
+            for agent in self.agents:
+                agent.upgrade_decision()
+
+            # Recruit decision
+            for agent in self.agents:
+                agent.recruit_decision()
+
+            # "New" espionages become "old"
+            for agent in self.agents:
+                for espionage in agent.get_spy_log():
+                    espionage.set_new(False)
+
+            # Spying decision
+            spying_missions = []
+            for agent in self.agents:
+                decision = agent.spying_decision()
+                if decision is not None:
+                    spying_missions.append(decision)
+
+            # "New" espionages become "old"
+            for agent in self.agents:
+                for espionage in agent.get_spy_log():
+                    espionage.set_new(False)
+
+            # Send out spies and collect espionages
+            self.process_spying(spying_missions, turn)
+
+            # If a human player is playing and they have a new espionage, display it
+            if self.agents[0].get_name() == "Player" and self.agents[0].get_spy_log() and self.agents[0].get_spy_log()[0].new:
+                print(self.agents[0].get_spy_log()[0])
+
+            # Attack decision
+            armies = []
+            for agent in self.agents:
+                decision = agent.attack_decision()
+                if decision is not None:
+                    armies.append(decision)
+
+            # Send out attacks and collect reports
+            all_reports = self.process_attacks(armies, turn)
+
+            # After all attacks are done processing, send surviving troops back to their villages
+            self.return_home(armies, all_reports)
+
+            # If at least one attack was sent, reset stalemate tracker
+            if armies:
+                turn_of_last_attack = turn
+
+            # "New" reports become "old"
+            for agent in self.agents:
+                for report in agent.get_report_log():
+                    report.set_new(False)
+
+            # Distribute reports
+            for report in all_reports:
+                winning_village = report.get_winner()
+                losing_village = report.get_loser()
+                attacking_village = report.get_attacking_village()
+                # If attacker lost, don't give that player information regarding the defending troops
+                if attacking_village == losing_village:
+                    truncated_report = deepcopy(report)
+                    truncated_report.truncate_losing_report()
+                    winning_agent = self.get_agent_by_village_name(winning_village)
+                    losing_agent = self.get_agent_by_village_name(losing_village)
+                    winning_agent.add_report(report)
+                    losing_agent.add_report(truncated_report)
+                else:
+                    winning_agent = self.get_agent_by_village_name(winning_village)
+                    losing_agent = self.get_agent_by_village_name(losing_village)
+                    winning_agent.add_report(report)
+                    losing_agent.add_report(report)
+
+            # If a human player is playing, display their new reports
+            if self.agents[0].get_name() == "Player":
+                for report in self.agents[0].get_report_log():
+                    if report.is_new():
+                        print(report)
+
+            # Checks if a stalemate has occurred based on number of turns without agents sending attacks
+            winners = self.check_stalemate(turn, turn_of_last_attack)
+            if winners:
+                break
+
+            # Determine players that lost (village dropped to below 0 HP) and check if there is a winner
+            old_agents = self.agents.copy()
+            self.eliminate_players()
+            winners = self.check_winner(old_agents)
+            if winners:
+                break
+
+            # Do end-of-turn village updates (produce resources and regenerate health)
+            for village in self.villages:
+                village.end_of_turn()
+
+            turn += 1
+
+            print()
+            print()
+
+        print()
+        print()
+        if turn > self.TURN_LIMIT:
+            print("Turn limit reached.")
+        else:
+            print(f"Game reached {turn} turns.")
+
+        return winners
+
+    def print_villages(self):
+        if self.agents[0].get_name() == "Player":
+            print(self.villages[0])
+        else:
+            for village in self.villages:
+                print(village)
+
+    def process_spying(self, spying_missions, turn):
+        for mission in spying_missions:
+            agent = self.get_agent_by_village_name(mission.get_village_name())
+            # Get deep copy of enemy village for espionage
+            enemy_village = deepcopy(self.get_village_by_name(mission.get_enemy_village_name()))
+            mission.set_spied_village(enemy_village)
+            mission.set_turn(turn)
+            agent.add_espionage(mission)
+
+    def process_attacks(self, attacking_armies, turn):
+        # Order of attacks is randomized in case of multiple attacks on the same village
+        shuffle(attacking_armies)
+
+        all_reports = []
+
+        # Perform attacks, set missing report attributes, plunder resources and lower village healths
+        for attacking_army in attacking_armies:
+            defending_village = self.get_village_by_name(attacking_army.get_enemy_village_name())
+            defending_army = defending_village.create_defensive_army()
+            report = attacking_army.attack(defending_army, defending_village.get_wall().defense_bonus())
+            plundered_resources = defending_village.plundered(report.get_resources_to_plunder())
+            report.set_plundered_resources(plundered_resources)
+            report.set_defending_village_health_before(defending_village.get_health())
+            report.set_turn(turn)
+            all_reports.append(report)
+            defending_village.lower_health(report.get_damage_dealt())
+            defending_village.update_troops(defending_army)
+
+        return all_reports
+
+    def return_home(self, surviving_armies, all_reports):
+        for army, report in zip(surviving_armies, all_reports):
+            village = self.get_village_by_name(army.get_village_name())
+            village.add_troops(army)
+            village.add_resources(report.get_plundered_resources())
+
+    def check_stalemate(self, turn, turn_of_last_attack):
+        if turn - turn_of_last_attack > self.STALEMATE_LIMIT:
+            print("~~~~~~~~~~Stalemate between players:~~~~~~~~~~")
+            for agent in self.agents:
+                print(agent.get_name())
+            print()
+            print()
+            return ["stalemate", [agent.get_name() for agent in self.agents]]
+        return []
+
+    def eliminate_players(self):
+        agents_to_delete = []
+        for agent in self.agents:
+            if agent.get_village().get_health() <= 0:
+                agents_to_delete.append(agent)
+                self.villages.remove(agent.get_village())
+                for other_agent in self.agents:
+                    if agent != other_agent:
+                        other_agent.remove_other_village(agent.get_village().get_name())
+        self.agents = [agent for agent in self.agents if agent not in agents_to_delete]
+
+    def check_winner(self, old_agents):
+        # 2+ players simultaneously killed each other - a tie is declared
+        if len(self.agents) == 0:
+            print("\n~~~~~~~~~~Tie between players:~~~~~~~~~~")
+            for agent in old_agents:
+                print(agent.get_name())
+            print()
+            print()
+            return ["tie", [agent.get_name() for agent in old_agents]]
+
+        # 1 player left
+        elif len(self.agents) == 1:
+            print("\n~~~~~~~~~~Winner:~~~~~~~~~~")
+            print(self.agents[0].get_name())
+            print()
+            print()
+            return ["victory", [self.agents[0].get_name()]]
+        else:
+            return []
+
+    # AUX
+
+    def get_village_by_name(self, name):
+        # Village names are unique
+        for village in self.villages:
+            if name == village.get_name():
+                return village
+        return None
+
+    def get_agent_by_village_name(self, name):
+        # Village names are unique
+        for agent in self.agents:
+            if name == agent.get_village().get_name():
+                return agent
+        return None
 
 
 if __name__ == "__main__":
@@ -473,6 +717,22 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
-    ui.setupUi(MainWindow, 5)
+    if len(sys.argv) != 2:
+        raise ValueError("Must pass one and only one command line argument (number of players).")
+
+    n_players = int(argv[1])
+    if n_players <= 1:
+        raise ValueError("Number of players must be a positive integer greater than 1.")
+    ui.setupUi(MainWindow, n_players)
     MainWindow.show()
+    agents_to_add = [ReactiveAgent(i, Stance(i % 3)) for i in range(n_players)]
+    villages_to_add = [agent.get_village() for agent in agents_to_add]
+    for i, agent in enumerate(agents_to_add):
+        agent.set_other_villages([village.name for j, village in enumerate(villages_to_add) if i != j])
+    ui.start_game(agents_to_add, villages_to_add)
+    ui.print_message(agents_to_add[0], "Hello")
+    ui.print_message(agents_to_add[1], "Hello")
+    ui.print_message(agents_to_add[2], "Hello")
+    ui.print_message(agents_to_add[3], "Hello")
+    ui.print_message(agents_to_add[4], "Hello")
     sys.exit(app.exec_())
