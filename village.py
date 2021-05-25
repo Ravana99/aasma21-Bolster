@@ -240,7 +240,7 @@ class Village:
         self.health = min(self.health + health, Village.MAX_HEALTH)
 
     def lower_health(self, health):
-        self.health -= health
+        self.health = max(self.health - health, 0)
 
     # OTHER
 

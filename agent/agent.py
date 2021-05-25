@@ -12,7 +12,8 @@ from buildings.warehouse import Warehouse
 class Agent:
     """DO NOT INSTANTIATE!"""
 
-    def __init__(self, i):
+    def __init__(self, i, ui=None):
+        self.ui = ui
         self.village = Village(i)
         self.name = "Agent " + str(i)
         self.other_villages = []

@@ -11,7 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QDesktopWidget, QMainWindow
 
-from agent.reactiveagent import ReactiveAgent, Stance
+from agent.decisions import *
 from ui.VillageUI import VillageUI
 from ui.mylogwindow import MyLogWindow
 from agent.reactiveagent import ReactiveAgent, Stance
@@ -26,6 +26,9 @@ class Ui_MainWindow(QMainWindow):
     def __init__(self):
         self.TURN_LIMIT = 750
         self.STALEMATE_LIMIT = 100
+        self.turn = 1
+        self.turn_of_last_attack = 0
+        self.winners = False
         self.agents = []
         self.villages = []
 
@@ -47,7 +50,22 @@ class Ui_MainWindow(QMainWindow):
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 425 * numAgents, 780))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.oneTurnButton = QtWidgets.QPushButton(self.scrollAreaWidgetContents)
+        self.oneTurnButton.setObjectName("oneTurnButton")
+        self.oneTurnButton.setText("Simulate one turn")
+        self.oneTurnButton.clicked.connect(lambda: self.do_one_turn())
+        self.allTurnButton = QtWidgets.QPushButton(self.scrollAreaWidgetContents)
+        self.allTurnButton.setObjectName("allTurnButton")
+        self.allTurnButton.setText("Simulate all turns")
+        self.allTurnButton.clicked.connect(lambda: self.do_all_turns())
         self.villageWidgets = []
+        agents_to_add = [ReactiveAgent(i, Stance(i % 3)) for i in range(n_players)]
+        villages_to_add = [agent.get_village() for agent in agents_to_add]
+        for i, agent in enumerate(agents_to_add):
+            agent.set_other_villages([village.name for j, village in enumerate(villages_to_add) if i != j])
+        self.agents = agents_to_add
+        self.villages = villages_to_add
+        # criar UI
         for i in range(0, numAgents):
             w = 425 * i
             self.villageWidgets.insert(i, VillageUI())
@@ -72,7 +90,8 @@ class Ui_MainWindow(QMainWindow):
             self.villageWidgets[i].HealthBar.setFont(font)
             self.villageWidgets[i].HealthBar.setLayoutDirection(QtCore.Qt.LeftToRight)
             self.villageWidgets[i].HealthBar.setAutoFillBackground(False)
-            self.villageWidgets[i].HealthBar.setProperty("value", 100)
+            self.villageWidgets[i].HealthBar.setProperty("maximum", 10000)
+            self.villageWidgets[i].HealthBar.setProperty("value", 10000)
             self.villageWidgets[i].HealthBar.setTextVisible(True)
             self.villageWidgets[i].HealthBar.setInvertedAppearance(False)
             self.villageWidgets[i].HealthBar.setObjectName("HealthBar" + str(i + 1))
@@ -156,7 +175,8 @@ class Ui_MainWindow(QMainWindow):
             self.villageWidgets[i].WoodValue.setObjectName("WoodValue" + str(i + 1))
             self.villageWidgets[i].Army = QtWidgets.QLabel(self.scrollAreaWidgetContents)
             self.villageWidgets[i].Army.setGeometry(QtCore.QRect(w + 90, 450, 60, 15))
-            self.villageWidgets[i].Army.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+            self.villageWidgets[i].Army.setAlignment(
+                QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
             self.villageWidgets[i].Army.setObjectName("Army" + str(i + 1))
             self.villageWidgets[i].Warriors = QtWidgets.QLabel(self.scrollAreaWidgetContents)
             self.villageWidgets[i].Warriors.setGeometry(QtCore.QRect(w + 90, 480, 60, 15))
@@ -185,6 +205,7 @@ class Ui_MainWindow(QMainWindow):
             self.villageWidgets[i].Log = MyLogWindow(self.scrollAreaWidgetContents)
             self.villageWidgets[i].Log.setGeometry(QtCore.QRect(w + 5, 650, 415, 130))
             self.villageWidgets[i].Log.setObjectName("Log" + str(i + 1))
+            self.agents[i].ui = self.villageWidgets[i].Log
             self.villageWidgets[i].WarriorsNum = QtWidgets.QLabel(self.scrollAreaWidgetContents)
             self.villageWidgets[i].WarriorsNum.setGeometry(QtCore.QRect(w + 170, 480, 60, 15))
             self.villageWidgets[i].WarriorsNum.setObjectName("WarriorsNum" + str(i + 1))
@@ -332,34 +353,28 @@ class Ui_MainWindow(QMainWindow):
             self.villageWidgets[i].WarehouseNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
             self.villageWidgets[i].WarehouseNextLevel.setGeometry(QtCore.QRect(w + 280, 305, 75, 15))
             self.villageWidgets[i].WarehouseNextLevel.setObjectName("WarehouseNextLevel" + str(i + 1))
+
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         MainWindow.setCentralWidget(self.centralwidget)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        for i in range(0, len(self.agents)):
+            self.update_village(self.agents[i])
         for i in range(0, len(self.villageWidgets)):
-            _translate = QtCore.QCoreApplication.translate
             MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
             self.villageWidgets[i].VillageName.setText(_translate("MainWindow", "Village " + str(i + 1)))
             self.villageWidgets[i].VillageType.setText(_translate("MainWindow", "Aggressive"))
             self.villageWidgets[i].BuildingLevel.setText(_translate("MainWindow", "Level"))
             self.villageWidgets[i].BuildingNextLevel.setText(_translate("MainWindow", "Next Level"))
             self.villageWidgets[i].Barracks.setText(_translate("MainWindow", "Barracks"))
-            self.villageWidgets[i].BarracksLevel.setText(_translate("MainWindow", "1"))
-            self.villageWidgets[i].BarracksNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
             self.villageWidgets[i].Farm.setText(_translate("MainWindow", "Farm"))
-            self.villageWidgets[i].FarmLevel.setText(_translate("MainWindow", "1"))
-            self.villageWidgets[i].FarmNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
             self.villageWidgets[i].Mine.setText(_translate("MainWindow", "Mine"))
-            self.villageWidgets[i].MineLevel.setText(_translate("MainWindow", "1"))
-            self.villageWidgets[i].MineNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
             self.villageWidgets[i].Iron.setText(_translate("MainWindow", "Iron"))
-            self.villageWidgets[i].IronValue.setText(_translate("MainWindow", "0"))
             self.villageWidgets[i].Stone.setText(_translate("MainWindow", "Stone"))
-            self.villageWidgets[i].StoneValue.setText(_translate("MainWindow", "0"))
             self.villageWidgets[i].Wood.setText(_translate("MainWindow", "Wood"))
-            self.villageWidgets[i].WoodValue.setText(_translate("MainWindow", "0"))
             self.villageWidgets[i].Army.setText(_translate("MainWindow", "Army"))
             self.villageWidgets[i].Warriors.setText(_translate("MainWindow", "Warriors"))
             self.villageWidgets[i].Archers.setText(_translate("MainWindow", "Archers"))
@@ -369,48 +384,22 @@ class Ui_MainWindow(QMainWindow):
             self.villageWidgets[i].NumSoldiers.setText(_translate("MainWindow", "Num"))
             self.villageWidgets[i].Offensive.setText(_translate("MainWindow", "Offensive"))
             self.villageWidgets[i].Defensive.setText(_translate("MainWindow", "Defensive"))
-            self.villageWidgets[i].WarriorsNum.setText(_translate("MainWindow", "0"))
-            self.villageWidgets[i].ArchersNum.setText(_translate("MainWindow", "0"))
-            self.villageWidgets[i].CatapultsNum.setText(_translate("MainWindow", "0"))
-            self.villageWidgets[i].CavalrymenNum.setText(_translate("MainWindow", "0"))
-            self.villageWidgets[i].TotalNum.setText(_translate("MainWindow", "0"))
-            self.villageWidgets[i].WarriorsOffensive.setText(_translate("MainWindow", "0"))
-            self.villageWidgets[i].ArchersOffensive.setText(_translate("MainWindow", "0"))
-            self.villageWidgets[i].CatapultsOffensive.setText(_translate("MainWindow", "0"))
-            self.villageWidgets[i].CavalrymenOffensive.setText(_translate("MainWindow", "0"))
-            self.villageWidgets[i].TotalOffensive.setText(_translate("MainWindow", "0"))
-            self.villageWidgets[i].WarriorsDefensive.setText(_translate("MainWindow", "0"))
-            self.villageWidgets[i].ArchersDefensive.setText(_translate("MainWindow", "0"))
-            self.villageWidgets[i].CatapultsDefensive.setText(_translate("MainWindow", "0"))
-            self.villageWidgets[i].CavalrymenDefensive.setText(_translate("MainWindow", "0"))
-            self.villageWidgets[i].TotalDefensive.setText(_translate("MainWindow", "0"))
             self.villageWidgets[i].SawMill.setText(_translate("MainWindow", "Saw Mill"))
-            self.villageWidgets[i].SawMilLevel.setText(_translate("MainWindow", "1"))
-            self.villageWidgets[i].SawMillNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
             self.villageWidgets[i].VillageCapacity.setText(_translate("MainWindow", "Village Capacity:"))
-            self.villageWidgets[i].VillageCapacityValue.setText(_translate("MainWindow", "1"))
-            self.villageWidgets[i].SpiesValue.setText(_translate("MainWindow", "0"))
             self.villageWidgets[i].Spies.setText(_translate("MainWindow", "Spies"))
             self.villageWidgets[i].Quarry.setText(_translate("MainWindow", "Quarry"))
-            self.villageWidgets[i].QuarryLevel.setText(_translate("MainWindow", "1"))
-            self.villageWidgets[i].QuarryNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
             self.villageWidgets[i].Wall.setText(_translate("MainWindow", "Wall"))
             self.villageWidgets[i].Warehouse.setText(_translate("MainWindow", "Warehouse"))
-            self.villageWidgets[i].WallLevel.setText(_translate("MainWindow", "1"))
-            self.villageWidgets[i].WarehouseLevel.setText(_translate("MainWindow", "1"))
-            self.villageWidgets[i].WallNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
-            self.villageWidgets[i].WarehouseNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
 
     def update_village(self, agent):
         _translate = QtCore.QCoreApplication.translate
         for i in range(0, len(self.villageWidgets)):
-            if self.villageWidgets[i].name != agent.village.name:
-                self.villageWidgets[i].VillageType.setText(_translate("MainWindow", "Lost"))
-                continue
-            else:
+            if self.villageWidgets[i].name == agent.village.name:
                 v = agent.village
                 a = agent
+                self.villageWidgets[i].VillageName.setText(_translate("MainWindow", "Village " + str(i + 1)))
                 self.villageWidgets[i].VillageType.setText(_translate("MainWindow", str(a.stance)))
+                self.villageWidgets[i].HealthBar.setProperty("value", agent.village.health)
                 self.villageWidgets[i].BarracksLevel.setText(_translate("MainWindow", str(v.barracks.get_level())))
                 barracks_next_upgrade = "" if v.barracks.is_max_level() else str(v.barracks.get_cost_of_upgrade())
                 self.villageWidgets[i].BarracksNextLevel.setText(
@@ -476,139 +465,142 @@ class Ui_MainWindow(QMainWindow):
             if self.villageWidgets[i].name == agent.village.name:
                 self.villageWidgets[i].Log.append_message(message)
 
-    def start_game(self, agent_list, village_list):
+    def do_one_turn(self):
+        over = []
+        if self.turn < self.TURN_LIMIT and not self.winners:
+            over = self.process_turn()
+        if len(over) > 0:
+            for i in range(0, len(over[1])):
+                self.print_message(self.get_agent_by_name(over[1][i]), over[0])
+        for i in range(0, len(self.agents)):
+            if self.turn > self.TURN_LIMIT:
+                self.print_message(self.agents[i], "Turn limit reached");
 
-        self.agents = agent_list
-        self.villages = village_list
+    def do_all_turns(self):
+        over = []
+        while self.turn < self.TURN_LIMIT and not self.winners:
+            over = self.process_turn()
+        if len(over) > 0:
+            for i in range(0, len(over[1])):
+                self.print_message(self.get_agent_by_name(over[1][i]), over[0])
+        for i in range(0, len(self.agents)):
+            if self.turn > self.TURN_LIMIT:
+                self.print_message(self.agents[i], "Turn limit reached");
 
-        turn = 1
+    def test(self):
+        print("Teste")
+        # _translate = QtCore.QCoreApplication.translate
+        # self.villageWidgets[0].VillageName.setText(_translate("MainWindow", "BOTAO FUNCIONA"))
 
-        winners = []
+    def process_turn(self):
 
-        # Stalemate tracker
-        turn_of_last_attack = 0
+        # Update turn counter for each agent
+        for agent in self.agents:
+            agent.set_turn(self.turn)
+            self.print_message(agent, f"\n\n*************** TURN {self.turn} ***************\n\n")
 
-        while turn <= self.TURN_LIMIT:
-            print(f"\n\n*************** TURN {turn} ***************\n\n")
+        # If a human player is playing, display their village; otherwise, display villages of all agents
+        for i in range(0, len(self.agents)):
+            self.update_village(self.agents[i])
 
-            # Update turn counter for each agent
-            for agent in self.agents:
-                agent.set_turn(turn)
-                self.print_message(agent, "Turn")
+        # Upgrade decision
+        for agent in self.agents:
+             agent.upgrade_decision()
 
-            # If a human player is playing, display their village; otherwise, display villages of all agents
-            # print_villages()
-            for i in range(0, len(self.agents)):
-               self.update_village(self.agents[i])
+        # Recruit decision
+        for agent in self.agents:
+            agent.recruit_decision()
 
-            # Upgrade decision
-            for agent in self.agents:
-                agent.upgrade_decision()
+        # "New" espionages become "old"
+        for agent in self.agents:
+            for espionage in agent.get_spy_log():
+                espionage.set_new(False)
 
-            # Recruit decision
-            for agent in self.agents:
-                agent.recruit_decision()
+        # Spying decision
+        spying_missions = []
+        for agent in self.agents:
+            decision = agent.spying_decision()
+            if decision is not None:
+                spying_missions.append(decision)
 
-            # "New" espionages become "old"
-            for agent in self.agents:
-                for espionage in agent.get_spy_log():
-                    espionage.set_new(False)
+        # "New" espionages become "old"
+        for agent in self.agents:
+            for espionage in agent.get_spy_log():
+                espionage.set_new(False)
 
-            # Spying decision
-            spying_missions = []
-            for agent in self.agents:
-                decision = agent.spying_decision()
-                if decision is not None:
-                    spying_missions.append(decision)
+        # Send out spies and collect espionages
+        self.process_spying(spying_missions, self.turn)
 
-            # "New" espionages become "old"
-            for agent in self.agents:
-                for espionage in agent.get_spy_log():
-                    espionage.set_new(False)
+        # If a human player is playing and they have a new espionage, display it
+        if self.agents[0].get_name() == "Player" and self.agents[0].get_spy_log() and self.agents[0].get_spy_log()[
+            0].new:
+            print(self.agents[0].get_spy_log()[0])
 
-            # Send out spies and collect espionages
-            self.process_spying(spying_missions, turn)
+        # Attack decision
+        armies = []
+        for agent in self.agents:
+            decision = agent.attack_decision()
+            if decision is not None:
+                armies.append(decision)
 
-            # If a human player is playing and they have a new espionage, display it
-            if self.agents[0].get_name() == "Player" and self.agents[0].get_spy_log() and self.agents[0].get_spy_log()[0].new:
-                print(self.agents[0].get_spy_log()[0])
+        # Send out attacks and collect reports
+        all_reports = self.process_attacks(armies, self.turn)
 
-            # Attack decision
-            armies = []
-            for agent in self.agents:
-                decision = agent.attack_decision()
-                if decision is not None:
-                    armies.append(decision)
+        # After all attacks are done processing, send surviving troops back to their villages
+        self.return_home(armies, all_reports)
 
-            # Send out attacks and collect reports
-            all_reports = self.process_attacks(armies, turn)
+        # If at least one attack was sent, reset stalemate tracker
+        if armies:
+            self.turn_of_last_attack = self.turn
 
-            # After all attacks are done processing, send surviving troops back to their villages
-            self.return_home(armies, all_reports)
+        # "New" reports become "old"
+        for agent in self.agents:
+            for report in agent.get_report_log():
+                report.set_new(False)
 
-            # If at least one attack was sent, reset stalemate tracker
-            if armies:
-                turn_of_last_attack = turn
+        # Distribute reports
+        for report in all_reports:
+            winning_village = report.get_winner()
+            losing_village = report.get_loser()
+            attacking_village = report.get_attacking_village()
+            # If attacker lost, don't give that player information regarding the defending troops
+            if attacking_village == losing_village:
+                truncated_report = deepcopy(report)
+                truncated_report.truncate_losing_report()
+                winning_agent = self.get_agent_by_village_name(winning_village)
+                losing_agent = self.get_agent_by_village_name(losing_village)
+                winning_agent.add_report(report)
+                losing_agent.add_report(truncated_report)
+            else:
+                winning_agent = self.get_agent_by_village_name(winning_village)
+                losing_agent = self.get_agent_by_village_name(losing_village)
+                winning_agent.add_report(report)
+                losing_agent.add_report(report)
 
-            # "New" reports become "old"
-            for agent in self.agents:
-                for report in agent.get_report_log():
-                    report.set_new(False)
+        # If a human player is playing, display their new reports
+        if self.agents[0].get_name() == "Player":
+            for report in self.agents[0].get_report_log():
+                if report.is_new():
+                    print(report)
 
-            # Distribute reports
-            for report in all_reports:
-                winning_village = report.get_winner()
-                losing_village = report.get_loser()
-                attacking_village = report.get_attacking_village()
-                # If attacker lost, don't give that player information regarding the defending troops
-                if attacking_village == losing_village:
-                    truncated_report = deepcopy(report)
-                    truncated_report.truncate_losing_report()
-                    winning_agent = self.get_agent_by_village_name(winning_village)
-                    losing_agent = self.get_agent_by_village_name(losing_village)
-                    winning_agent.add_report(report)
-                    losing_agent.add_report(truncated_report)
-                else:
-                    winning_agent = self.get_agent_by_village_name(winning_village)
-                    losing_agent = self.get_agent_by_village_name(losing_village)
-                    winning_agent.add_report(report)
-                    losing_agent.add_report(report)
+        # Checks if a stalemate has occurred based on number of turns without agents sending attacks
+        winners = self.check_stalemate()
+        if winners:
+            return winners
 
-            # If a human player is playing, display their new reports
-            if self.agents[0].get_name() == "Player":
-                for report in self.agents[0].get_report_log():
-                    if report.is_new():
-                        print(report)
+        # Determine players that lost (village dropped to below 0 HP) and check if there is a winner
+        old_agents = self.agents.copy()
+        self.eliminate_players()
+        winners = self.check_winner(old_agents)
+        if winners:
+            return winners
 
-            # Checks if a stalemate has occurred based on number of turns without agents sending attacks
-            winners = self.check_stalemate(turn, turn_of_last_attack)
-            if winners:
-                break
+        # Do end-of-turn village updates (produce resources and regenerate health)
+        for village in self.villages:
+            village.end_of_turn()
 
-            # Determine players that lost (village dropped to below 0 HP) and check if there is a winner
-            old_agents = self.agents.copy()
-            self.eliminate_players()
-            winners = self.check_winner(old_agents)
-            if winners:
-                break
-
-            # Do end-of-turn village updates (produce resources and regenerate health)
-            for village in self.villages:
-                village.end_of_turn()
-
-            turn += 1
-
-            print()
-            print()
-
-        print()
-        print()
-        if turn > self.TURN_LIMIT:
-            print("Turn limit reached.")
-        else:
-            print(f"Game reached {turn} turns.")
-
-        return winners
+        self.turn += 1
+        return []
 
     def print_villages(self):
         if self.agents[0].get_name() == "Player":
@@ -653,8 +645,9 @@ class Ui_MainWindow(QMainWindow):
             village.add_troops(army)
             village.add_resources(report.get_plundered_resources())
 
-    def check_stalemate(self, turn, turn_of_last_attack):
-        if turn - turn_of_last_attack > self.STALEMATE_LIMIT:
+    def check_stalemate(self):
+        if self.turn - self.turn_of_last_attack > self.STALEMATE_LIMIT:
+            self.winners = True
             print("~~~~~~~~~~Stalemate between players:~~~~~~~~~~")
             for agent in self.agents:
                 print(agent.get_name())
@@ -665,6 +658,8 @@ class Ui_MainWindow(QMainWindow):
 
     def eliminate_players(self):
         agents_to_delete = []
+        for i in range(0, len(self.agents)):
+            self.update_village(self.agents[i])
         for agent in self.agents:
             if agent.get_village().get_health() <= 0:
                 agents_to_delete.append(agent)
@@ -677,6 +672,7 @@ class Ui_MainWindow(QMainWindow):
     def check_winner(self, old_agents):
         # 2+ players simultaneously killed each other - a tie is declared
         if len(self.agents) == 0:
+            self.winners = True
             print("\n~~~~~~~~~~Tie between players:~~~~~~~~~~")
             for agent in old_agents:
                 print(agent.get_name())
@@ -686,6 +682,7 @@ class Ui_MainWindow(QMainWindow):
 
         # 1 player left
         elif len(self.agents) == 1:
+            self.winners = True
             print("\n~~~~~~~~~~Winner:~~~~~~~~~~")
             print(self.agents[0].get_name())
             print()
@@ -710,6 +707,12 @@ class Ui_MainWindow(QMainWindow):
                 return agent
         return None
 
+    def get_agent_by_name(self, name):
+        for agent in self.agents:
+            if name == agent.get_name():
+                return agent
+        return None
+
 
 if __name__ == "__main__":
     import sys
@@ -725,14 +728,6 @@ if __name__ == "__main__":
         raise ValueError("Number of players must be a positive integer greater than 1.")
     ui.setupUi(MainWindow, n_players)
     MainWindow.show()
-    agents_to_add = [ReactiveAgent(i, Stance(i % 3)) for i in range(n_players)]
-    villages_to_add = [agent.get_village() for agent in agents_to_add]
-    for i, agent in enumerate(agents_to_add):
-        agent.set_other_villages([village.name for j, village in enumerate(villages_to_add) if i != j])
-    ui.start_game(agents_to_add, villages_to_add)
-    ui.print_message(agents_to_add[0], "Hello")
-    ui.print_message(agents_to_add[1], "Hello")
-    ui.print_message(agents_to_add[2], "Hello")
-    ui.print_message(agents_to_add[3], "Hello")
-    ui.print_message(agents_to_add[4], "Hello")
+    # for i in range(0, ui.TURN_LIMIT):
+    #    ui.do_one_turn()
     sys.exit(app.exec_())
