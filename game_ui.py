@@ -9,13 +9,13 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QDesktopWidget
+from PyQt5.QtWidgets import QDesktopWidget, QMainWindow
 
 from ui.VillageUI import VillageUI
 from ui.mylogwindow import MyLogWindow
 
 
-class Ui_MainWindow(object):
+class Ui_MainWindow(QMainWindow):
     # noinspection PyPep8Naming
     def setupUi(self, MainWindow, numAgents):
         MainWindow.setObjectName("MainWindow")
@@ -39,6 +39,7 @@ class Ui_MainWindow(object):
         for i in range(0, numAgents):
             w = 425 * i
             self.villages.insert(i, VillageUI())
+            self.villages[i].name = "Village " + str(i)
             self.villages[i].VillageName = QtWidgets.QLabel(self.scrollAreaWidgetContents)
             self.villages[i].VillageName.setGeometry(QtCore.QRect(w + 175, 5, 50, 15))
             self.villages[i].VillageName.setAlignment(QtCore.Qt.AlignCenter)
@@ -389,10 +390,10 @@ class Ui_MainWindow(object):
             self.villages[i].WallNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
             self.villages[i].WarehouseNextLevel.setText(_translate("MainWindow", "[100,100,100]"))
 
-    def update_villages(self, MainWindow, agent):
+    def update_village(self, agent):
         _translate = QtCore.QCoreApplication.translate
         for i in range(0, len(self.villages)):
-            if self.villages[i].VillageName != agent.village.name:
+            if self.villages[i].name != agent.village.name:
                 self.villages[i].VillageType.setText(_translate("MainWindow", "Lost"))
                 continue
             else:
@@ -400,11 +401,15 @@ class Ui_MainWindow(object):
                 a = agent
                 self.villages[i].VillageType.setText(_translate("MainWindow", str(a.stance)))
                 self.villages[i].BarracksLevel.setText(_translate("MainWindow", str(v.barracks.get_level())))
-                self.villages[i].BarracksNextLevel.setText(_translate("MainWindow", str(v.barracks.get_cost_of_upgrade())))
+                barracks_next_upgrade = "" if v.barracks.is_max_level() else str(v.barracks.get_cost_of_upgrade())
+                self.villages[i].BarracksNextLevel.setText(
+                    _translate("MainWindow", barracks_next_upgrade))
                 self.villages[i].FarmLevel.setText(_translate("MainWindow", str(v.farm.get_level())))
-                self.villages[i].FarmNextLevel.setText(_translate("MainWindow", str(v.barracks.get_cost_of_upgrade())))
+                farm_next_upgrade = "" if v.farm.is_max_level() else str(v.farm.get_cost_of_upgrade())
+                self.villages[i].FarmNextLevel.setText(_translate("MainWindow", farm_next_upgrade))
                 self.villages[i].MineLevel.setText(_translate("MainWindow", str(v.mine.get_level())))
-                self.villages[i].MineNextLevel.setText(_translate("MainWindow", str(v.mine.get_cost_of_upgrade())))
+                mine_next_upgrade = "" if v.mine.is_max_level() else str(v.mine.get_cost_of_upgrade())
+                self.villages[i].MineNextLevel.setText(_translate("MainWindow", mine_next_upgrade))
                 self.villages[i].IronValue.setText(_translate("MainWindow", str(v.iron)))
                 self.villages[i].StoneValue.setText(_translate("MainWindow", str(v.stone)))
                 self.villages[i].WoodValue.setText(_translate("MainWindow", str(v.wood)))
@@ -439,21 +444,28 @@ class Ui_MainWindow(object):
                 self.villages[i].CavalrymenDefensive.setText(_translate("MainWindow", str(cavalrymen_defensive)))
                 self.villages[i].TotalDefensive.setText(_translate("MainWindow", str(total_defensive)))
                 self.villages[i].SawMilLevel.setText(_translate("MainWindow", str(v.sawmill.get_level())))
-                self.villages[i].SawMillNextLevel.setText(_translate("MainWindow", str(v.sawmill.get_cost_of_upgrade())))
+                sawmill_next_upgrade = "" if v.sawmill.is_max_level() else str(v.sawmill.get_cost_of_upgrade())
+                self.villages[i].SawMillNextLevel.setText(
+                    _translate("MainWindow", sawmill_next_upgrade))
                 self.villages[i].VillageCapacityValue.setText(_translate("MainWindow", str(v.farm.capacity())))
                 self.villages[i].SpiesValue.setText(_translate("MainWindow", str(v.spies.get_n())))
                 self.villages[i].QuarryLevel.setText(_translate("MainWindow", str(v.quarry.get_level())))
-                self.villages[i].QuarryNextLevel.setText(_translate("MainWindow", str(v.quarry.get_cost_of_upgrade())))
-                self.villages[i].WallLevel.setText(_translate("MainWindow", str(v.wall.get_level())))
+                quarry_next_upgrade = "" if v.quarry.is_max_level() else str(v.quarry.get_cost_of_upgrade())
+                self.villages[i].QuarryNextLevel.setText(_translate("MainWindow", quarry_next_upgrade))
+                self.villages[i].WallLevel.setText(_translate("MainWindow", str(v.warehouse.get_level())))
                 self.villages[i].WarehouseLevel.setText(_translate("MainWindow", str(v.warehouse.get_level())))
-                self.villages[i].WallNextLevel.setText(_translate("MainWindow", str(v.wall.get_cost_of_upgrade())))
-                self.villages[i].WarehouseNextLevel.setText(_translate("MainWindow", str(v.warehouse.get_cost_of_upgrade())))
+                wall_next_upgrade = "" if v.wall.is_max_level() else str(v.wall.get_cost_of_upgrade())
+                self.villages[i].WallNextLevel.setText(_translate("MainWindow", wall_next_upgrade))
+                warehouse_next_upgrade = "" if v.warehouse.is_max_level() else str(v.warehouse.get_cost_of_upgrade())
+                self.villages[i].WarehouseNextLevel.setText(
+                    _translate("MainWindow", warehouse_next_upgrade))
 
 
-   def print_message(self, MainWindow, agent, message):
-       for i in range(0, len(self.villages)):
-           if self.villages[i].VillageName == agent.village.name:
-                 self.villages[i].Log.append_message(message)
+def print_message(self, agent, message):
+    for i in range(0, len(self.villages)):
+        if self.villages[i].name == agent.village.name:
+            self.villages[i].Log.append_message(message)
+
 
 if __name__ == "__main__":
     import sys

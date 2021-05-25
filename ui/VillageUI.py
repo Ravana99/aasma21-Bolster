@@ -1,6 +1,7 @@
 class VillageUI:
 
     def __init__(self):
+        self.name = None
         self.VillageName = None
         self.VillageType = None
         self.HealthBar = None
