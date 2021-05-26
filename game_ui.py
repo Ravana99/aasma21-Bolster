@@ -376,7 +376,8 @@ class Ui_MainWindow(QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         for i in range(0, len(self.villageWidgets)):
             MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-            self.villageWidgets[i].VillageName.setText(_translate("MainWindow", "Village " + str(i + 1)))
+            self.villageWidgets[i].VillageName.setText(_translate("MainWindow", "Village " + str(i)))
+            self.villageWidgets[i].VillageType.setText(_translate("MainWindow", str(self.agents[i].stance)[7:]))
             self.villageWidgets[i].VillageType.setText(_translate("MainWindow", "Aggressive"))
             self.villageWidgets[i].BuildingLevel.setText(_translate("MainWindow", "Level"))
             self.villageWidgets[i].BuildingNextLevel.setText(_translate("MainWindow", "Next Level"))
@@ -410,8 +411,6 @@ class Ui_MainWindow(QMainWindow):
             if self.villageWidgets[i].name == agent.village.name:
                 v = agent.village
                 a = agent
-                self.villageWidgets[i].VillageName.setText(_translate("MainWindow", "Village " + str(i + 1)))
-                self.villageWidgets[i].VillageType.setText(_translate("MainWindow", str(a.stance)[7:]))
                 self.villageWidgets[i].HealthBar.setProperty("value", agent.village.health)
                 self.villageWidgets[i].BarracksLevel.setText(_translate("MainWindow", str(v.barracks.get_level())))
                 barracks_next_upgrade = "" if v.barracks.is_max_level() else str(v.barracks.get_cost_of_upgrade())
