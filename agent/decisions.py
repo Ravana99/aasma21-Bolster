@@ -34,6 +34,11 @@ class UpgradeBarracksDecision(UpgradeDecision):
     def execute(self):
         vis_print(f"{self.agent.get_name()} has upgraded the Barracks.")
         vis_print()
+        if self.agent.ui is not None:
+            if self.agent.village.barracks.get_level() > 1:
+                self.agent.ui.append_message(f"Upgraded Barracks.")
+            else:
+                self.agent.ui.append_message(f"Built Barracks.")
         self.agent.add_decision(self)
         return self.agent.upgrade_barracks()
 
@@ -45,6 +50,8 @@ class UpgradeFarmDecision(UpgradeDecision):
     def execute(self):
         vis_print(f"{self.agent.get_name()} has upgraded the Farm.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Upgraded Farm.")
         self.agent.add_decision(self)
         return self.agent.upgrade_farm()
 
@@ -56,6 +63,8 @@ class UpgradeMineDecision(UpgradeDecision):
     def execute(self):
         vis_print(f"{self.agent.get_name()} has upgraded the Mine.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Upgraded Mine.")
         self.agent.add_decision(self)
         return self.agent.upgrade_mine()
 
@@ -67,6 +76,8 @@ class UpgradeQuarryDecision(UpgradeDecision):
     def execute(self):
         vis_print(f"{self.agent.get_name()} has upgraded the Quarry.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Upgraded Quarry.")
         self.agent.add_decision(self)
         return self.agent.upgrade_quarry()
 
@@ -78,6 +89,8 @@ class UpgradeSawmillDecision(UpgradeDecision):
     def execute(self):
         vis_print(f"{self.agent.get_name()} has upgraded the Sawmill.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Upgraded Sawmill.")
         self.agent.add_decision(self)
         return self.agent.upgrade_sawmill()
 
@@ -89,6 +102,11 @@ class UpgradeWallDecision(UpgradeDecision):
     def execute(self):
         vis_print(f"{self.agent.get_name()} has upgraded the Wall.")
         vis_print()
+        if self.agent.ui is not None:
+            if self.agent.village.wall.get_level() > 1:
+                self.agent.ui.append_message(f"Upgraded Wall.")
+            else:
+                self.agent.ui.append_message(f"Built Wall.")
         self.agent.add_decision(self)
         return self.agent.upgrade_wall()
 
@@ -100,6 +118,8 @@ class UpgradeWarehouseDecision(UpgradeDecision):
     def execute(self):
         vis_print(f"{self.agent.get_name()} has upgraded the Warehouse.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Upgraded Warehouse.")
         self.agent.add_decision(self)
         return self.agent.upgrade_warehouse()
 
@@ -111,6 +131,8 @@ class UpgradeNothingDecision(UpgradeDecision):
     def execute(self):
         vis_print(f"{self.agent.get_name()} has upgraded nothing.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Upgraded nothing.")
         self.agent.add_decision(self)
         return self.agent.upgrade_nothing()
 
@@ -147,6 +169,8 @@ class RecruitSpiesDecision(RecruitDecision):
         self.n = n
         vis_print(f"{self.agent.get_name()} has recruited {n} Spies.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Recruited {n} Spies.")
         self.agent.add_decision(self)
         return self.agent.recruit_spies(n)
 
@@ -157,6 +181,8 @@ class RecruitWarriorsDecision(RecruitDecision):
         self.n = n
         vis_print(f"{self.agent.get_name()} has recruited {n} Warriors.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Recruited {n} Warriors.")
         self.agent.add_decision(self)
         return self.agent.recruit_warriors(n)
 
@@ -167,6 +193,8 @@ class RecruitArchersDecision(RecruitDecision):
         self.n = n
         vis_print(f"{self.agent.get_name()} has recruited {n} Archers.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Recruited {n} Archers.")
         self.agent.add_decision(self)
         return self.agent.recruit_archers(n)
 
@@ -177,6 +205,8 @@ class RecruitCatapultsDecision(RecruitDecision):
         self.n = n
         vis_print(f"{self.agent.get_name()} has recruited {n} Catapults.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Recruited {n} Catapults.")
         self.agent.add_decision(self)
         return self.agent.recruit_catapults(n)
 
@@ -187,6 +217,8 @@ class RecruitCavalrymenDecision(RecruitDecision):
         self.n = n
         vis_print(f"{self.agent.get_name()} has recruited {n} Cavalrymen.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Recruited {n} Cavalrymen.")
         self.agent.add_decision(self)
         return self.agent.recruit_cavalrymen(n)
 
@@ -197,6 +229,8 @@ class DemoteSpiesDecision(RecruitDecision):
         self.n = n
         vis_print(f"{self.agent.get_name()} has demoted {n} Spies.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Demoted {n} Spies.")
         self.agent.add_decision(self)
         return self.agent.demote_spies(n)
 
@@ -207,6 +241,8 @@ class DemoteWarriorsDecision(RecruitDecision):
         self.n = n
         vis_print(f"{self.agent.get_name()} has demoted {n} Warriors.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Demoted {n} Warriors.")
         self.agent.add_decision(self)
         return self.agent.demote_warriors(n)
 
@@ -217,6 +253,8 @@ class DemoteArchersDecision(RecruitDecision):
         self.n = n
         vis_print(f"{self.agent.get_name()} has demoted {n} Archers.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Demoted {n} Archers.")
         self.agent.add_decision(self)
         return self.agent.demote_archers(n)
 
@@ -227,6 +265,8 @@ class DemoteCatapultsDecision(RecruitDecision):
         self.n = n
         vis_print(f"{self.agent.get_name()} has demoted {n} Catapults.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Demoted {n} Catapults.")
         self.agent.add_decision(self)
         return self.agent.demote_catapults(n)
 
@@ -237,6 +277,8 @@ class DemoteCavalrymenDecision(RecruitDecision):
         self.n = n
         vis_print(f"{self.agent.get_name()} has demoted {n} Cavalrymen.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Demoted {n} Cavalrymen.")
         self.agent.add_decision(self)
         return self.agent.demote_cavalrymen(n)
 
@@ -245,6 +287,8 @@ class RecruitNothingDecision(RecruitDecision):
     def execute(self, n="0"):
         vis_print(f"{self.agent.get_name()} has recruited nothing.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message("Recruited no soldiers.")
         self.agent.add_decision(self)
         return self.agent.recruit_nothing()
 
@@ -266,6 +310,8 @@ class SpyVillageDecision(SpyingDecision):
     def execute(self):
         vis_print(f"{self.agent.get_name()} has spied {self.enemy_village_name}.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Spied {self.enemy_village_name}.")
         self.agent.add_decision(self)
         return self.agent.spy(self.enemy_village_name)
 
@@ -274,6 +320,8 @@ class SpyNothingDecision(SpyingDecision):
     def execute(self):
         vis_print(f"{self.agent.get_name()} has spied nothing.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Spied nothing.")
         self.agent.add_decision(self)
         return self.agent.spy_nothing()
 
@@ -338,6 +386,9 @@ class AttackVillageDecision(AttackDecision):
         vis_print(f"{self.agent.get_name()} has attacked {self.enemy_village_name} using ", end="")
         vis_print(f"{n_warriors} warriors, {n_archers} archers, {n_catapults} catapults and {n_cavalrymen} cavalrymen.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Attacked {self.enemy_village_name} using {n_warriors} warriors, {n_archers} "
+                                         f"archers, {n_catapults} catapults and {n_cavalrymen} cavalrymen.")
         self.agent.add_decision(self)
         return self.agent.send_attack(n_warriors, n_archers, n_catapults, n_cavalrymen, self.enemy_village_name)
 
@@ -346,6 +397,8 @@ class AttackNothingDecision(AttackDecision):
     def execute(self, n_warriors="0", n_archers="0", n_catapults="0", n_cavalrymen="0"):
         vis_print(f"{self.agent.get_name()} has attacked nothing.")
         vis_print()
+        if self.agent.ui is not None:
+            self.agent.ui.append_message(f"Attacked nothing.")
         self.agent.add_decision(self)
         return self.agent.attack_nothing()
 

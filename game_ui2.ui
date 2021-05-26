@@ -1,0 +1,1391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>425</width>
+    <height>780</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QScrollArea" name="scrollArea">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>425</width>
+      <height>825</height>
+     </rect>
+    </property>
+    <property name="widgetResizable">
+     <bool>false</bool>
+    </property>
+    <widget class="QWidget" name="scrollAreaWidgetContents">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>423</width>
+       <height>823</height>
+      </rect>
+     </property>
+     <widget class="QLabel" name="BarracksLevel">
+      <property name="geometry">
+       <rect>
+        <x>165</x>
+        <y>90</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>1</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="NumSoldiers">
+      <property name="geometry">
+       <rect>
+        <x>165</x>
+        <y>445</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Num</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="VillageCapacity">
+      <property name="geometry">
+       <rect>
+        <x>55</x>
+        <y>415</y>
+        <width>80</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Village Capacity:</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QTextBrowser" name="Log">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>645</y>
+        <width>415</width>
+        <height>130</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Mine">
+      <property name="geometry">
+       <rect>
+        <x>65</x>
+        <y>160</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Mine</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="SawmillNextLevel">
+      <property name="geometry">
+       <rect>
+        <x>275</x>
+        <y>230</y>
+        <width>75</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>[100,100,100]</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="WallIcon">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>255</y>
+        <width>35</width>
+        <height>35</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>../../../../../.designer/backup/ui_icons/Great_Wall_%28Civ6%29.png</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="TotalOffensive">
+      <property name="geometry">
+       <rect>
+        <x>235</x>
+        <y>615</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="WarehouseNextLevel">
+      <property name="geometry">
+       <rect>
+        <x>275</x>
+        <y>300</y>
+        <width>75</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>[100,100,100]</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="MineLevel">
+      <property name="geometry">
+       <rect>
+        <x>165</x>
+        <y>160</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>1</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="SawmillIcon">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>220</y>
+        <width>35</width>
+        <height>35</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>../../../../../.designer/backup/ui_icons/Lumber_Mill_%28Civ6%29.png</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Quarry">
+      <property name="geometry">
+       <rect>
+        <x>65</x>
+        <y>195</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Quarry</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="WallLevel">
+      <property name="geometry">
+       <rect>
+        <x>165</x>
+        <y>265</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>1</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="SawmilLevel">
+      <property name="geometry">
+       <rect>
+        <x>165</x>
+        <y>230</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>1</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="SpiesIcon">
+      <property name="geometry">
+       <rect>
+        <x>235</x>
+        <y>405</y>
+        <width>35</width>
+        <height>35</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>../../../../../.designer/backup/ui_icons/Spy_icon_%28Civ6%29.png</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="CatapultsNum">
+      <property name="geometry">
+       <rect>
+        <x>165</x>
+        <y>545</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="CatapultsDefensive">
+      <property name="geometry">
+       <rect>
+        <x>315</x>
+        <y>545</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="WarehouseIcon">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>290</y>
+        <width>35</width>
+        <height>35</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>../../../../../.designer/backup/ui_icons/Feitoria_%28Civ6%29.png</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Barracks">
+      <property name="geometry">
+       <rect>
+        <x>65</x>
+        <y>90</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Barracks</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Archers">
+      <property name="geometry">
+       <rect>
+        <x>85</x>
+        <y>510</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Archers</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="WallNextLevel">
+      <property name="geometry">
+       <rect>
+        <x>275</x>
+        <y>265</y>
+        <width>75</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>[100,100,100]</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Stone">
+      <property name="geometry">
+       <rect>
+        <x>165</x>
+        <y>345</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Stone</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="WarriorsIcon">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>465</y>
+        <width>35</width>
+        <height>35</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>../../../../../.designer/backup/ui_icons/Warrior_icon_%28Civ6%29.png</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="ArchersIcon">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>500</y>
+        <width>35</width>
+        <height>35</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>../../../../../.designer/backup/ui_icons/Archer_icon_%28Civ6%29.png</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="ArchersDefensive">
+      <property name="geometry">
+       <rect>
+        <x>315</x>
+        <y>510</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="CavalrymenNum">
+      <property name="geometry">
+       <rect>
+        <x>165</x>
+        <y>580</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Wall">
+      <property name="geometry">
+       <rect>
+        <x>65</x>
+        <y>265</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Wall</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="IronValue">
+      <property name="geometry">
+       <rect>
+        <x>45</x>
+        <y>375</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="WarriorsNum">
+      <property name="geometry">
+       <rect>
+        <x>165</x>
+        <y>475</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Farm">
+      <property name="geometry">
+       <rect>
+        <x>65</x>
+        <y>125</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Farm</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="BuldingLevel">
+      <property name="geometry">
+       <rect>
+        <x>165</x>
+        <y>60</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Level</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="FarmLevel">
+      <property name="geometry">
+       <rect>
+        <x>165</x>
+        <y>125</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>1</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="SpiesValue">
+      <property name="geometry">
+       <rect>
+        <x>315</x>
+        <y>415</y>
+        <width>50</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Iron">
+      <property name="geometry">
+       <rect>
+        <x>45</x>
+        <y>345</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Iron</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="QuarryNextLevel">
+      <property name="geometry">
+       <rect>
+        <x>275</x>
+        <y>195</y>
+        <width>75</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>[100,100,100</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="WoodValue">
+      <property name="geometry">
+       <rect>
+        <x>285</x>
+        <y>375</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="QuarryLevel">
+      <property name="geometry">
+       <rect>
+        <x>165</x>
+        <y>195</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>1</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Spies">
+      <property name="geometry">
+       <rect>
+        <x>275</x>
+        <y>415</y>
+        <width>80</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Spies</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="VillageType">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>15</y>
+        <width>50</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Agressive</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="CavalrymenOffensive">
+      <property name="geometry">
+       <rect>
+        <x>235</x>
+        <y>580</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="MineIcon">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>150</y>
+        <width>35</width>
+        <height>35</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>../../../../../.designer/backup/ui_icons/Mine_%28Civ6%29.png</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="BarracksIcon">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>80</y>
+        <width>35</width>
+        <height>35</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>../../../../../.designer/backup/ui_icons/Fort_%28Civ6%29.png</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="CavalrymenIcon">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>570</y>
+        <width>35</width>
+        <height>35</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>../../../../../.designer/backup/ui_icons/Horseman_icon_%28Civ6%29.png</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="FarmNextLevel">
+      <property name="geometry">
+       <rect>
+        <x>275</x>
+        <y>125</y>
+        <width>75</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>[100,100,100]</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="ArchersNum">
+      <property name="geometry">
+       <rect>
+        <x>165</x>
+        <y>510</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="ArchersOffensive">
+      <property name="geometry">
+       <rect>
+        <x>235</x>
+        <y>510</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="CavalrymenDefensive">
+      <property name="geometry">
+       <rect>
+        <x>315</x>
+        <y>580</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Wood">
+      <property name="geometry">
+       <rect>
+        <x>285</x>
+        <y>345</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Wood</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="TotalDefensive">
+      <property name="geometry">
+       <rect>
+        <x>315</x>
+        <y>615</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="QuarryIcon">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>185</y>
+        <width>35</width>
+        <height>35</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>../../../../../.designer/backup/ui_icons/Quarry_%28Civ6%29.png</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="VillageName">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>0</y>
+        <width>50</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Village 10</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Warriors">
+      <property name="geometry">
+       <rect>
+        <x>85</x>
+        <y>475</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Warriors</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="WarehouseLevel">
+      <property name="geometry">
+       <rect>
+        <x>165</x>
+        <y>300</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>1</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Cavalrymen">
+      <property name="geometry">
+       <rect>
+        <x>85</x>
+        <y>580</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Cavalrymen</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="BuldingNextLevel">
+      <property name="geometry">
+       <rect>
+        <x>275</x>
+        <y>60</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Next Level</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="WarriorsDefensive">
+      <property name="geometry">
+       <rect>
+        <x>315</x>
+        <y>475</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Warehouse">
+      <property name="geometry">
+       <rect>
+        <x>65</x>
+        <y>300</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Warehouse</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="VillageCapacityValue">
+      <property name="geometry">
+       <rect>
+        <x>165</x>
+        <y>415</y>
+        <width>50</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>1</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Catapults">
+      <property name="geometry">
+       <rect>
+        <x>85</x>
+        <y>545</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Catapults</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Army">
+      <property name="geometry">
+       <rect>
+        <x>85</x>
+        <y>445</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Army</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Defensive">
+      <property name="geometry">
+       <rect>
+        <x>315</x>
+        <y>445</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Defensive</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="BarracksNextLevel">
+      <property name="geometry">
+       <rect>
+        <x>275</x>
+        <y>90</y>
+        <width>75</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>[100,100,100]</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="TotalNum">
+      <property name="geometry">
+       <rect>
+        <x>165</x>
+        <y>615</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="CatapultsIcon">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>535</y>
+        <width>35</width>
+        <height>35</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>../../../../../.designer/backup/ui_icons/Catapult_icon_%28Civ6%29.png</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="StoneValue">
+      <property name="geometry">
+       <rect>
+        <x>165</x>
+        <y>375</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="MineNextLevel">
+      <property name="geometry">
+       <rect>
+        <x>275</x>
+        <y>160</y>
+        <width>75</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>[100,100,100]</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="FarmIcon">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>115</y>
+        <width>35</width>
+        <height>35</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>../../../../../.designer/backup/ui_icons/Farm_%28Civ6%29.png</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Sawmill">
+      <property name="geometry">
+       <rect>
+        <x>65</x>
+        <y>230</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Saw Mill</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="WarriorsOffensive">
+      <property name="geometry">
+       <rect>
+        <x>235</x>
+        <y>475</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Offensive">
+      <property name="geometry">
+       <rect>
+        <x>235</x>
+        <y>445</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Offensive</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="TotalArmy">
+      <property name="geometry">
+       <rect>
+        <x>85</x>
+        <y>615</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Total</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QProgressBar" name="HealthBar">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>35</y>
+        <width>415</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+        <underline>false</underline>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
+       </font>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="maximum">
+       <number>10000</number>
+      </property>
+      <property name="value">
+       <number>5000</number>
+      </property>
+      <property name="textVisible">
+       <bool>true</bool>
+      </property>
+      <property name="invertedAppearance">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="CatapultsOffensive">
+      <property name="geometry">
+       <rect>
+        <x>235</x>
+        <y>545</y>
+        <width>60</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>40</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Step</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_2">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>0</y>
+        <width>40</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Run</string>
+      </property>
+     </widget>
+     <zorder>ArchersDefensive</zorder>
+     <zorder>VillageName</zorder>
+     <zorder>Mine</zorder>
+     <zorder>CavalrymenDefensive</zorder>
+     <zorder>WallLevel</zorder>
+     <zorder>HealthBar</zorder>
+     <zorder>TotalOffensive</zorder>
+     <zorder>ArchersOffensive</zorder>
+     <zorder>WarriorsIcon</zorder>
+     <zorder>SawmilLevel</zorder>
+     <zorder>WarehouseLevel</zorder>
+     <zorder>Wall</zorder>
+     <zorder>Cavalrymen</zorder>
+     <zorder>TotalNum</zorder>
+     <zorder>BarracksIcon</zorder>
+     <zorder>VillageCapacityValue</zorder>
+     <zorder>WarehouseIcon</zorder>
+     <zorder>WallIcon</zorder>
+     <zorder>VillageType</zorder>
+     <zorder>NumSoldiers</zorder>
+     <zorder>CatapultsOffensive</zorder>
+     <zorder>Barracks</zorder>
+     <zorder>BarracksNextLevel</zorder>
+     <zorder>Sawmill</zorder>
+     <zorder>MineIcon</zorder>
+     <zorder>BuldingLevel</zorder>
+     <zorder>Stone</zorder>
+     <zorder>SpiesValue</zorder>
+     <zorder>SpiesIcon</zorder>
+     <zorder>SawmillIcon</zorder>
+     <zorder>Catapults</zorder>
+     <zorder>TotalDefensive</zorder>
+     <zorder>WoodValue</zorder>
+     <zorder>CavalrymenIcon</zorder>
+     <zorder>IronValue</zorder>
+     <zorder>TotalArmy</zorder>
+     <zorder>BarracksLevel</zorder>
+     <zorder>WarehouseNextLevel</zorder>
+     <zorder>CatapultsDefensive</zorder>
+     <zorder>Spies</zorder>
+     <zorder>SawmillNextLevel</zorder>
+     <zorder>Wood</zorder>
+     <zorder>QuarryLevel</zorder>
+     <zorder>FarmNextLevel</zorder>
+     <zorder>CatapultsIcon</zorder>
+     <zorder>Offensive</zorder>
+     <zorder>CavalrymenNum</zorder>
+     <zorder>QuarryIcon</zorder>
+     <zorder>QuarryNextLevel</zorder>
+     <zorder>Farm</zorder>
+     <zorder>CatapultsNum</zorder>
+     <zorder>WarriorsOffensive</zorder>
+     <zorder>FarmLevel</zorder>
+     <zorder>MineLevel</zorder>
+     <zorder>FarmIcon</zorder>
+     <zorder>Warehouse</zorder>
+     <zorder>Iron</zorder>
+     <zorder>ArchersIcon</zorder>
+     <zorder>Log</zorder>
+     <zorder>WarriorsDefensive</zorder>
+     <zorder>BuldingNextLevel</zorder>
+     <zorder>Defensive</zorder>
+     <zorder>Warriors</zorder>
+     <zorder>MineNextLevel</zorder>
+     <zorder>VillageCapacity</zorder>
+     <zorder>WarriorsNum</zorder>
+     <zorder>Army</zorder>
+     <zorder>Quarry</zorder>
+     <zorder>CavalrymenOffensive</zorder>
+     <zorder>StoneValue</zorder>
+     <zorder>Archers</zorder>
+     <zorder>WallNextLevel</zorder>
+     <zorder>ArchersNum</zorder>
+     <zorder>pushButton</zorder>
+     <zorder>pushButton_2</zorder>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
