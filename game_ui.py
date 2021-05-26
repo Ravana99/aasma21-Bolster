@@ -48,7 +48,7 @@ class Ui_MainWindow(QMainWindow):
         self.scrollArea.setWidgetResizable(False)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 425 * numAgents, 780))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 425 * numAgents, 765))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.oneTurnButton = QtWidgets.QPushButton(self.scrollAreaWidgetContents)
         self.oneTurnButton.setObjectName("oneTurnButton")
@@ -60,6 +60,16 @@ class Ui_MainWindow(QMainWindow):
         self.allTurnButton.setText("Run")
         self.allTurnButton.clicked.connect(lambda: self.do_all_turns())
         self.allTurnButton.setGeometry(QtCore.QRect(40, 0, 40, 25))
+        self.oneTurnButton2 = QtWidgets.QPushButton(self.scrollAreaWidgetContents)
+        self.oneTurnButton2.setObjectName("oneTurnButton2")
+        self.oneTurnButton2.setText("Step")
+        self.oneTurnButton2.clicked.connect(lambda: self.do_one_turn())
+        self.oneTurnButton2.setGeometry(QtCore.QRect(0, 620, 40, 25))
+        self.allTurnButton2 = QtWidgets.QPushButton(self.scrollAreaWidgetContents)
+        self.allTurnButton2.setObjectName("allTurnButton2")
+        self.allTurnButton2.setText("Run")
+        self.allTurnButton2.clicked.connect(lambda: self.do_all_turns())
+        self.allTurnButton2.setGeometry(QtCore.QRect(40, 620, 40, 25))
         self.villageWidgets = []
         agents_to_add = [ReactiveAgent(i, Stance(i % 3)) for i in range(n_players)]
         villages_to_add = [agent.get_village() for agent in agents_to_add]
@@ -78,7 +88,8 @@ class Ui_MainWindow(QMainWindow):
             self.villageWidgets[i].VillageName.setObjectName("VillageName" + str(i + 1))
             self.villageWidgets[i].VillageName.setScaledContents(True)
             self.villageWidgets[i].VillageType = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villageWidgets[i].VillageType.setGeometry(QtCore.QRect(w + 172, 20, 55, 15))
+            self.villageWidgets[i].VillageType.setGeometry(QtCore.QRect(w + 152, 20, 100, 15))
+            self.villageWidgets[i].VillageType.setAlignment(QtCore.Qt.AlignCenter)
             self.villageWidgets[i].VillageType.setObjectName("VillageType" + str(i + 1))
             self.villageWidgets[i].VillageType.setScaledContents(True)
             self.villageWidgets[i].HealthBar = QtWidgets.QProgressBar(self.scrollAreaWidgetContents)
@@ -119,7 +130,7 @@ class Ui_MainWindow(QMainWindow):
             self.villageWidgets[i].BarracksLevel.setGeometry(QtCore.QRect(w + 170, 95, 60, 15))
             self.villageWidgets[i].BarracksLevel.setObjectName("BarracksLevel" + str(i + 1))
             self.villageWidgets[i].BarracksNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villageWidgets[i].BarracksNextLevel.setGeometry(QtCore.QRect(w + 280, 95, 75, 15))
+            self.villageWidgets[i].BarracksNextLevel.setGeometry(QtCore.QRect(w + 280, 95, 100, 15))
             self.villageWidgets[i].BarracksNextLevel.setObjectName("BarracksNextLevel" + str(i + 1))
             self.villageWidgets[i].FarmIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
             self.villageWidgets[i].FarmIcon.setGeometry(QtCore.QRect(w + 10, 120, 35, 35))
@@ -134,7 +145,7 @@ class Ui_MainWindow(QMainWindow):
             self.villageWidgets[i].FarmLevel.setGeometry(QtCore.QRect(w + 170, 130, 60, 15))
             self.villageWidgets[i].FarmLevel.setObjectName("FarmLevel" + str(i + 1))
             self.villageWidgets[i].FarmNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villageWidgets[i].FarmNextLevel.setGeometry(QtCore.QRect(w + 280, 130, 75, 15))
+            self.villageWidgets[i].FarmNextLevel.setGeometry(QtCore.QRect(w + 280, 130, 100, 15))
             self.villageWidgets[i].FarmNextLevel.setObjectName("FarmNextLevel" + str(i + 1))
             self.villageWidgets[i].MineIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
             self.villageWidgets[i].MineIcon.setGeometry(QtCore.QRect(w + 10, 155, 35, 35))
@@ -149,7 +160,7 @@ class Ui_MainWindow(QMainWindow):
             self.villageWidgets[i].MineLevel.setGeometry(QtCore.QRect(w + 170, 165, 60, 15))
             self.villageWidgets[i].MineLevel.setObjectName("MineLevel" + str(i + 1))
             self.villageWidgets[i].MineNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villageWidgets[i].MineNextLevel.setGeometry(QtCore.QRect(w + 280, 165, 75, 15))
+            self.villageWidgets[i].MineNextLevel.setGeometry(QtCore.QRect(w + 280, 165, 100, 15))
             self.villageWidgets[i].MineNextLevel.setObjectName("MineNextLevel" + str(i + 1))
             self.villageWidgets[i].Iron = QtWidgets.QLabel(self.scrollAreaWidgetContents)
             self.villageWidgets[i].Iron.setGeometry(QtCore.QRect(w + 50, 350, 60, 15))
@@ -205,7 +216,7 @@ class Ui_MainWindow(QMainWindow):
             self.villageWidgets[i].Defensive.setGeometry(QtCore.QRect(w + 320, 450, 60, 15))
             self.villageWidgets[i].Defensive.setObjectName("Defensive" + str(i + 1))
             self.villageWidgets[i].Log = MyLogWindow(self.scrollAreaWidgetContents)
-            self.villageWidgets[i].Log.setGeometry(QtCore.QRect(w + 5, 650, 415, 130))
+            self.villageWidgets[i].Log.setGeometry(QtCore.QRect(w + 5, 650, 415, 110))
             self.villageWidgets[i].Log.setObjectName("Log" + str(i + 1))
             self.agents[i].ui = self.villageWidgets[i].Log
             self.villageWidgets[i].WarriorsNum = QtWidgets.QLabel(self.scrollAreaWidgetContents)
@@ -290,7 +301,7 @@ class Ui_MainWindow(QMainWindow):
             self.villageWidgets[i].SawMilLevel.setGeometry(QtCore.QRect(w + 170, 235, 60, 15))
             self.villageWidgets[i].SawMilLevel.setObjectName("SawMilLevel" + str(i + 1))
             self.villageWidgets[i].SawMillNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villageWidgets[i].SawMillNextLevel.setGeometry(QtCore.QRect(w + 280, 235, 75, 15))
+            self.villageWidgets[i].SawMillNextLevel.setGeometry(QtCore.QRect(w + 280, 235, 100, 15))
             self.villageWidgets[i].SawMillNextLevel.setObjectName("SawMillNextLevel" + str(i + 1))
             self.villageWidgets[i].VillageCapacity = QtWidgets.QLabel(self.scrollAreaWidgetContents)
             self.villageWidgets[i].VillageCapacity.setGeometry(QtCore.QRect(w + 60, 420, 80, 15))
@@ -323,7 +334,7 @@ class Ui_MainWindow(QMainWindow):
             self.villageWidgets[i].QuarryLevel.setGeometry(QtCore.QRect(w + 170, 200, 60, 15))
             self.villageWidgets[i].QuarryLevel.setObjectName("QuarryLevel" + str(i + 1))
             self.villageWidgets[i].QuarryNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villageWidgets[i].QuarryNextLevel.setGeometry(QtCore.QRect(w + 280, 200, 75, 15))
+            self.villageWidgets[i].QuarryNextLevel.setGeometry(QtCore.QRect(w + 280, 200, 100, 15))
             self.villageWidgets[i].QuarryNextLevel.setObjectName("QuarryNextLevel" + str(i + 1))
             self.villageWidgets[i].WallIcon = QtWidgets.QLabel(self.scrollAreaWidgetContents)
             self.villageWidgets[i].WallIcon.setGeometry(QtCore.QRect(w + 10, 260, 35, 35))
@@ -350,10 +361,10 @@ class Ui_MainWindow(QMainWindow):
             self.villageWidgets[i].WarehouseLevel.setGeometry(QtCore.QRect(w + 170, 305, 60, 15))
             self.villageWidgets[i].WarehouseLevel.setObjectName("WarehouseLevel" + str(i + 1))
             self.villageWidgets[i].WallNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villageWidgets[i].WallNextLevel.setGeometry(QtCore.QRect(w + 280, 270, 75, 15))
+            self.villageWidgets[i].WallNextLevel.setGeometry(QtCore.QRect(w + 280, 270, 100, 15))
             self.villageWidgets[i].WallNextLevel.setObjectName("WallNextLevel" + str(i + 1))
             self.villageWidgets[i].WarehouseNextLevel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            self.villageWidgets[i].WarehouseNextLevel.setGeometry(QtCore.QRect(w + 280, 305, 75, 15))
+            self.villageWidgets[i].WarehouseNextLevel.setGeometry(QtCore.QRect(w + 280, 305, 100, 15))
             self.villageWidgets[i].WarehouseNextLevel.setObjectName("WarehouseNextLevel" + str(i + 1))
 
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
@@ -363,8 +374,6 @@ class Ui_MainWindow(QMainWindow):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        for i in range(0, len(self.agents)):
-            self.update_village(self.agents[i])
         for i in range(0, len(self.villageWidgets)):
             MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
             self.villageWidgets[i].VillageName.setText(_translate("MainWindow", "Village " + str(i + 1)))
@@ -392,6 +401,8 @@ class Ui_MainWindow(QMainWindow):
             self.villageWidgets[i].Quarry.setText(_translate("MainWindow", "Quarry"))
             self.villageWidgets[i].Wall.setText(_translate("MainWindow", "Wall"))
             self.villageWidgets[i].Warehouse.setText(_translate("MainWindow", "Warehouse"))
+        for i in range(0, len(self.agents)):
+            self.update_village(self.agents[i])
 
     def update_village(self, agent):
         _translate = QtCore.QCoreApplication.translate
@@ -400,12 +411,11 @@ class Ui_MainWindow(QMainWindow):
                 v = agent.village
                 a = agent
                 self.villageWidgets[i].VillageName.setText(_translate("MainWindow", "Village " + str(i + 1)))
-                self.villageWidgets[i].VillageType.setText(_translate("MainWindow", str(a.stance)))
+                self.villageWidgets[i].VillageType.setText(_translate("MainWindow", str(a.stance)[7:]))
                 self.villageWidgets[i].HealthBar.setProperty("value", agent.village.health)
                 self.villageWidgets[i].BarracksLevel.setText(_translate("MainWindow", str(v.barracks.get_level())))
                 barracks_next_upgrade = "" if v.barracks.is_max_level() else str(v.barracks.get_cost_of_upgrade())
-                self.villageWidgets[i].BarracksNextLevel.setText(
-                    _translate("MainWindow", barracks_next_upgrade))
+                self.villageWidgets[i].BarracksNextLevel.setText(_translate("MainWindow", barracks_next_upgrade))
                 self.villageWidgets[i].FarmLevel.setText(_translate("MainWindow", str(v.farm.get_level())))
                 farm_next_upgrade = "" if v.farm.is_max_level() else str(v.farm.get_cost_of_upgrade())
                 self.villageWidgets[i].FarmNextLevel.setText(_translate("MainWindow", farm_next_upgrade))
@@ -454,7 +464,7 @@ class Ui_MainWindow(QMainWindow):
                 self.villageWidgets[i].QuarryLevel.setText(_translate("MainWindow", str(v.quarry.get_level())))
                 quarry_next_upgrade = "" if v.quarry.is_max_level() else str(v.quarry.get_cost_of_upgrade())
                 self.villageWidgets[i].QuarryNextLevel.setText(_translate("MainWindow", quarry_next_upgrade))
-                self.villageWidgets[i].WallLevel.setText(_translate("MainWindow", str(v.warehouse.get_level())))
+                self.villageWidgets[i].WallLevel.setText(_translate("MainWindow", str(v.wall.get_level())))
                 self.villageWidgets[i].WarehouseLevel.setText(_translate("MainWindow", str(v.warehouse.get_level())))
                 wall_next_upgrade = "" if v.wall.is_max_level() else str(v.wall.get_cost_of_upgrade())
                 self.villageWidgets[i].WallNextLevel.setText(_translate("MainWindow", wall_next_upgrade))

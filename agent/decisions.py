@@ -35,7 +35,10 @@ class UpgradeBarracksDecision(UpgradeDecision):
         vis_print(f"{self.agent.get_name()} has upgraded the Barracks.")
         vis_print()
         if self.agent.ui is not None:
-            self.agent.ui.append_message(f"Upgraded Barracks.")
+            if self.agent.village.barracks.get_level() > 1:
+                self.agent.ui.append_message(f"Upgraded Barracks.")
+            else:
+                self.agent.ui.append_message(f"Built Barracks.")
         self.agent.add_decision(self)
         return self.agent.upgrade_barracks()
 
@@ -100,7 +103,10 @@ class UpgradeWallDecision(UpgradeDecision):
         vis_print(f"{self.agent.get_name()} has upgraded the Wall.")
         vis_print()
         if self.agent.ui is not None:
-            self.agent.ui.append_message(f"Upgraded Wall.")
+            if self.agent.village.wall.get_level() > 1:
+                self.agent.ui.append_message(f"Upgraded Wall.")
+            else:
+                self.agent.ui.append_message(f"Built Wall.")
         self.agent.add_decision(self)
         return self.agent.upgrade_wall()
 
