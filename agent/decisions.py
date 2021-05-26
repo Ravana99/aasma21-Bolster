@@ -1,8 +1,8 @@
-visualize = True
+has_player = False
 
 
 def vis_print(*kwargs, end="\n"):
-    if visualize:
+    if not has_player:
         print(*kwargs, end=end)
 
 
@@ -12,7 +12,10 @@ class Decision:
     """DO NOT INSTANTIATE!"""
 
     def __init__(self, agent):
+        global has_player
         self.agent = agent
+        if agent.get_name() == "Player":
+            has_player = True
 
 
 # UPGRADE DECISIONS

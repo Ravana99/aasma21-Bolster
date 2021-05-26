@@ -46,7 +46,6 @@ def analyze_data():
                 tie_participants.append(winner)
 
         # How many agents of each starting stance won a game
-
         starting_stances = []
         for ending_condition, winner, game in zip(ending_conditions, winners, games):
             winner = winner[0]
@@ -402,41 +401,34 @@ def analyze_data():
         print(f"Percentage of turns spent in neutral stance: {percent_neutral}")
         print(f"Percentage of turns spent in offensive stance: {percent_offensive}")
 
-        """
-        # Attacks per current stance
-        def_successful_attacks = 0
-        neut_successful_attacks = 0
-        off_successful_attacks = 0
-        def_failed_attacks = 0
-        neut_failed_attacks = 0
-        off_failed_attacks = 0
-        for game in games:
+        successful_attacks = 0
+        failed_attacks = 0
+        for ending_condition, winner, game in zip(ending_conditions, winners, games):
             for agent in game:
-                for report in agent.get_report_log():
-                    if agent.get_village().get_name() == report.get_attacking_village():
-                        current_stance = get_current_stance(agent.stance_history, report.get_turn())
-                        if agent.get_village().get_name() == report.get_winner():
-                            if current_stance == Stance.DEFENSIVE:
-                                def_successful_attacks += 1
-                            elif current_stance == Stance.NEUTRAL:
-                                neut_successful_attacks += 1
-                            else:
-                                off_successful_attacks += 1
-                        else:
-                            if current_stance == Stance.DEFENSIVE:
-                                def_failed_attacks += 1
-                            elif current_stance == Stance.NEUTRAL:
-                                neut_failed_attacks += 1
-                            else:
-                                off_failed_attacks += 1
+                successful_attacks += agent.successful_attacks
+                failed_attacks += agent.failed_attacks
+        print(f"Total successful attacks: {successful_attacks}")
+        print(f"Total failed attacks: {failed_attacks}")
+        print(f"Percentage of success on attacks: {successful_attacks * 100 / (successful_attacks + failed_attacks)}%")
 
-        percent_def_successful = def_successful_attacks / turns_defensive
-        percent_neut_successful = neut_successful_attacks / turns_neutral
-        percent_off_successful = off_successful_attacks / turns_offensive
-        percent_def_failed = def_failed_attacks / turns_defensive
-        percent_neut_failed = neut_failed_attacks / turns_neutral
-        percent_off_failed = off_failed_attacks / turns_offensive
-        """
+        def_stance_changes = []
+        neut_stance_changes = []
+        off_stance_changes = []
+        for ending_condition, winner, game in zip(ending_conditions, winners, games):
+            for agent in game:
+                if agent.get_starting_stance() == Stance.DEFENSIVE:
+                    def_stance_changes.append(len(agent.stance_history) - 1)
+                elif agent.get_starting_stance() == Stance.NEUTRAL:
+                    neut_stance_changes.append(len(agent.stance_history) - 1)
+                else:
+                    off_stance_changes.append(len(agent.stance_history) - 1)
+
+        avg_def_stance_changes = mean(def_stance_changes)
+        avg_neut_stance_changes = mean(neut_stance_changes)
+        avg_off_stance_changes = mean(off_stance_changes)
+        print(f"Average stance changes per defensive agent per game: {avg_def_stance_changes}")
+        print(f"Average stance changes per neutral agent per game: {avg_neut_stance_changes}")
+        print(f"Average stance changes per offensive agent per game: {avg_off_stance_changes}")
 
         return
 
