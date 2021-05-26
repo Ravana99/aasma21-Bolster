@@ -52,12 +52,14 @@ class Ui_MainWindow(QMainWindow):
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.oneTurnButton = QtWidgets.QPushButton(self.scrollAreaWidgetContents)
         self.oneTurnButton.setObjectName("oneTurnButton")
-        self.oneTurnButton.setText("Simulate one turn")
+        self.oneTurnButton.setText("Step")
         self.oneTurnButton.clicked.connect(lambda: self.do_one_turn())
+        self.oneTurnButton.setGeometry(QtCore.QRect(0, 0, 40, 25))
         self.allTurnButton = QtWidgets.QPushButton(self.scrollAreaWidgetContents)
         self.allTurnButton.setObjectName("allTurnButton")
-        self.allTurnButton.setText("Simulate all turns")
+        self.allTurnButton.setText("Run")
         self.allTurnButton.clicked.connect(lambda: self.do_all_turns())
+        self.allTurnButton.setGeometry(QtCore.QRect(40, 0, 40, 25))
         self.villageWidgets = []
         agents_to_add = [ReactiveAgent(i, Stance(i % 3)) for i in range(n_players)]
         villages_to_add = [agent.get_village() for agent in agents_to_add]

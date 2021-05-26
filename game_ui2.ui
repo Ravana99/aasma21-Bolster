@@ -1284,14 +1284,27 @@
      <widget class="QPushButton" name="pushButton">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>75</width>
-        <height>23</height>
+        <x>0</x>
+        <y>0</y>
+        <width>40</width>
+        <height>25</height>
        </rect>
       </property>
       <property name="text">
-       <string>PushButton</string>
+       <string>Step</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_2">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>0</y>
+        <width>40</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Run</string>
       </property>
      </widget>
      <zorder>ArchersDefensive</zorder>
@@ -1368,6 +1381,7 @@
      <zorder>WallNextLevel</zorder>
      <zorder>ArchersNum</zorder>
      <zorder>pushButton</zorder>
+     <zorder>pushButton_2</zorder>
     </widget>
    </widget>
   </widget>
