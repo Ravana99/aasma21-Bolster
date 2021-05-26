@@ -664,7 +664,7 @@ class Ui_MainWindow(QMainWindow):
                 print(agent.get_name())
             print()
             print()
-            return ["stalemate", [agent.get_name() for agent in self.agents]]
+            return ["Stalemate", [agent.get_name() for agent in self.agents]]
         return []
 
     def eliminate_players(self):
@@ -689,7 +689,7 @@ class Ui_MainWindow(QMainWindow):
                 print(agent.get_name())
             print()
             print()
-            return ["tie", [agent.get_name() for agent in old_agents]]
+            return ["Tie", [agent.get_name() for agent in old_agents]]
 
         # 1 player left
         elif len(self.agents) == 1:
@@ -698,7 +698,7 @@ class Ui_MainWindow(QMainWindow):
             print(self.agents[0].get_name())
             print()
             print()
-            return ["victory", [self.agents[0].get_name()]]
+            return ["Victory", [self.agents[0].get_name()]]
         else:
             return []
 
