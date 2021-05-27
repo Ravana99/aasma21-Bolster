@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-n_games = 2500
+n_games = 100
 target = f"bin/outcomes{n_games}dynamic.pickle"
 # target = f"bin/outcomes{n_games}static.pickle"
 

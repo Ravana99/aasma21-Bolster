@@ -449,7 +449,7 @@ class Ui_MainWindow(QMainWindow):
                 archers_defensive = v.archers.get_defense_power()
                 catapults_defensive = v.catapults.get_defense_power()
                 cavalrymen_defensive = v.cavalrymen.get_defense_power()
-                total_defensive = warriors_defensive + archers_defensive + catapults_defensive + cavalrymen_defensive
+                total_defensive = int(v.get_defense_power())
                 self.villageWidgets[i].WarriorsNum.setText(_translate("MainWindow", str(num_warriors)))
                 self.villageWidgets[i].ArchersNum.setText(_translate("MainWindow", str(num_archers)))
                 self.villageWidgets[i].CatapultsNum.setText(_translate("MainWindow", str(num_catapults)))
