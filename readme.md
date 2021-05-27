@@ -14,6 +14,9 @@ To run the program, use the following command:
 
 where parameter `agents` corresponds to the number of agents that will play the game.
 
+In the GUI, pressing the "Step" button will make all agents perform one turn and pressing the "Run" button will make all agents play the entirety of the game.
+To play again, simply close the window and run the previous command again.
+
 ### Using the CLI
 
 To run the program using the CLI, use command:
